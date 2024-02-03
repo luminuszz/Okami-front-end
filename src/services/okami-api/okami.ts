@@ -4,6 +4,8 @@ import {
   GetAuthTokenInput,
   getUserDetailsSchema,
   GetUserDetailsSchemaType,
+  getWorksResponse,
+  MarkWorkReadInput,
 } from './schemas'
 
 export const okamiHttpGateway = axios.create({
@@ -36,4 +38,21 @@ export const getUserDetails = async () => {
     await okamiHttpGateway.get<GetUserDetailsSchemaType>('/auth/user/me')
 
   return getUserDetailsSchema.parse(data)
+}
+
+export const fetchWorksWithFilter = async (filter: string) => {
+  const { data } = await okamiHttpGateway.get(
+    `/work/fetch-for-workers-${filter}`,
+  )
+
+  return getWorksResponse.parse(data)
+}
+
+export const markWorkAsRead = async ({
+  chapter,
+  workId,
+}: MarkWorkReadInput) => {
+  await okamiHttpGateway.patch(`/work/${workId}/update-chapter`, {
+    chapter,
+  })
 }
