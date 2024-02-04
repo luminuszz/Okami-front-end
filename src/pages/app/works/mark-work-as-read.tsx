@@ -1,21 +1,20 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { filter } from 'lodash'
-import { useRef, useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
+import { markWorkAsRead } from '@/api/mark-work-as-read'
+import { WorkType } from '@/api/schemas'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { markWorkAsRead } from '@/services/okami-api/okami'
-import { Work } from '@/services/okami-api/schemas'
 
 interface MarkChapterReadDialogProps {
   work: {
@@ -26,15 +25,15 @@ interface MarkChapterReadDialogProps {
   }
 }
 
-export function MarkChapterReadDialog({ work }: MarkChapterReadDialogProps) {
+export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
   const [inputValue, setInputValue] = useState(work.chapter?.toString())
   const client = useQueryClient()
 
   const { mutateAsync } = useMutation({
     mutationFn: markWorkAsRead,
-    mutationKey: markWorkAsRead.name,
+    mutationKey: ['markWorkAsRead', work.id],
     onMutate: () => {
-      client.setQueryData<Work[]>(['fetchWorksWithFilter', 'unread'], (works) =>
+      client.setQueryData<WorkType[]>(['works', 'unread'], (works) =>
         filter(works, (value) => value.id !== work.id),
       )
     },

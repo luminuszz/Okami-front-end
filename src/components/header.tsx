@@ -1,4 +1,4 @@
-import { Book, BookCheck, Home } from 'lucide-react'
+import { Book, Home } from 'lucide-react'
 
 import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
@@ -28,14 +28,6 @@ export function Header() {
           >
             <Book className="mr-1 h-4 w-4" />
             Obras
-          </NavLink>
-
-          <NavLink
-            to="/works-read"
-            className="flex flex-col items-center justify-center gap-2"
-          >
-            <BookCheck className="mr-1 h-4 w-4" />
-            Obras Lidas
           </NavLink>
         </nav>
 

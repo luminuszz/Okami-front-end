@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
-import { Dashboard } from './pages/app/dashboard'
+import { Dashboard } from './pages/app/dashboard/dashboard'
 import { Works } from './pages/app/works/works'
 import { Signin } from './pages/auth/signin'
 

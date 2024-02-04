@@ -3,6 +3,7 @@ import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Book, BookCheck, Clock } from 'lucide-react'
 
+import { WorkType } from '@/api/schemas'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -12,12 +13,11 @@ import {
   CardHeader,
 } from '@/components/ui/card'
 import { DialogTrigger } from '@/components/ui/dialog'
-import { Work } from '@/services/okami-api/schemas'
 
-import { MarkChapterReadDialog } from './markChapterReadDialog'
+import { MarkWorksAsReadDialog } from './mark-work-as-read'
 
 export interface WorksCardProps {
-  work: Work
+  work: WorkType
 }
 
 export function WorkCard({ work }: WorksCardProps) {
@@ -39,7 +39,7 @@ export function WorkCard({ work }: WorksCardProps) {
 
   return (
     <Dialog>
-      <MarkChapterReadDialog
+      <MarkWorksAsReadDialog
         work={{
           id: work.id,
           chapter: work.nextChapter ?? work.chapter,
@@ -64,18 +64,18 @@ export function WorkCard({ work }: WorksCardProps) {
           </div>
 
           {work.hasNewChapter ? (
-            <div className="flex justify-center gap-1">
+            <div className="flex items-center justify-center gap-1">
               <BookCheck className="size-5 text-green-500" />
-              <strong className="text-md text-green-500 text-muted-foreground">{`${newChapter} ${work.nextChapter}`}</strong>
+              <strong className="text-md text-green-500">{`${newChapter} ${work.nextChapter}`}</strong>
             </div>
           ) : (
-            <div className="flex items-end justify-center gap-1">
+            <div className="flex items-center justify-center gap-1">
               <Book className="size-5" />
               <span className="text-md text-muted-foreground">{`${lastChapter} ${work.chapter}`}</span>
             </div>
           )}
 
-          <div className="flex   items-end justify-center gap-1">
+          <div className="flex items-center justify-center gap-1">
             <Clock className="size-5" />
             <span className="text-sm text-muted-foreground">{`Atualizado a ${updatedAt}`}</span>
           </div>

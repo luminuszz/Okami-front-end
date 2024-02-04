@@ -1,20 +1,19 @@
 import './global.css'
 
+import { QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { RouterProvider } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/sonner'
 
+import { queryClient } from './lib/react-query'
 import { router } from './routes'
 import { currentThemeAtom } from './store/theme'
 
 export function App() {
-  const queryClient = new QueryClient()
-
   const theme = useAtomValue(currentThemeAtom)
 
   useEffect(() => {

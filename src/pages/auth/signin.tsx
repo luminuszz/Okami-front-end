@@ -1,15 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { getAuthToken } from '@/api/get-auth-token'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { getAuthToken } from '@/services/okami-api/okami'
 
 const formLoginSchema = z.object({
   email: z.string().email(),
@@ -31,7 +31,7 @@ export function Signin() {
     },
   })
 
-  const { mutateAsync } = useMutation('login', {
+  const { mutateAsync } = useMutation({
     mutationFn: getAuthToken,
   })
 

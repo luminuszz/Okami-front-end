@@ -1,7 +1,7 @@
+import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut, User } from 'lucide-react'
-import { useQuery } from 'react-query'
 
-import { getUserDetails } from '@/services/okami-api/okami'
+import { getUserDetails } from '@/api/get-user-details'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -17,7 +17,7 @@ import {
 export function AccountMenu() {
   const { data: user } = useQuery({
     queryFn: getUserDetails,
-    queryKey: getUserDetails.name,
+    queryKey: ['user-details'],
   })
 
   const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()

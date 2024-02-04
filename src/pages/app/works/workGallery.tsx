@@ -1,9 +1,9 @@
+import { useQuery } from '@tanstack/react-query'
 import { compareDesc } from 'date-fns'
-import { useQuery } from 'react-query'
 import { useSearchParams } from 'react-router-dom'
 
+import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { Skeleton } from '@/components/ui/skeleton'
-import { fetchWorksWithFilter } from '@/services/okami-api/okami'
 
 import { WorkCard } from './workCard'
 
@@ -12,17 +12,17 @@ export function WorkGallery() {
 
   const filterName = filter.get('name')
 
-  const status = filter.get('status') ?? 'unread'
+  const status = filter.get('status') || 'unread'
 
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter(status),
     queryKey: ['works', status],
     select: (works) =>
       works
-        .sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
         .filter((work) =>
           work.name.toLowerCase().includes(filterName?.toLowerCase() ?? ''),
-        ),
+        )
+        .sort((a, b) => compareDesc(a.updatedAt, b.updatedAt)),
   })
 
   if (isLoading) {
@@ -36,7 +36,7 @@ export function WorkGallery() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {works?.map((work) => <WorkCard key={work.id} work={work} />)}
     </div>
   )
