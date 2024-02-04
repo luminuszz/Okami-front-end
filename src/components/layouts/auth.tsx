@@ -1,15 +1,13 @@
 import { Outlet } from 'react-router-dom'
 
+import { Logo } from '../logo'
+
 export function AuthLayout() {
   return (
     <div className="grid min-h-screen grid-cols-2 antialiased">
       <div className="flex h-full flex-col justify-between border-r border-foreground/5 bg-muted p-10 text-muted-foreground">
         <main className=" flex h-full flex-col items-center justify-center gap-5  text-lg  text-foreground">
-          <img
-            className="h-[400px] w-[400px]"
-            src="/okami-logo.png"
-            alt="Okami logo"
-          />
+          <Logo className="h-[400px] w-[400px]" />
           <span className="mt font-semibold ">Okami Platform</span>
         </main>
 

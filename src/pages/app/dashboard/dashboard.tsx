@@ -6,7 +6,6 @@ import { RecentSyncList } from './recent-sync-list'
 import { TotalWorksCard } from './total-works-card'
 import { UnreadWorksAmountCard } from './unread-works-amount-card'
 import { WorksInfoChart } from './works-info-chart'
-import { WorksUpdated } from './works-updated'
 
 export function Dashboard() {
   return (
