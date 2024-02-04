@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -19,6 +20,8 @@ const formLoginSchema = z.object({
 type FormLogin = z.infer<typeof formLoginSchema>
 
 export function Signin() {
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -40,7 +43,7 @@ export function Signin() {
       const { token } = await mutateAsync(payload)
 
       localStorage.setItem('@okami-web:token', token)
-
+      navigate('/')
       toast.success('Login feito com sucesso')
     } catch (err) {
       toast.error('Credenciais inválidas')
