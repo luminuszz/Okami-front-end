@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card'
 import { DialogTrigger } from '@/components/ui/dialog'
 
+import { EditWorkFormDialog } from './edit-work-form'
 import { MarkWorksAsReadDialog } from './mark-work-as-read'
 
 export interface WorksCardProps {
@@ -38,16 +39,7 @@ export function WorkCard({ work }: WorksCardProps) {
     work.category === 'ANIME' ? 'Último episodio ' : 'Último Capitulo '
 
   return (
-    <Dialog>
-      <MarkWorksAsReadDialog
-        work={{
-          id: work.id,
-          chapter: work.nextChapter ?? work.chapter,
-          name: work.name,
-          type: work.category,
-        }}
-      />
-
+    <>
       <Card>
         <CardHeader>
           <CardDescription className="truncate text-center text-lg">
@@ -82,10 +74,39 @@ export function WorkCard({ work }: WorksCardProps) {
         </CardContent>
         <CardFooter className="flex justify-center gap-4">
           {work.hasNewChapter && (
-            <DialogTrigger asChild>
-              <Button>Marcar como lido</Button>
-            </DialogTrigger>
+            <Dialog>
+              <MarkWorksAsReadDialog
+                work={{
+                  id: work.id,
+                  chapter: work.nextChapter ?? work.chapter,
+                  name: work.name,
+                  type: work.category,
+                }}
+              />
+
+              <DialogTrigger asChild>
+                <Button>Marcar como lido</Button>
+              </DialogTrigger>
+            </Dialog>
           )}
+
+          <Dialog>
+            <EditWorkFormDialog
+              work={{
+                id: work.id,
+                chapter: work.chapter,
+                name: work.name,
+                imageUrl: work.imageUrl,
+                url: work.url,
+                type: work.category,
+                hasNewChapter: work.hasNewChapter,
+              }}
+            />
+
+            <DialogTrigger asChild>
+              <Button variant="outline">Editar</Button>
+            </DialogTrigger>
+          </Dialog>
 
           {work.isFinished && (
             <Button
@@ -98,6 +119,6 @@ export function WorkCard({ work }: WorksCardProps) {
           )}
         </CardFooter>
       </Card>
-    </Dialog>
+    </>
   )
 }

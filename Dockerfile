@@ -10,9 +10,7 @@ RUN corepack prepare pnpm@latest --activate
 
 RUN pnpm install
 
-RUN pnpm build
-
-CMD ["pnpm", "preview"]
+CMD ["pnpm", "dev"]
 
 
 

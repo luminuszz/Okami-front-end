@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 
 export const okamiHttpGateway = axios.create({
-  baseURL: import.meta.env.API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 })
 
 okamiHttpGateway.interceptors.request.use((config) => {
