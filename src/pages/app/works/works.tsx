@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 
+import { ActionsButtons } from './actions-buttons'
 import { WorkGallery } from './workGallery'
 import { WorksFilter } from './works-filter'
 
@@ -13,7 +14,10 @@ export function Works() {
           Obras Atualizadas
         </h1>
 
-        <WorksFilter />
+        <aside className="flex justify-between md:flex-col md:gap-4 xl:flex-row">
+          <WorksFilter />
+          <ActionsButtons />
+        </aside>
 
         <main className="flex justify-center ">
           <WorkGallery />
