@@ -3,6 +3,7 @@ import { filter, map } from 'lodash'
 import { AlertCircle, Book, BookCheck } from 'lucide-react'
 import { useState } from 'react'
 import { Label } from 'recharts'
+import { toast } from 'sonner'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { markWorksAsDropped } from '@/api/mark-work-as-dropped'
@@ -45,6 +46,12 @@ export function MarkWorksAsFinishedDialog() {
           work.id === workId ? { ...work, isFinished: true } : work,
         )
       })
+    },
+    onSuccess: () => {
+      toast.success('Obra finalizada com sucesso')
+    },
+    onError: () => {
+      toast.error('Erro ao finalizar obra')
     },
   })
 
