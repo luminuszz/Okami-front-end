@@ -13,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryFn: getUserDetails,
     queryKey: ['user-details'],
   })
@@ -29,15 +30,27 @@ export function AccountMenu() {
           variant="outline"
           className="flex select-none items-center gap-2"
         >
-          <Avatar className="h-8 w-8">
-            {user?.avatarImageUrl ? (
-              <AvatarImage className="size-8" src={user.avatarImageUrl} />
-            ) : (
-              <AvatarFallback>{initialName}</AvatarFallback>
-            )}
-          </Avatar>
-          {user?.name}
-          <ChevronDown className="h-4 w-4" />
+          {isLoading ? (
+            <>
+              <Skeleton className="size-8 rounded-full" />
+              <div className="flex flex-col gap-1">
+                <Skeleton className="h-2 w-20 rounded-s" />
+                <Skeleton className="h-2 w-20 rounded-s" />
+              </div>
+            </>
+          ) : (
+            <>
+              <Avatar className="h-8 w-8">
+                {user?.avatarImageUrl ? (
+                  <AvatarImage className="size-8" src={user.avatarImageUrl} />
+                ) : (
+                  <AvatarFallback>{initialName}</AvatarFallback>
+                )}
+              </Avatar>
+              {user?.name}
+              <ChevronDown className="h-4 w-4" />
+            </>
+          )}
         </Button>
       </DropdownMenuTrigger>
 

@@ -1,6 +1,10 @@
+import { useQueries } from '@tanstack/react-query'
+import { BarChart } from 'lucide-react'
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import colors from 'tailwindcss/colors'
 
+import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import { getUserDetails } from '@/api/get-user-details'
 import {
   Card,
   CardContent,
@@ -8,12 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-
-const data = [
-  { name: 'Obras lidas', value: 50, color: colors.cyan[600] },
-  { name: 'Obras não lidas', value: 20, color: colors.yellow[600] },
-  { name: 'Obras finalizadas', value: 10, color: colors.emerald[600] },
-]
+import { Skeleton } from '@/components/ui/skeleton'
 
 const RADIAN = Math.PI / 180
 
@@ -27,33 +26,47 @@ type LabelProps = {
   index: number
 }
 
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-}: LabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-  const x = cx + radius * Math.cos(-midAngle * RADIAN)
-  const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
-  return (
-    <text
-      className="text-sm font-semibold"
-      x={x}
-      y={y}
-      fill="white"
-      textAnchor={x > cx ? 'start' : 'end'}
-      dominantBaseline="central"
-    >
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
-  )
-}
-
 export function WorksInfoChart() {
+  const analytics = useQueries({
+    queries: [
+      {
+        queryKey: ['works', 'unread'],
+        queryFn: () => fetchWorksWithFilter('unread'),
+      },
+      {
+        queryKey: ['works', 'read'],
+        queryFn: () => fetchWorksWithFilter('read'),
+      },
+      {
+        queryKey: ['user-details'],
+        queryFn: getUserDetails,
+      },
+    ],
+    combine: (result) => {
+      const [unread, read, user] = result
+      return {
+        unread: unread.data?.length,
+        read: read.data?.length,
+        finished: user.data?.finishedWorksCount,
+        isLoading: unread.isLoading || read.isLoading || user.isLoading,
+      }
+    },
+  })
+
+  const data = [
+    { name: 'Obras lidas', value: analytics.read, color: colors.cyan[500] },
+    {
+      name: 'Obras não lidas',
+      value: analytics.unread,
+      color: colors.amber[500],
+    },
+    {
+      name: 'Obras finalizadas',
+      value: analytics.finished,
+      color: colors.emerald[500],
+    },
+  ]
+
   return (
     <Card className="col-span-5">
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
@@ -63,30 +76,69 @@ export function WorksInfoChart() {
           </CardTitle>
           <CardDescription>Dados dos seu banco de obras</CardDescription>
         </div>
+
+        <div>
+          <BarChart className="size-5 text-muted-foreground" />
+        </div>
       </CardHeader>
 
       <CardContent>
-        <ResponsiveContainer width="100%" height={400}>
-          <PieChart style={{ fontSize: 12 }}>
-            <Legend
-              iconSize={10}
-              layout="vertical"
-              verticalAlign="top"
-              align="left"
-            />
-            <Pie
-              dataKey="value"
-              labelLine={false}
-              data={data}
-              outerRadius={200}
-              label={renderCustomizedLabel}
-            >
-              {data.map((data) => (
-                <Cell key={data.name} fill={data.color} name={data.name} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+        {analytics.isLoading ? (
+          <div className="flex items-center justify-center">
+            <Skeleton className="size-96 rounded-full" />
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart style={{ fontSize: 12 }}>
+              <Pie
+                dataKey="value"
+                data={data}
+                cx="50%"
+                cy="50%"
+                outerRadius={150}
+                innerRadius={100}
+                strokeWidth={8}
+                labelLine={false}
+                label={({
+                  cx,
+                  cy,
+                  midAngle,
+                  innerRadius,
+                  outerRadius,
+                  index,
+                }) => {
+                  const RADIAN = Math.PI / 180
+                  const radius = 12 + innerRadius + (outerRadius - innerRadius)
+                  const x = cx + radius * Math.cos(-midAngle * RADIAN)
+                  const y = cy + radius * Math.sin(-midAngle * RADIAN)
+
+                  const currentCell = data[index]
+
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      className="fill-muted-foreground text-xs"
+                      textAnchor={x > cx ? 'start' : 'end'}
+                      dominantBaseline="central"
+                    >
+                      {`${currentCell.name}: ${currentCell.value}`}
+                    </text>
+                  )
+                }}
+              >
+                {data.map((data) => (
+                  <Cell
+                    key={data.name}
+                    fill={data.color}
+                    name={data.name}
+                    className="stroke-background hover:opacity-80"
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   )

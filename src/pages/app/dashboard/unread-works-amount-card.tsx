@@ -3,13 +3,18 @@ import { Info } from 'lucide-react'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function UnreadWorksAmountCard() {
-  const { data: totalWorksUnread } = useQuery({
+  const { data: totalWorksUnread, isLoading } = useQuery({
     queryKey: ['works', 'unread'],
     queryFn: () => fetchWorksWithFilter('unread'),
     select: (works) => works.length,
   })
+
+  if (isLoading) {
+    return <Skeleton className="h-max-[140px] w-full rounded-lg" />
+  }
 
   return (
     <Card className="w-full">

@@ -2,7 +2,7 @@ import {} from '@radix-ui/react-avatar'
 import { useQuery } from '@tanstack/react-query'
 import { compareDesc, formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, FolderSync } from 'lucide-react'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -86,11 +86,15 @@ export function RecentSyncList() {
 
   return (
     <Card className="col-span-4">
-      <CardHeader>
-        <CardTitle className="font-medium text-foreground">
-          Sincronizações
-        </CardTitle>
-        <CardDescription>Sincronização de obras recentes</CardDescription>
+      <CardHeader className="flex  flex-row items-center justify-between pb-8">
+        <div className="space-y-1">
+          <CardTitle className="font-medium text-foreground">
+            Sincronizações
+          </CardTitle>
+          <CardDescription>Sincronização de obras recentes</CardDescription>
+        </div>
+
+        <FolderSync className="size-5 text-muted-foreground" />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5 ">

@@ -3,13 +3,18 @@ import { BookCheck } from 'lucide-react'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function ReadWorksAmountCard() {
-  const { data: totalWorksRead } = useQuery({
+  const { data: totalWorksRead, isLoading } = useQuery({
     queryKey: ['works', 'read'],
     queryFn: () => fetchWorksWithFilter('read'),
     select: (works) => works.length,
   })
+
+  if (isLoading) {
+    return <Skeleton className="h-max-[140px] w-full rounded-lg" />
+  }
 
   return (
     <Card className="w-full">

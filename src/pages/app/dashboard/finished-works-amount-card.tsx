@@ -3,12 +3,17 @@ import { Check } from 'lucide-react'
 
 import { GetUserDetailsType } from '@/api/get-user-details'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function FinishedWorksAmountCard() {
-  const { data: totalWorksFinished } = useQuery({
+  const { data: totalWorksFinished, isLoading } = useQuery({
     queryKey: ['user-details'],
     select: (data: GetUserDetailsType) => data.finishedWorksCount,
   })
+
+  if (isLoading) {
+    return <Skeleton className="h-max-[140px] w-full rounded-lg" />
+  }
 
   return (
     <Card className="w-full">

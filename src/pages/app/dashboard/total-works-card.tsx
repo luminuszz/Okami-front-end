@@ -3,12 +3,18 @@ import { Book } from 'lucide-react'
 
 import { GetUserDetailsType } from '@/api/get-user-details'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function TotalWorksCard() {
-  const { data: totalWorks } = useQuery({
+  const { data: totalWorks, isLoading } = useQuery({
     queryKey: ['user-details'],
     select: (data: GetUserDetailsType) => data.readingWorksCount,
   })
+
+  if (isLoading) {
+    return <Skeleton className="h-max-[140px] w-full rounded-lg" />
+  }
+
   return (
     <Card className="w-full ">
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
