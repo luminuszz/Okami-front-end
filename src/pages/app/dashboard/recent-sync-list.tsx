@@ -79,13 +79,16 @@ export function RecentSyncList() {
     select: (data) =>
       data
         .sort((a, b) =>
-          compareDesc(new Date(a.updatedAt), new Date(b.updatedAt)),
+          compareDesc(
+            new Date(a.nextChapterUpdatedAt || ''),
+            new Date(b.nextChapterUpdatedAt || ''),
+          ),
         )
         .slice(0, 7),
   })
 
   return (
-    <Card className="col-span-4">
+    <Card className="xs:col-span-1 w-full lg:col-span-4">
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="font-medium text-foreground">

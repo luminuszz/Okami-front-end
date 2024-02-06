@@ -22,7 +22,12 @@ export function WorkGallery() {
         .filter((work) =>
           work.name.toLowerCase().includes(filterName?.toLowerCase() ?? ''),
         )
-        .sort((a, b) => compareDesc(a.updatedAt, b.updatedAt)),
+        .sort((a, b) =>
+          compareDesc(
+            a.nextChapterUpdatedAt || '',
+            b.nextChapterUpdatedAt || '',
+          ),
+        ),
   })
 
   if (isLoading) {

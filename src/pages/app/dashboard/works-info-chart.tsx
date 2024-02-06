@@ -68,7 +68,7 @@ export function WorksInfoChart() {
   ]
 
   return (
-    <Card className="col-span-5">
+    <Card className="xs:col-span-1 lg:col-span-5">
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="text-base font-medium">

@@ -1,4 +1,5 @@
 import { Book, Home } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
@@ -7,10 +8,15 @@ import { ThemeToggle } from './theme-toogle'
 import { Separator } from './ui/separator'
 
 export function Header() {
+  const navigate = useNavigate()
+
   return (
     <header className="border-b">
       <div className="flex h-16 items-center gap-6 px-6">
-        <Logo className="h-10 w-10" />
+        <Logo
+          className="h-10 w-10 cursor-pointer hover:opacity-90"
+          onClick={() => navigate('/')}
+        />
         <Separator orientation="vertical" className="h-6" />
 
         <nav className="flex items-center space-x-4 lg:space-x-6">
