@@ -1,12 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { filter, map } from 'lodash'
-import { AlertCircle, Book, BookCheck } from 'lucide-react'
+import { map } from 'lodash'
 import { useState } from 'react'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
-import { markWorksAsDropped } from '@/api/mark-work-as-dropped'
 import { markWorksAsFinished } from '@/api/mark-works-as-finished'
 import { WorkType } from '@/api/schemas'
 
@@ -14,7 +12,6 @@ import { Button } from './ui/button'
 import {
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,

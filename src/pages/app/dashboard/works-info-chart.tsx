@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query'
 import { BarChart } from 'lucide-react'
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import colors from 'tailwindcss/colors'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
@@ -13,18 +13,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-
-const RADIAN = Math.PI / 180
-
-type LabelProps = {
-  cx: number
-  cy: number
-  midAngle: number
-  innerRadius: number
-  outerRadius: number
-  percent: number
-  index: number
-}
 
 export function WorksInfoChart() {
   const analytics = useQueries({
