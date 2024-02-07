@@ -2,9 +2,12 @@ import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 import { isUnauthorizedError, okamiHttpGateway } from '@/lib/axios'
+import { serviceWorkNotificationManager } from '@/lib/notifications'
 import { LocalStorageKeys } from '@/lib/utils'
 
 import { Header } from '../header'
+
+serviceWorkNotificationManager.registerServiceWorker()
 
 export function AppLayout() {
   const navigate = useNavigate()
