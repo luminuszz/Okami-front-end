@@ -117,6 +117,12 @@ export function WorkCard({ work }: WorksCardProps) {
               Finalizado
             </Button>
           )}
+
+          {work.isDropped && (
+            <Button variant="link" className="font-bold text-red-500" disabled>
+              Dropado
+            </Button>
+          )}
         </CardFooter>
       </Card>
     </>
