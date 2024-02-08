@@ -1,9 +1,14 @@
 import { getSubscriptionPublicKey } from '@/api/get-subscription-public-key'
 import { registerSubscription } from '@/api/register-subscription'
 
+import { BroadCastEvent, BroadCastEvents } from './utils'
+
 export class ServiceWorkerNotification {
+  private readonly channel: BroadcastChannel
+
   constructor() {
     this.requestNotifications()
+    this.channel = new BroadcastChannel('service-worker-events')
   }
 
   async requestNotifications() {
@@ -12,12 +17,6 @@ export class ServiceWorkerNotification {
         ? console.log('Notification permission granted')
         : console.log('Notification permission denied')
     })
-  }
-
-  showNotification(title: string, options: NotificationOptions) {
-    if (window.Notification.permission === 'granted') {
-      return new Notification(title, options)
-    }
   }
 
   registerServiceWorker() {

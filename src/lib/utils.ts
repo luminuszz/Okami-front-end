@@ -9,3 +9,9 @@ export enum LocalStorageKeys {
   token = '@okami-web:token',
   theme = '@okami-web:theme',
 }
+
+export const BroadCastEvents = {
+  newChapterAvailable: 'new-chapter-available',
+} as const
+
+export type BroadCastEvent = keyof typeof BroadCastEvents
