@@ -37,6 +37,9 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
         filter(works, (value) => value.id !== work.id),
       )
     },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ['works', 'read'] })
+    },
   })
 
   const message = work.type === 'ANIME' ? 'Episodio' : 'Capitulo'

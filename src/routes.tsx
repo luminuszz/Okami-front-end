@@ -1,12 +1,14 @@
+import { lazy } from 'react'
 import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
 import { LocalStorageKeys } from './lib/utils'
 import { NotFound } from './pages/404'
-import { Dashboard } from './pages/app/dashboard/dashboard'
-import { Works } from './pages/app/works/works'
 import { Signin } from './pages/auth/signin'
+
+const Works = lazy(() => import('./pages/app/works/works'))
+const Dashboard = lazy(() => import('./pages/app/dashboard/dashboard'))
 
 export const router = createBrowserRouter([
   {

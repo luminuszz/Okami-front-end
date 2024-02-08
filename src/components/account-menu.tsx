@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut, User } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { getUserDetails } from '@/api/get-user-details'
+import { LocalStorageKeys } from '@/lib/utils'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -16,12 +18,18 @@ import {
 import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
+  const navigate = useNavigate()
   const { data: user, isLoading } = useQuery({
     queryFn: getUserDetails,
     queryKey: ['user-details'],
   })
 
   const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()
+
+  function handleLogout() {
+    localStorage.removeItem(LocalStorageKeys.token)
+    navigate('/auth/sign-in')
+  }
 
   return (
     <DropdownMenu>
@@ -69,7 +77,10 @@ export function AccountMenu() {
           <span>Perfil</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="cursor-pointer text-rose-500 dark:text-rose-400">
+        <DropdownMenuItem
+          className="cursor-pointer text-rose-500 dark:text-rose-400"
+          onClick={handleLogout}
+        >
           <LogOut className="mr-2 size-4" />
           <span>Sair</span>
         </DropdownMenuItem>

@@ -14,12 +14,6 @@ export class ServiceWorkerNotification {
     })
   }
 
-  showNotification(title: string, options: NotificationOptions) {
-    if (window.Notification.permission === 'granted') {
-      return new Notification(title, options)
-    }
-  }
-
   registerServiceWorker() {
     navigator.serviceWorker
       .register('/service-worker.js')
