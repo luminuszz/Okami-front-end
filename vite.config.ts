@@ -21,6 +21,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           lodash: ['lodash'],
+          react: ['react'],
+          'react-dom': ['react-dom'],
         },
       },
     },
