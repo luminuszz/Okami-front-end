@@ -4,7 +4,7 @@ import { ActionsButtons } from './actions-buttons'
 import { WorkGallery } from './workGallery'
 import { WorksFilter } from './works-filter'
 
-export default function Works() {
+export function Works() {
   return (
     <>
       <Helmet title="obras atualizadas" />
