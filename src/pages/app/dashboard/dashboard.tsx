@@ -7,7 +7,7 @@ import { TotalWorksCard } from './total-works-card'
 import { UnreadWorksAmountCard } from './unread-works-amount-card'
 import { WorksInfoChart } from './works-info-chart'
 
-export function Dashboard() {
+export default function Dashboard() {
   return (
     <>
       <Helmet title="Dashboard" />
