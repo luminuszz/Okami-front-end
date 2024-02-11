@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
+import { Loader2 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -56,7 +57,7 @@ export function Signin() {
   return (
     <>
       <Helmet title="Login" />
-      <div className="p-8 ">
+      <div className="p-8">
         <div className="flex w-[320px] flex-col justify-center gap-6">
           <header className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
@@ -91,7 +92,11 @@ export function Signin() {
               />
             </div>
             <Button disabled={isSubmitting} className="w-full" type="submit">
-              Login
+              {isSubmitting ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : (
+                'Login'
+              )}
             </Button>
           </form>
         </div>

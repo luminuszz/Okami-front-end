@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { compareDesc, formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { map } from 'lodash'
 
 import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,27 +21,28 @@ export function WorksUpdated() {
     queryFn: () => fetchWorksWithFilter(filter),
     select: (data) =>
       data
+        .slice(0, 5)
         .sort((a, b) =>
           compareDesc(new Date(a.updatedAt), new Date(b.updatedAt)),
-        )
-        .slice(0, 5)
-        .map((work) => ({
-          ...work,
-          formattedUpdatedAt: formatDistance(
-            parseISO(work.nextChapterUpdatedAt ?? work.updatedAt),
-            new Date(),
-            {
-              addSuffix: true,
-              includeSeconds: true,
-              locale: ptBR,
-            },
-          ),
-          formattedNewChapterMessage:
-            work.category === 'ANIME'
-              ? `Novo Episodio: ${work.nextChapter} `
-              : `Novo Capitulo:  ${work.nextChapter}`,
-        })),
+        ),
   })
+
+  const parsedWorks = map(works, (work) => ({
+    ...work,
+    formattedUpdatedAt: formatDistance(
+      parseISO(work.nextChapterUpdatedAt ?? work.updatedAt),
+      new Date(),
+      {
+        addSuffix: true,
+        includeSeconds: true,
+        locale: ptBR,
+      },
+    ),
+    formattedNewChapterMessage:
+      work.category === 'ANIME'
+        ? `Novo Episodio: ${work.nextChapter} `
+        : `Novo Capitulo:  ${work.nextChapter}`,
+  }))
 
   return (
     <Carousel
@@ -55,7 +57,7 @@ export function WorksUpdated() {
         </CardHeader>
 
         <CarouselContent className="flex items-center justify-center">
-          {works?.map((work) => (
+          {parsedWorks?.map((work) => (
             <CarouselItem key={work.id}>
               <div className="p-15 flex flex-1 flex-col items-center justify-center gap-4 p-4">
                 <div className="w-[300px] text-center">

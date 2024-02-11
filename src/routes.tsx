@@ -4,6 +4,7 @@ import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
 import { LocalStorageKeys } from './lib/utils'
 import { NotFound } from './pages/404'
+import { Works } from './pages/app/works/works'
 
 export const router = createBrowserRouter([
   {
@@ -33,12 +34,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/works',
-        lazy: async () => {
-          const { Works } = await import('./pages/app/works/works')
-          return {
-            element: <Works />,
-          }
-        },
+        element: <Works />,
       },
     ],
   },

@@ -25,12 +25,12 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools />
       <Toaster richColors />
       <HelmetProvider>
         <Helmet titleTemplate="%s | Okami" />
         <RouterProvider router={router} />
       </HelmetProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   )
 }

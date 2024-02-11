@@ -3,7 +3,7 @@ import { BookmarkCheck, BookmarkX } from 'lucide-react'
 
 import { MarkWorksAsFinishedDialog } from '@/components/mark-work-as-finished-dialog'
 import { MarkWorksAsDroppedDialog } from '@/components/mark-wroks-as-dropped-dialog'
-import { RefreshChapterButton } from '@/components/refresh-chapter-buttont'
+import { RefreshChapterButton } from '@/components/refresh-chapter-button'
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 
