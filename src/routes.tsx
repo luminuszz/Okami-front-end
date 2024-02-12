@@ -4,6 +4,8 @@ import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
 import { LocalStorageKeys } from './lib/utils'
 import { NotFound } from './pages/404'
+import { Dashboard } from './pages/app/dashboard/dashboard'
+import { ScrappingReport } from './pages/app/scrapping-report/scrapping-report'
 import { Works } from './pages/app/works/works'
 
 export const router = createBrowserRouter([
@@ -24,17 +26,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        lazy: async () => {
-          const { Dashboard } = await import('./pages/app/dashboard/dashboard')
-
-          return {
-            element: <Dashboard />,
-          }
-        },
+        element: <Dashboard />,
       },
       {
         path: '/works',
         element: <Works />,
+      },
+      {
+        path: '/scrapping-report',
+        element: <ScrappingReport />,
       },
     ],
   },

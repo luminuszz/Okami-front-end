@@ -1,4 +1,4 @@
-import { Book, Home } from 'lucide-react'
+import { BarChart4, Book, Home } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { AccountMenu } from './account-menu'
@@ -34,6 +34,14 @@ export function Header() {
           >
             <Book className="mr-1 h-4 w-4" />
             Obras
+          </NavLink>
+
+          <NavLink
+            to="/scrapping-report"
+            className="flex flex-col items-center justify-center gap-2"
+          >
+            <BarChart4 className="mr-1 h-4 w-4" />
+            Relatório
           </NavLink>
         </nav>
 
