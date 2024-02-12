@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table'
 
 import { EmptyLoadingTable } from './empty-loading-table'
+import { ResyncWorkButton } from './re-sync-work-buttont'
 import { WorkDetails } from './work-details'
 
 export function ScrappingReport() {
@@ -104,14 +105,7 @@ export function ScrappingReport() {
                   </TableCell>
 
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      disabled
-                      aria-label="Desativado temporariamente"
-                    >
-                      <RefreshCcw className="mr-2 size-4" />
-                      Sincronizar
-                    </Button>
+                    <ResyncWorkButton currentPage={page} workId={work.id} />
                   </TableCell>
                 </TableRow>
               ))}

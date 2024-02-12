@@ -1,4 +1,3 @@
-import { compareDesc, parseISO } from 'date-fns'
 import { z } from 'zod'
 
 import { okamiHttpGateway } from '@/lib/axios'
@@ -24,17 +23,14 @@ const scrappingReportSchema = z.object({
       }),
     )
     .transform((works) =>
-      works.sort((a, b) =>
-        compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt)),
-      ),
-    )
-    .transform((works) =>
       works.map((work) => ({
         ...work,
         updatedAt: parseDistanceByDate(work.updatedAt),
       })),
     ),
 })
+
+export type ScrapingReportResponse = z.infer<typeof scrappingReportSchema>
 
 interface Params {
   page: number
