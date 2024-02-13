@@ -1,6 +1,5 @@
 import { max } from 'lodash'
 import { useSearchParams } from 'react-router-dom'
-import { z } from 'zod'
 
 import {
   Pagination as PaginationComponent,
@@ -14,15 +13,11 @@ import {
 
 export interface PaginationProps {
   totalOfPages: number
+  currentPage: number
 }
 
-export function Pagination({ totalOfPages }: PaginationProps) {
-  const [query, setQuery] = useSearchParams()
-
-  const currentPage = z.coerce
-    .number()
-    .transform((value) => value - 1)
-    .parse(query.get('page') ?? '1')
+export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
+  const [, setQuery] = useSearchParams()
 
   const uiLimit = 4
 

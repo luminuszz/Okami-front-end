@@ -90,7 +90,7 @@ export function ScrappingReport() {
                     {work.updatedAt}
                   </TableCell>
                   <TableCell className="font-medium">{work.name}</TableCell>
-                  <TableCell>{`${work.category === 'ANIME' ? 'Episódio' : 'Capítulo'} ${work.chapter}`}</TableCell>
+                  <TableCell>{`${work.category === 'ANIME' ? 'Episódio' : 'Capítulo'} ${work.nextChapter ?? work.chapter}`}</TableCell>
                   <TableCell>{work.category}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
@@ -119,7 +119,10 @@ export function ScrappingReport() {
           </div>
 
           <div className="flex">
-            <Pagination totalOfPages={works?.totalOfPages || 0} />
+            <Pagination
+              totalOfPages={works?.totalOfPages || 0}
+              currentPage={page}
+            />
           </div>
         </div>
       </div>
