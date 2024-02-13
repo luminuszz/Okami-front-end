@@ -22,12 +22,12 @@ export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
   const uiLimit = 4
 
   const handlePageChange = (page: number) => {
-    setQuery((query) => {
-      if (page >= totalOfPages || page < 0) {
-        return query
-      }
+    if (page >= totalOfPages || page < 0) {
+      return
+    }
 
-      query.set('page', String(page))
+    setQuery((query) => {
+      query.set('page', String(page + 1))
 
       return query
     })
@@ -55,7 +55,7 @@ export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
             <PaginationLink
               isActive={value === currentPage}
               onClick={() => {
-                handlePageChange(value + 1)
+                handlePageChange(value)
               }}
             >
               {value + 1}
@@ -65,7 +65,7 @@ export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
 
         {!listOfPages.includes(totalOfPages - 1) && <PaginationEllipsis />}
 
-        {currentPage + 1 < totalOfPages && (
+        {currentPage < totalOfPages && (
           <>
             <PaginationItem>
               <PaginationNext
