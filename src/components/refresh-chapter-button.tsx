@@ -1,6 +1,5 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, RefreshCcwDot } from 'lucide-react'
-import { useEffect } from 'react'
 import { toast } from 'sonner'
 
 import { refreshChapterStatus } from '@/api/refresh-chapters-status'
@@ -8,20 +7,22 @@ import { refreshChapterStatus } from '@/api/refresh-chapters-status'
 import { Button } from './ui/button'
 
 export function RefreshChapterButton() {
-  const { mutate, isPending, status } = useMutation({
+  const queryClient = useQueryClient()
+
+  const { mutate, isPending } = useMutation({
     mutationKey: ['refresh-chapter-status'],
     mutationFn: refreshChapterStatus,
-  })
-
-  useEffect(() => {
-    if (status === 'success') {
+    onSuccess: () => {
       toast.success('Sincronização iniciada com sucesso!')
-    }
 
-    if (status === 'error') {
+      queryClient.invalidateQueries({
+        queryKey: ['scrappingReport'],
+      })
+    },
+    onError: () => {
       toast.error('Erro ao sincronizar os capítulos')
-    }
-  }, [status])
+    },
+  })
 
   return (
     <Button
@@ -35,7 +36,7 @@ export function RefreshChapterButton() {
       ) : (
         <RefreshCcwDot className="mr-2 size-4 text-muted-foreground" />
       )}
-      Buscar novas atualizações
+      Sincronizar todas as obras
     </Button>
   )
 }

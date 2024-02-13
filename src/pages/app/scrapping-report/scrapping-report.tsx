@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { fetchScrappingReport } from '@/api/fetch-scraping-report'
 import { Pagination } from '@/components/pagination'
+import { RefreshChapterButton } from '@/components/refresh-chapter-button'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
@@ -46,7 +47,12 @@ export function ScrappingReport() {
       <Helmet title="Sincronizações" />
 
       <div className="flex  flex-col gap-4">
-        <h1 className="text-3xl font-bold tracking-tighter">Sincronizações</h1>
+        <div className="flex justify-between">
+          <h1 className="text-3xl font-bold tracking-tighter">
+            Sincronizações
+          </h1>
+          <RefreshChapterButton />
+        </div>
 
         <div className="rounded-sm border">
           <Table>
