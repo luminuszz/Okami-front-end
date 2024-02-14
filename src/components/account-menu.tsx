@@ -1,10 +1,10 @@
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { getUserDetails } from '@/api/get-user-details'
-import { LocalStorageKeys } from '@/lib/utils'
+import { makeLogout } from '@/api/logout'
 
 import { ProfileDialog } from './profile-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -26,12 +26,15 @@ export function AccountMenu() {
     queryKey: ['user-details'],
   })
 
-  const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()
+  const logoutMutation = useMutation({
+    mutationKey: ['logout'],
+    mutationFn: makeLogout,
+    onMutate: () => {
+      navigate('/auth/sign-in')
+    },
+  })
 
-  function handleLogout() {
-    localStorage.removeItem(LocalStorageKeys.token)
-    navigate('/auth/sign-in')
-  }
+  const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()
 
   return (
     <Dialog>
@@ -87,7 +90,9 @@ export function AccountMenu() {
 
           <DropdownMenuItem
             className="cursor-pointer text-rose-500 dark:text-rose-400"
-            onClick={handleLogout}
+            onClick={() => {
+              logoutMutation.mutate()
+            }}
           >
             <LogOut className="mr-2 size-4" />
             <span>Sair</span>

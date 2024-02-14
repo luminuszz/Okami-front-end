@@ -8,7 +8,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export enum LocalStorageKeys {
-  token = '@okami-web:token',
   theme = '@okami-web:theme',
 }
 
