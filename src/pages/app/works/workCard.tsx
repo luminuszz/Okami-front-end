@@ -32,6 +32,10 @@ export function WorkCard({ work }: WorksCardProps) {
     },
   )
 
+  function handleOpenUrl() {
+    window.open(work.url, '_blank')
+  }
+
   const newChapter =
     work.category === 'ANIME' ? 'Novo Episodio ' : 'Novo Capitulo'
 
@@ -56,15 +60,23 @@ export function WorkCard({ work }: WorksCardProps) {
           </div>
 
           {work.hasNewChapter ? (
-            <div className="flex items-center justify-center gap-1">
-              <BookCheck className="size-5 text-green-500" />
-              <strong className="text-md text-green-500">{`${newChapter} ${work.nextChapter}`}</strong>
-            </div>
+            <Button
+              variant="link"
+              className="text-md text-green-500"
+              onClick={handleOpenUrl}
+            >
+              <BookCheck className="mr-2 size-5 text-green-500" />
+              {`${newChapter} ${work.nextChapter}`}
+            </Button>
           ) : (
-            <div className="flex items-center justify-center gap-1">
-              <Book className="size-5" />
-              <span className="text-md text-muted-foreground">{`${lastChapter} ${work.chapter}`}</span>
-            </div>
+            <Button
+              variant="link"
+              className="text-md text-muted-foreground"
+              onClick={handleOpenUrl}
+            >
+              <Book className="mr-2 size-5" />
+              {`${lastChapter} ${work.chapter}`}
+            </Button>
           )}
 
           <div className="flex items-center justify-center gap-1">
