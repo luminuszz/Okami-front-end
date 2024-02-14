@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 
 import { isUnauthorizedError, okamiHttpGateway } from '@/lib/axios'
 import { serviceWorkNotificationManager } from '@/lib/notifications'
-import { BroadCastEvents, LocalStorageKeys } from '@/lib/utils'
+import { BroadCastEvents } from '@/lib/utils'
 
 import { Header } from '../header'
 
@@ -23,7 +23,6 @@ export function AppLayout() {
         const canRedirectToLogin = isUnauthorizedError(error)
 
         if (canRedirectToLogin) {
-          localStorage.removeItem(LocalStorageKeys.token)
           navigate('/auth/sign-in', { replace: true })
         }
       },

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { getAuthToken } from '@/api/get-auth-token'
+import { createSession } from '@/api/create-session'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,21 +35,22 @@ export function Signin() {
     },
   })
 
-  const { mutateAsync } = useMutation({
-    mutationFn: getAuthToken,
+  const { mutateAsync: makeSession } = useMutation({
+    mutationFn: createSession,
   })
 
   async function handleSigin(payload: FormLogin) {
     try {
-      const { token } = await mutateAsync(payload)
+      await makeSession(payload)
 
-      localStorage.setItem('@okami-web:token', token)
-      navigate('/')
       toast.success('Login feito com sucesso')
+
+      navigate('/', { replace: true })
     } catch (err) {
-      toast.error('Credenciais inválidas')
       if (err instanceof AxiosError && err.code === '401') {
-        toast.error('Credenciais inválidas')
+        toast.error('Usuário ou senha inválidos!')
+      } else {
+        toast.error('Opa, algo deu errado! Tente novamente mais tarde.')
       }
     }
   }
