@@ -1,5 +1,6 @@
 import { DialogClose, DialogTitle } from '@radix-ui/react-dialog'
 
+import { ClipBoardInput } from '@/components/clipboard-input'
 import { Button } from '@/components/ui/button'
 import {
   DialogContent,
@@ -14,6 +15,7 @@ interface WorkDetailsProps {
     updatedAt: string
     category: string
     refreshStatus: string
+    url: string
   }
 }
 
@@ -29,6 +31,7 @@ export function WorkDetails({ work }: WorkDetailsProps) {
         <p>Atualizado: {work.updatedAt}</p>
         <p>Categoria: {work.category}</p>
         <p>Categoria: {work.refreshStatus}</p>
+        <ClipBoardInput value={work.url} />
       </div>
 
       <DialogFooter>
