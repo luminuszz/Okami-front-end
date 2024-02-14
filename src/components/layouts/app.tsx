@@ -38,7 +38,7 @@ export function AppLayout() {
     channel.onmessage = ({ data }) => {
       if (data.type === BroadCastEvents.newChapterAvailable) {
         queryClient.invalidateQueries({
-          queryKey: ['works', 'unread'],
+          queryKey: ['works', 'unread', 'scrappingReport'],
         })
       }
     }

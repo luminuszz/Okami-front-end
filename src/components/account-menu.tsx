@@ -1,3 +1,4 @@
+import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -5,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUserDetails } from '@/api/get-user-details'
 import { LocalStorageKeys } from '@/lib/utils'
 
+import { ProfileDialog } from './profile-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import {
@@ -32,59 +34,66 @@ export function AccountMenu() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="flex select-none items-center gap-2"
-        >
-          {isLoading ? (
-            <>
-              <Skeleton className="size-8 rounded-full" />
-              <div className="flex flex-col gap-1">
-                <Skeleton className="h-2 w-20 rounded-s" />
-                <Skeleton className="h-2 w-20 rounded-s" />
-              </div>
-            </>
-          ) : (
-            <>
-              <Avatar className="h-8 w-8">
-                {user?.avatarImageUrl ? (
-                  <AvatarImage className="size-8" src={user.avatarImageUrl} />
-                ) : (
-                  <AvatarFallback>{initialName}</AvatarFallback>
-                )}
-              </Avatar>
-              {user?.name}
-              <ChevronDown className="h-4 w-4" />
-            </>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+    <Dialog>
+      <ProfileDialog />
 
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="flex flex-col">
-          <span>{user?.name}</span>
-          <span className="text-xs font-normal text-muted-foreground">
-            {user?.email}
-          </span>
-        </DropdownMenuLabel>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="flex select-none items-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <Skeleton className="size-8 rounded-full" />
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-2 w-20 rounded-s" />
+                  <Skeleton className="h-2 w-20 rounded-s" />
+                </div>
+              </>
+            ) : (
+              <>
+                <Avatar className="h-8 w-8">
+                  {user?.avatarImageUrl ? (
+                    <AvatarImage className="size-8" src={user.avatarImageUrl} />
+                  ) : (
+                    <AvatarFallback>{initialName}</AvatarFallback>
+                  )}
+                </Avatar>
+                {user?.name}
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel className="flex flex-col">
+            <span>{user?.name}</span>
+            <span className="text-xs font-normal text-muted-foreground">
+              {user?.email}
+            </span>
+          </DropdownMenuLabel>
 
-        <DropdownMenuItem className="cursor-pointer">
-          <User className="mr-2 size-4" />
-          <span>Perfil</span>
-        </DropdownMenuItem>
+          <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          className="cursor-pointer text-rose-500 dark:text-rose-400"
-          onClick={handleLogout}
-        >
-          <LogOut className="mr-2 size-4" />
-          <span>Sair</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DialogTrigger asChild>
+            <DropdownMenuItem className="cursor-pointer">
+              <User className="mr-2 size-4" />
+
+              <span>Perfil</span>
+            </DropdownMenuItem>
+          </DialogTrigger>
+
+          <DropdownMenuItem
+            className="cursor-pointer text-rose-500 dark:text-rose-400"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 size-4" />
+            <span>Sair</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </Dialog>
   )
 }
