@@ -21,7 +21,7 @@ export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
 
   const uiLimit = 4
 
-  const handlePageChange = (page: number) => {
+  function handlePageChange(page: number) {
     if (page >= totalOfPages || page < 0) {
       return
     }
