@@ -29,3 +29,16 @@ export const parseDistanceByDate = (date: Date | string) => {
     locale: ptBR,
   })
 }
+
+export const acceptFileTypes = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+]
+
+export const validateFileType = (data: FileList | File) => {
+  return acceptFileTypes.includes(
+    data instanceof FileList ? data?.[0]?.type : data?.type,
+  )
+}

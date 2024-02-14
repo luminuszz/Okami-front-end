@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
+import { validateFileType } from '@/lib/utils'
 
 import { ImageSelector } from './image-selector'
-const acceptFileTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
 
 const editWorkSchema = z.object({
   name: z.string().optional(),
@@ -30,11 +30,7 @@ const editWorkSchema = z.object({
   url: z.string().url().optional(),
   imageFile: z
     .instanceof(FileList)
-    .refine(
-      (imageFile) =>
-        imageFile?.length && acceptFileTypes.includes(imageFile[0].type),
-      { message: 'Tipo de arquivo invalido' },
-    )
+    .refine(validateFileType, { message: 'Tipo de arquivo invalido' })
     .transform((imageList) => imageList?.length && imageList[0])
     .nullable(),
 
