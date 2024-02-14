@@ -25,9 +25,9 @@ import { validateFileType } from '@/lib/utils'
 import { ImageSelector } from './image-selector'
 
 const editWorkSchema = z.object({
-  name: z.string().optional(),
-  chapter: z.string().or(z.number()).optional().transform(Number),
-  url: z.string().url().optional(),
+  name: z.string().min(1),
+  chapter: z.coerce.number().min(1).positive(),
+  url: z.string().url(),
   imageFile: z
     .instanceof(FileList)
     .refine(validateFileType, { message: 'Tipo de arquivo invalido' })
