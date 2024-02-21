@@ -1,6 +1,7 @@
 import { DialogClose, DialogTitle } from '@radix-ui/react-dialog'
 
 import { ClipBoardInput } from '@/components/clipboard-input'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DialogContent,
@@ -28,9 +29,24 @@ export function WorkDetails({ work }: WorkDetailsProps) {
 
       <div className="flex flex-col items-center gap-4">
         <img className="max-h-[500px]" src={work.imageUrl} alt={work.name} />
-        <p>Atualizado: {work.updatedAt}</p>
-        <p>Categoria: {work.category}</p>
-        <p>Categoria: {work.refreshStatus}</p>
+        <p>
+          Categoria:
+          <Badge className="ml-1" variant="secondary">
+            {work.category}
+          </Badge>
+        </p>
+        <p>
+          Status:
+          <span
+            data-status={work.refreshStatus}
+            className="ml-2 text-slate-500 data-[status=Falhou]:text-red-600 data-[status=Sincronizado]:text-emerald-600"
+          >
+            {work.refreshStatus}
+          </span>
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Atualizado: {work.updatedAt}
+        </p>
         <ClipBoardInput value={work.url} />
       </div>
 
