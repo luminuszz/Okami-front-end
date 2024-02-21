@@ -41,7 +41,7 @@ export function WorkGallery() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
       {works?.map((work) => <WorkCard key={work.id} work={work} />)}
     </div>
   )
