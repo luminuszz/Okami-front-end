@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { RefreshCcw } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { ScrapingReportResponse } from '@/api/fetch-scraping-report'
@@ -8,14 +9,12 @@ import { Button } from '@/components/ui/button'
 
 interface ResyncWorkButtonProps {
   workId: string
-  currentPage: number
 }
 
-export function ResyncWorkButton({
-  workId,
-  currentPage,
-}: ResyncWorkButtonProps) {
+export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
   const queryClient = useQueryClient()
+
+  const [query] = useSearchParams()
 
   const {
     mutate: syncWork,
@@ -29,10 +28,12 @@ export function ResyncWorkButton({
     },
     onSuccess: () => {
       queryClient.setQueryData(
-        ['scrappingReport', currentPage],
+        ['scrappingReport', query.get('page') ?? 0, query.get('filter')],
         (syncWorkList: ScrapingReportResponse) => {
           const newWorkList = syncWorkList?.data?.map((work) => {
             if (work.id === workId) {
+              console.log('work', work)
+
               return {
                 ...work,
                 refreshStatus: 'Pendente',

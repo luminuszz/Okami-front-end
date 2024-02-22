@@ -20,6 +20,7 @@ import {
 
 import { EmptyLoadingTable } from './empty-loading-table'
 import { ResyncWorkButton } from './re-sync-work-buttont'
+import { ScrappingFilters } from './scrapping-filter'
 import { WorkDetails } from './work-details'
 
 export function ScrappingReport() {
@@ -30,14 +31,18 @@ export function ScrappingReport() {
     .transform((value) => value - 1)
     .parse(query.get('page') ?? '1')
 
+  const filter =
+    (query.get('filter') as 'PENDING' | 'SUCCESS' | 'FAILED') ?? 'SUCCESS'
+
   const {
     data: works,
     isLoading,
     isFetching,
+    refetch,
   } = useQuery({
-    queryKey: ['scrappingReport', page],
-    queryFn: () => fetchScrappingReport({ page }),
-    refetchIntervalInBackground: false,
+    queryKey: ['scrappingReport', page, filter],
+    queryFn: () => fetchScrappingReport({ page, filter }),
+    refetchOnWindowFocus: true,
   })
 
   const totalOfWorks = (works?.totalOfPages ?? 10) * 10
@@ -54,14 +59,24 @@ export function ScrappingReport() {
           <RefreshChapterButton />
         </div>
 
+        <ScrappingFilters />
+
         <div className="rounded-sm border">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[64px]">
-                  {isFetching && (
-                    <RefreshCcw className="animate-spin text-muted-foreground" />
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => refetch()}
+                    disabled={isFetching}
+                  >
+                    <RefreshCcw
+                      data-IsFetching={isFetching}
+                      className="text-muted-foreground data-[isFetching=true]:animate-spin"
+                    />
+                  </Button>
                 </TableHead>
                 <TableHead className="w-[140px] ">Identificador</TableHead>
                 <TableHead className="w-[180px]">Sincronizado há </TableHead>
@@ -100,18 +115,25 @@ export function ScrappingReport() {
                   <TableCell>{work.category}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <span
-                        data-status={work.refreshStatus}
-                        className="data-status mr-2 size-2 rounded-full data-[status=Falhou]:bg-red-500 data-[status=Pendente]:bg-slate-400 data-[status=Sincronizado]:bg-emerald-500"
-                      ></span>
-                      <span className="font-medium text-muted-foreground">
+                      <span className="relative flex size-2">
+                        <span
+                          data-status={work.refreshStatus}
+                          className="absolute inline-flex h-full w-full rounded-full  bg-slate-400 opacity-75 data-[status=Pendente]:animate-ping data-[status=Falhou]:bg-red-400 data-[status=Pendente]:bg-yellow-400 data-[status=Sincronizado]:bg-emerald-500"
+                        ></span>
+                        <span
+                          data-status={work.refreshStatus}
+                          className="relative inline-flex size-2 rounded-full bg-slate-500 data-[status=Falhou]:bg-red-500 data-[status=Pendente]:bg-yellow-500 data-[status=Sincronizado]:bg-emerald-500"
+                        ></span>
+                      </span>
+
+                      <span className="ml-3 font-medium text-muted-foreground">
                         {work.refreshStatus}
                       </span>
                     </div>
                   </TableCell>
 
                   <TableCell>
-                    <ResyncWorkButton currentPage={page} workId={work.id} />
+                    <ResyncWorkButton workId={work.id} />
                   </TableCell>
                 </TableRow>
               ))}
