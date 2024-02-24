@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Book, BookCheck, Search, X } from 'lucide-react'
+import { Book, BookCheck, BookMarked, BookX, Search, X } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
@@ -85,8 +85,22 @@ export function WorksFilter() {
               </SelectItem>
               <SelectItem value="read">
                 <div className="flex items-center gap-2">
-                  <BookCheck className="size-4" />
+                  <BookMarked className="size-4" />
                   <span>Lidos</span>
+                </div>
+              </SelectItem>
+
+              <SelectItem value="finished">
+                <div className="flex items-center gap-2">
+                  <BookCheck className="size-4" />
+                  <span>Finalizados</span>
+                </div>
+              </SelectItem>
+
+              <SelectItem value="dropped">
+                <div className="flex items-center gap-2">
+                  <BookX className="size-4" />
+                  <span>Dropados</span>
                 </div>
               </SelectItem>
             </SelectContent>

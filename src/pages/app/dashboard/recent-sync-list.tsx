@@ -75,7 +75,7 @@ export function RecentSyncList() {
 
   const { data: works } = useQuery({
     queryKey: ['works', filter],
-    queryFn: () => fetchWorksWithFilter(filter),
+    queryFn: () => fetchWorksWithFilter({ status: filter }),
     select: (data) =>
       data
         .sort((a, b) =>

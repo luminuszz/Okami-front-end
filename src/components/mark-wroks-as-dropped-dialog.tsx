@@ -33,7 +33,7 @@ export function MarkWorksAsDroppedDialog() {
 
   const { data: works, isLoading } = useQuery({
     queryKey: ['works', 'read'],
-    queryFn: () => fetchWorksWithFilter('read'),
+    queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
 
   const { mutate: markAsDropped } = useMutation({

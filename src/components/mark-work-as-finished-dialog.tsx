@@ -31,7 +31,7 @@ export function MarkWorksAsFinishedDialog() {
 
   const { data: works, isLoading } = useQuery({
     queryKey: ['works', 'read'],
-    queryFn: () => fetchWorksWithFilter('read'),
+    queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
 
   const { mutate: markAsFinished } = useMutation({

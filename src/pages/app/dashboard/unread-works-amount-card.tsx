@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function UnreadWorksAmountCard() {
+  const filter = 'unread'
+
   const { data: totalWorksUnread, isLoading } = useQuery({
-    queryKey: ['works', 'unread'],
-    queryFn: () => fetchWorksWithFilter('unread'),
+    queryKey: ['works', filter],
+    queryFn: () => fetchWorksWithFilter({ status: filter }),
     select: (works) => works.length,
   })
 

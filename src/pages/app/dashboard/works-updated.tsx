@@ -18,7 +18,7 @@ const filter = 'unread'
 export function WorksUpdated() {
   const { data: works } = useQuery({
     queryKey: ['works', filter],
-    queryFn: () => fetchWorksWithFilter(filter),
+    queryFn: () => fetchWorksWithFilter({ status: 'unread' }),
     select: (data) =>
       data
         .slice(0, 5)

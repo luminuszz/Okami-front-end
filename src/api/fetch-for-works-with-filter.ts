@@ -3,8 +3,12 @@ import { z } from 'zod'
 import { okamiHttpGateway } from '@/lib/axios'
 
 const fetchWorksWithFilterSchema = z.object({
-  filter: z.enum(['unread', 'read']),
+  status: z.enum(['unread', 'read', 'dropped', 'finished']).optional(),
 })
+
+type FetchWorksWithFilterInput = z.infer<typeof fetchWorksWithFilterSchema>
+
+export type FilterStatus = FetchWorksWithFilterInput['status']
 
 const fetchWorksWithFilterOutputSchema = z.array(
   z.object({
@@ -24,12 +28,12 @@ const fetchWorksWithFilterOutputSchema = z.array(
   }),
 )
 
-export async function fetchWorksWithFilter(filter: string) {
-  const parsed = fetchWorksWithFilterSchema.parse({ filter })
+export async function fetchWorksWithFilter(filter: FetchWorksWithFilterInput) {
+  const params = fetchWorksWithFilterSchema.parse(filter)
 
-  const { data } = await okamiHttpGateway.get(
-    `/work/fetch-for-workers-${parsed.filter}`,
-  )
+  const { data } = await okamiHttpGateway.get('/work/list', {
+    params,
+  })
 
   return fetchWorksWithFilterOutputSchema.parse(data)
 }

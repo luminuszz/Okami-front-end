@@ -19,11 +19,11 @@ export function WorksInfoChart() {
     queries: [
       {
         queryKey: ['works', 'unread'],
-        queryFn: () => fetchWorksWithFilter('unread'),
+        queryFn: () => fetchWorksWithFilter({ status: 'unread' }),
       },
       {
         queryKey: ['works', 'read'],
-        queryFn: () => fetchWorksWithFilter('read'),
+        queryFn: () => fetchWorksWithFilter({ status: 'read' }),
       },
       {
         queryKey: ['user-details'],

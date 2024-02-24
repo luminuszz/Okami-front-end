@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 export function ReadWorksAmountCard() {
   const { data: totalWorksRead, isLoading } = useQuery({
     queryKey: ['works', 'read'],
-    queryFn: () => fetchWorksWithFilter('read'),
+    queryFn: () => fetchWorksWithFilter({ status: 'read' }),
     select: (works) => works.length,
   })
 

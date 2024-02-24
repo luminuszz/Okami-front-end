@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { compareDesc } from 'date-fns'
 import { useSearchParams } from 'react-router-dom'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import {
+  fetchWorksWithFilter,
+  FilterStatus,
+} from '@/api/fetch-for-works-with-filter'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { WorkCard } from './workCard'
@@ -12,10 +15,10 @@ export function WorkGallery() {
 
   const filterName = filter.get('name')
 
-  const status = filter.get('status') || 'unread'
+  const status = (filter.get('status') as FilterStatus) ?? 'unread'
 
   const { data: works, isLoading } = useQuery({
-    queryFn: () => fetchWorksWithFilter(status),
+    queryFn: () => fetchWorksWithFilter({ status }),
     queryKey: ['works', status],
     select: (works) =>
       works
