@@ -27,8 +27,14 @@ export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
       toast.error('Erro ao sincronizar')
     },
     onSuccess: () => {
+      const currentQueryKey = [
+        'scrappingReport',
+        query.get('page') ?? 0,
+        query.get('filter') ?? '',
+      ]
+
       queryClient.setQueryData(
-        ['scrappingReport', query.get('page') ?? 0, query.get('filter')],
+        currentQueryKey,
         (syncWorkList: ScrapingReportResponse) => {
           const newWorkList = syncWorkList?.data?.map((work) => {
             if (work.id === workId) {

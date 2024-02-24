@@ -31,8 +31,7 @@ export function ScrappingReport() {
     .transform((value) => value - 1)
     .parse(query.get('page') ?? '1')
 
-  const filter =
-    (query.get('filter') as 'PENDING' | 'SUCCESS' | 'FAILED') ?? 'SUCCESS'
+  const filter = (query.get('filter') as 'PENDING' | 'SUCCESS' | 'FAILED') ?? ''
 
   const {
     data: works,
