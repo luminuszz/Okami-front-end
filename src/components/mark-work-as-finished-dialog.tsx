@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { map } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
@@ -8,6 +8,7 @@ import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { markWorksAsFinished } from '@/api/mark-works-as-finished'
 import { WorkType } from '@/api/schemas'
 
+import { ComboBox } from './combobox'
 import { Button } from './ui/button'
 import {
   DialogClose,
@@ -16,13 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select'
 
 export function MarkWorksAsFinishedDialog() {
   const [selectOption, setSelectOption] = useState('')
@@ -52,11 +46,22 @@ export function MarkWorksAsFinishedDialog() {
     },
   })
 
+  const options = map(works, (work) => ({
+    label: work.name,
+    value: work.id,
+  }))
+
   function handleMarkFinished() {
     if (!selectOption) return
 
     markAsFinished(selectOption)
   }
+
+  useEffect(() => {
+    return () => {
+      setSelectOption('')
+    }
+  }, [])
 
   return (
     <DialogContent>
@@ -66,31 +71,25 @@ export function MarkWorksAsFinishedDialog() {
 
       <div className="flex flex-col gap-2">
         <Label>Marcar como finalizada</Label>
-        <Select
+        <ComboBox
           disabled={isLoading}
-          onValueChange={(option) => setSelectOption(option)}
+          options={options}
           value={selectOption}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Seleciona a obra" />
-          </SelectTrigger>
-          <SelectContent align="center">
-            {map(works, (work) => (
-              <SelectItem value={work.id} key={work.id} className="truncate">
-                {work.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          onSelected={setSelectOption}
+        />
       </div>
 
       <DialogFooter>
         <DialogClose asChild>
-          <Button onClick={handleMarkFinished}>Finalizar</Button>
+          <Button disabled={!selectOption} onClick={handleMarkFinished}>
+            Finalizar
+          </Button>
         </DialogClose>
 
         <DialogClose asChild>
-          <Button variant="secondary">Cancelar</Button>
+          <Button disabled={!selectOption} variant="secondary">
+            Cancelar
+          </Button>
         </DialogClose>
       </DialogFooter>
     </DialogContent>

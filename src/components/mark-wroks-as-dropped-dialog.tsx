@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { filter, map } from 'lodash'
 import { AlertCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
@@ -9,6 +9,7 @@ import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
 import { markWorksAsDropped } from '@/api/mark-work-as-dropped'
 import { WorkType } from '@/api/schemas'
 
+import { ComboBox } from './combobox'
 import { Button } from './ui/button'
 import {
   DialogClose,
@@ -18,13 +19,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select'
 
 export function MarkWorksAsDroppedDialog() {
   const [selectOption, setSelectOption] = useState('')
@@ -58,6 +52,17 @@ export function MarkWorksAsDroppedDialog() {
     markAsDropped(selectOption)
   }
 
+  const options = map(works, (work) => ({
+    label: work.name,
+    value: work.id,
+  }))
+
+  useEffect(() => {
+    return () => {
+      setSelectOption('')
+    }
+  }, [])
+
   return (
     <DialogContent>
       <DialogHeader className="gap-2">
@@ -70,27 +75,21 @@ export function MarkWorksAsDroppedDialog() {
 
       <div className="flex flex-col gap-2">
         <Label>Marcar como Dropada</Label>
-        <Select
+        <ComboBox
           disabled={isLoading}
-          onValueChange={(option) => setSelectOption(option)}
           value={selectOption}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Seleciona a obra" />
-          </SelectTrigger>
-          <SelectContent align="center">
-            {map(works, (work) => (
-              <SelectItem value={work.id} key={work.id} className="truncate">
-                {work.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          onSelected={setSelectOption}
+          options={options}
+        />
       </div>
 
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="destructive" onClick={handleMarkDropped}>
+          <Button
+            disabled={!selectOption}
+            variant="destructive"
+            onClick={handleMarkDropped}
+          >
             Dropar
           </Button>
         </DialogClose>
