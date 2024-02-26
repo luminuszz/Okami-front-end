@@ -43,6 +43,26 @@ export const router = createBrowserRouter([
           }
         },
       },
+
+      {
+        path: '/auth/sign-out',
+        lazy: async () => {
+          const { SignOut } = await import('./pages/auth/signOut')
+          return {
+            element: <SignOut />,
+          }
+        },
+      },
+
+      {
+        path: '/auth/checkout',
+        lazy: async () => {
+          const { Checkout } = await import('./pages/auth/checkout')
+          return {
+            element: <Checkout />,
+          }
+        },
+      },
     ],
   },
 ])
