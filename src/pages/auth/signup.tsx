@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -40,7 +40,7 @@ const formSchema = z
 
 type FormType = z.infer<typeof formSchema>
 
-export function SignOut() {
+export function SignUp() {
   const navigate = useNavigate()
 
   const { mutateAsync: registerUserCall } = useMutation({
@@ -158,6 +158,15 @@ export function SignOut() {
                 ) : (
                   'Registrar'
                 )}
+              </Button>
+
+              <Button
+                asChild
+                type="button"
+                variant="link"
+                onClick={() => navigate('/auth/sign-up')}
+              >
+                <Link to="/auth/sign-in">Já possui uma conta ?</Link>
               </Button>
             </form>
           </Form>

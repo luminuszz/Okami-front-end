@@ -5,7 +5,7 @@ interface Response {
 }
 
 export async function createPaymentCheckout(): Promise<Response> {
-  const results = await okamiHttpGateway.post<Response>('/payment/intent')
+  const results = await okamiHttpGateway.post<Response>('/payment/checkout')
 
   return {
     paymentSessionId: results.data.paymentSessionId,

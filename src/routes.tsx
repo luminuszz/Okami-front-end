@@ -45,11 +45,11 @@ export const router = createBrowserRouter([
       },
 
       {
-        path: '/auth/sign-out',
+        path: '/auth/sign-up',
         lazy: async () => {
-          const { SignOut } = await import('./pages/auth/signOut')
+          const { SignUp } = await import('./pages/auth/signup')
           return {
-            element: <SignOut />,
+            element: <SignUp />,
           }
         },
       },
@@ -57,9 +57,29 @@ export const router = createBrowserRouter([
       {
         path: '/auth/checkout',
         lazy: async () => {
-          const { Checkout } = await import('./pages/auth/checkout')
+          const { Checkout } = await import('./pages/payment/checkout')
           return {
             element: <Checkout />,
+          }
+        },
+      },
+      {
+        path: '/auth/payment/success',
+        lazy: async () => {
+          const { PaymentSuccess } = await import(
+            './pages/payment/payment-success'
+          )
+          return {
+            element: <PaymentSuccess />,
+          }
+        },
+      },
+      {
+        path: '/auth/payment/error',
+        lazy: async () => {
+          const { PaymentError } = await import('./pages/payment/payment-error')
+          return {
+            element: <PaymentError />,
           }
         },
       },

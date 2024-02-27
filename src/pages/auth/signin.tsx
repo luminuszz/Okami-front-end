@@ -4,7 +4,7 @@ import { AxiosError } from 'axios'
 import { Loader2 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -58,6 +58,7 @@ export function Signin() {
   return (
     <>
       <Helmet title="Login" />
+
       <div className="p-8">
         <div className="flex w-[320px] flex-col justify-center gap-6">
           <header className="flex flex-col gap-2 text-center">
@@ -65,7 +66,7 @@ export function Signin() {
               Acessar Painel
             </h1>
             <p className="text-sm text-muted-foreground">
-              Acompanha suas obras Favoritas e muito mais
+              Acompanhe suas obras Favoritas e muito mais
             </p>
           </header>
 
@@ -98,6 +99,15 @@ export function Signin() {
               ) : (
                 'Login'
               )}
+            </Button>
+
+            <Button
+              asChild
+              type="button"
+              variant="link"
+              onClick={() => navigate('/auth/sign-up')}
+            >
+              <Link to="/auth/sign-up">Não possui uma conta ? </Link>
             </Button>
           </form>
         </div>

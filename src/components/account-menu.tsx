@@ -36,8 +36,6 @@ export function AccountMenu() {
 
   const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()
 
-  console.log({ user })
-
   return (
     <Dialog>
       <ProfileDialog />

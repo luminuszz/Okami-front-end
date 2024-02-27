@@ -10,6 +10,7 @@ const getUserDetailsSchema = z.object({
   avatarImageId: z.string(),
   finishedWorksCount: z.number(),
   readingWorksCount: z.number(),
+  paymentSubscriptionStatus: z.enum(['ACTIVE', 'INACTIVE']),
 })
 
 export type GetUserDetailsType = z.infer<typeof getUserDetailsSchema>
@@ -17,8 +18,6 @@ export type GetUserDetailsType = z.infer<typeof getUserDetailsSchema>
 export async function getUserDetails() {
   const { data } =
     await okamiHttpGateway.get<GetUserDetailsType>('/auth/user/me')
-
-  console.log(getUserDetailsSchema.parse(data))
 
   return getUserDetailsSchema.parse(data)
 }
