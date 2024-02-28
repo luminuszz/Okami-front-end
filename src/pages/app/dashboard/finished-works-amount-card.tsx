@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
 
-import { GetUserDetailsType } from '@/api/get-user-details'
+import { getUserAnalytics } from '@/api/get-user-analytics'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function FinishedWorksAmountCard() {
   const { data: totalWorksFinished, isLoading } = useQuery({
-    queryKey: ['user-details'],
-    select: (data: GetUserDetailsType) => data.finishedWorksCount,
+    queryKey: ['user-analytics'],
+    queryFn: getUserAnalytics,
+    select: ({ totalOfWorksFinished }) => totalOfWorksFinished,
   })
 
   if (isLoading) {

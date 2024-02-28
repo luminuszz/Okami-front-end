@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { BookCheck } from 'lucide-react'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import { getUserAnalytics } from '@/api/get-user-analytics'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function ReadWorksAmountCard() {
   const { data: totalWorksRead, isLoading } = useQuery({
-    queryKey: ['works', 'read'],
-    queryFn: () => fetchWorksWithFilter({ status: 'read' }),
-    select: (works) => works.length,
+    queryKey: ['user-analytics'],
+    queryFn: getUserAnalytics,
+    select: ({ totalOfWorksRead }) => totalOfWorksRead,
   })
 
   if (isLoading) {

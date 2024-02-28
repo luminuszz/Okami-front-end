@@ -15,6 +15,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
+import { SkeletonRecentSyncList } from './skeleton-recent-sync-list'
+
 interface SyncItemProps {
   work: {
     title: string
@@ -73,7 +75,7 @@ const SyncItemList = ({ work }: SyncItemProps) => {
 export function RecentSyncList() {
   const filter = 'unread'
 
-  const { data: works } = useQuery({
+  const { data: works, isLoading } = useQuery({
     queryKey: ['works', filter],
     queryFn: () => fetchWorksWithFilter({ status: filter }),
     select: (data) =>
@@ -86,6 +88,8 @@ export function RecentSyncList() {
         )
         .slice(0, 7),
   })
+
+  const hasNoWorks = works?.length === 0
 
   return (
     <Card className="xs:col-span-1 w-full lg:col-span-4">
@@ -101,19 +105,31 @@ export function RecentSyncList() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5 ">
-        {works?.map((item) => (
-          <SyncItemList
-            key={item.id}
-            work={{
-              imageUrl: item.imageUrl ?? '',
-              nextChapter: item.nextChapter || 0,
-              nextChapterUpdatedAt: item.nextChapterUpdatedAt || '',
-              title: item.name,
-              type: item.category,
-              url: item.url,
-            }}
-          />
-        ))}
+        {isLoading ? (
+          <SkeletonRecentSyncList />
+        ) : (
+          works?.map((item) => (
+            <SyncItemList
+              key={item.id}
+              work={{
+                imageUrl: item.imageUrl ?? '',
+                nextChapter: item.nextChapter || 0,
+                nextChapterUpdatedAt: item.nextChapterUpdatedAt || '',
+                title: item.name,
+                type: item.category,
+                url: item.url,
+              }}
+            />
+          ))
+        )}
+
+        {hasNoWorks && (
+          <div className="h-[400px]">
+            <p className="text-center text-muted-foreground">
+              Você não tem nenhuma obra recente
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

@@ -1,10 +1,9 @@
-import { useQueries } from '@tanstack/react-query'
-import { BarChart } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { BarChart, Loader2 } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import colors from 'tailwindcss/colors'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
-import { getUserDetails } from '@/api/get-user-details'
+import { getUserAnalytics } from '@/api/get-user-analytics'
 import {
   Card,
   CardContent,
@@ -12,48 +11,34 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 
 export function WorksInfoChart() {
-  const analytics = useQueries({
-    queries: [
-      {
-        queryKey: ['works', 'unread'],
-        queryFn: () => fetchWorksWithFilter({ status: 'unread' }),
-      },
-      {
-        queryKey: ['works', 'read'],
-        queryFn: () => fetchWorksWithFilter({ status: 'read' }),
-      },
-      {
-        queryKey: ['user-details'],
-        queryFn: getUserDetails,
-      },
-    ],
-    combine: (result) => {
-      const [unread, read, user] = result
-      return {
-        unread: unread.data?.length,
-        read: read.data?.length,
-        finished: user.data?.finishedWorksCount,
-        isLoading: unread.isLoading || read.isLoading || user.isLoading,
-      }
-    },
+  const { data: analytics, isLoading } = useQuery({
+    queryKey: ['user-analytics'],
+    queryFn: getUserAnalytics,
   })
 
   const data = [
-    { name: 'Obras lidas', value: analytics.read, color: colors.cyan[500] },
+    {
+      name: 'Obras lidas',
+      value: analytics?.totalOfWorksRead,
+      color: colors.cyan[500],
+    },
     {
       name: 'Obras não lidas',
-      value: analytics.unread,
+      value: analytics?.totalOfWorksUnread,
       color: colors.amber[500],
     },
     {
       name: 'Obras finalizadas',
-      value: analytics.finished,
+      value: analytics?.totalOfWorksFinished,
       color: colors.emerald[500],
     },
   ]
+
+  const noHaveValues = Object.values(analytics ?? {}).some(
+    (value) => value === 0,
+  )
 
   return (
     <Card className="xs:col-span-1 lg:col-span-5">
@@ -71,11 +56,13 @@ export function WorksInfoChart() {
       </CardHeader>
 
       <CardContent>
-        {analytics.isLoading ? (
+        {isLoading && (
           <div className="flex items-center justify-center">
-            <Skeleton className="size-96 rounded-full" />
+            <Loader2 className="size-30 animate-spin text-muted-foreground" />
           </div>
-        ) : (
+        )}
+
+        {!noHaveValues ? (
           <ResponsiveContainer width="100%" height={400}>
             <PieChart style={{ fontSize: 12 }}>
               <Pie
@@ -126,6 +113,12 @@ export function WorksInfoChart() {
               </Pie>
             </PieChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-muted-foreground">
+              Não há dados para exibir
+            </span>
+          </div>
         )}
       </CardContent>
     </Card>
