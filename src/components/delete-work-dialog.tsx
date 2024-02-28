@@ -5,9 +5,11 @@ import { useEffect, useState } from 'react'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
-import { markWorksAsDropped } from '@/api/mark-work-as-dropped'
-import { WorkType } from '@/api/schemas'
+import { deleteWork } from '@/api/delete-work'
+import {
+  fetchWorksWithFilter,
+  WorkType,
+} from '@/api/fetch-for-works-with-filter'
 
 import { ComboBox } from './combobox'
 import { Button } from './ui/button'
@@ -20,7 +22,7 @@ import {
   DialogTitle,
 } from './ui/dialog'
 
-export function MarkWorksAsDroppedDialog() {
+export function DeleteWorkDialog() {
   const [selectOption, setSelectOption] = useState('')
 
   const queryClient = useQueryClient()
@@ -30,26 +32,27 @@ export function MarkWorksAsDroppedDialog() {
     queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
 
-  const { mutate: markAsDropped } = useMutation({
-    mutationKey: ['mark-works-at-dropped', selectOption],
-    mutationFn: markWorksAsDropped,
+  const { mutate: deleteWorkMutation } = useMutation({
+    mutationFn: deleteWork,
     onMutate: (workId) => {
       queryClient.setQueryData<WorkType[]>(['works', 'read'], (works) => {
         return filter(works, (value) => value.id !== workId)
       })
     },
-    onSuccess: () => {
-      toast.success('Obra dropada com sucesso')
+    onSuccess() {
+      toast.success('Obra excluída com sucesso')
     },
-    onError: () => {
-      toast.error('Erro ao dropar obra')
+    onError() {
+      toast.error('Erro ao excluir obra')
+
+      queryClient.invalidateQueries({ queryKey: ['works', 'read'] })
     },
   })
 
-  function handleMarkDropped() {
+  function handleDeleteWork() {
     if (!selectOption) return
 
-    markAsDropped(selectOption)
+    deleteWorkMutation(selectOption)
   }
 
   const options = map(works, (work) => ({
@@ -69,12 +72,12 @@ export function MarkWorksAsDroppedDialog() {
         <DialogTitle>Dropar obra</DialogTitle>
         <DialogDescription className="my-2 flex items-center text-red-400">
           <AlertCircle className="mr-2 size-4 text-muted-foreground text-red-400" />
-          Ao dropar a obra, ela não será mais sincronizada.
+          Ao excluir a obra, ela não será mais sincronizada.
         </DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col gap-2">
-        <Label>Marcar como Dropada</Label>
+        <Label>Excluir obra</Label>
         <ComboBox
           disabled={isLoading}
           value={selectOption}
@@ -88,9 +91,9 @@ export function MarkWorksAsDroppedDialog() {
           <Button
             disabled={!selectOption}
             variant="destructive"
-            onClick={handleMarkDropped}
+            onClick={handleDeleteWork}
           >
-            Dropar
+            Excluir
           </Button>
         </DialogClose>
 

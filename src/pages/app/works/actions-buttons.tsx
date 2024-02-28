@@ -1,8 +1,8 @@
 import { DialogTrigger } from '@radix-ui/react-dialog'
 import { BookmarkCheck, BookmarkX } from 'lucide-react'
 
+import { DeleteWorkDialog } from '@/components/delete-work-dialog'
 import { MarkWorksAsFinishedDialog } from '@/components/mark-work-as-finished-dialog'
-import { MarkWorksAsDroppedDialog } from '@/components/mark-wroks-as-dropped-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 
@@ -19,11 +19,11 @@ export function ActionsButtons() {
         </DialogTrigger>
       </Dialog>
       <Dialog>
-        <MarkWorksAsDroppedDialog />
+        <DeleteWorkDialog />
         <DialogTrigger asChild>
           <Button variant="destructive" size="sm">
             <BookmarkX className="mr-2 size-4 text-muted-foreground" />
-            Dropar obra
+            Excluir obra
           </Button>
         </DialogTrigger>
       </Dialog>

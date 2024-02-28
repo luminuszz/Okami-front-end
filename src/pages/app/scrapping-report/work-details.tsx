@@ -12,8 +12,8 @@ import {
 interface WorkDetailsProps {
   work: {
     name: string
-    imageUrl: string
-    updatedAt: string
+    imageUrl?: string | null
+    updatedAt?: string
     category: string
     refreshStatus: string
     url: string
@@ -28,7 +28,11 @@ export function WorkDetails({ work }: WorkDetailsProps) {
       </DialogHeader>
 
       <div className="flex flex-col items-center gap-4">
-        <img className="max-h-[500px]" src={work.imageUrl} alt={work.name} />
+        <img
+          className="max-h-[500px]"
+          src={work.imageUrl ?? ''}
+          alt={work.name}
+        />
         <p>
           Categoria:
           <Badge className="ml-1" variant="secondary">

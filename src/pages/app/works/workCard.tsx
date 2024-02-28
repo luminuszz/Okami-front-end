@@ -3,7 +3,7 @@ import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Book, BookCheck, Clock } from 'lucide-react'
 
-import { WorkType } from '@/api/schemas'
+import { WorkType } from '@/api/fetch-for-works-with-filter'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -23,7 +23,7 @@ export interface WorksCardProps {
 
 export function WorkCard({ work }: WorksCardProps) {
   const updatedAt = formatDistance(
-    parseISO(work.nextChapterUpdatedAt ?? work.updatedAt),
+    parseISO(work.nextChapterUpdatedAt ?? work.updatedAt ?? work.createdAt),
     new Date(),
     {
       addSuffix: true,
@@ -54,7 +54,7 @@ export function WorkCard({ work }: WorksCardProps) {
           <div className="h-[400px] w-full">
             <img
               className="size-full rounded bg-cover"
-              src={work.imageUrl}
+              src={work.imageUrl ?? ''}
               alt={work.name}
             />
           </div>
@@ -108,7 +108,7 @@ export function WorkCard({ work }: WorksCardProps) {
                 id: work.id,
                 chapter: work.chapter,
                 name: work.name,
-                imageUrl: work.imageUrl,
+                imageUrl: work.imageUrl ?? '',
                 url: work.url,
                 type: work.category,
                 hasNewChapter: work.hasNewChapter,

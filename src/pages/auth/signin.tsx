@@ -23,11 +23,7 @@ type FormLogin = z.infer<typeof formLoginSchema>
 export function Signin() {
   const navigate = useNavigate()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<FormLogin>({
+  const { register, handleSubmit } = useForm<FormLogin>({
     resolver: zodResolver(formLoginSchema),
     values: {
       email: '',
@@ -35,24 +31,25 @@ export function Signin() {
     },
   })
 
-  const { mutateAsync: makeSession } = useMutation({
+  const { mutate: makeSession, isPending } = useMutation({
     mutationFn: createSession,
-  })
 
-  async function handleSigin(payload: FormLogin) {
-    try {
-      await makeSession(payload)
-
+    onSuccess() {
       toast.success('Login feito com sucesso')
-
       navigate('/', { replace: true })
-    } catch (err) {
+    },
+
+    onError(err) {
       if (err instanceof AxiosError && err.code === '401') {
         toast.error('Usuário ou senha inválidos!')
       } else {
         toast.error('Opa, algo deu errado! Tente novamente mais tarde.')
       }
-    }
+    },
+  })
+
+  function handleSigin(payload: FormLogin) {
+    makeSession(payload)
   }
 
   return (
@@ -93,8 +90,8 @@ export function Signin() {
                 {...register('password')}
               />
             </div>
-            <Button disabled={isSubmitting} className="w-full" type="submit">
-              {isSubmitting ? (
+            <Button disabled={isPending} className="w-full" type="submit">
+              {isPending ? (
                 <Loader2 className="mr-2 size-4 animate-spin" />
               ) : (
                 'Login'
@@ -102,6 +99,7 @@ export function Signin() {
             </Button>
 
             <Button
+              disabled={isPending}
               asChild
               type="button"
               variant="link"

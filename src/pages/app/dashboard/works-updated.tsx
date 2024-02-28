@@ -23,14 +23,14 @@ export function WorksUpdated() {
       data
         .slice(0, 5)
         .sort((a, b) =>
-          compareDesc(new Date(a.updatedAt), new Date(b.updatedAt)),
+          compareDesc(new Date(a.updatedAt ?? ''), new Date(b.updatedAt ?? '')),
         ),
   })
 
   const parsedWorks = map(works, (work) => ({
     ...work,
     formattedUpdatedAt: formatDistance(
-      parseISO(work.nextChapterUpdatedAt ?? work.updatedAt),
+      parseISO(work.nextChapterUpdatedAt ?? work.updatedAt ?? work.createdAt),
       new Date(),
       {
         addSuffix: true,
@@ -72,7 +72,7 @@ export function WorksUpdated() {
                 <div className="h-[400px] w-full">
                   <img
                     className="size-full rounded-lg bg-cover"
-                    src={work.imageUrl}
+                    src={work.imageUrl ?? ''}
                     alt={work.name}
                   />
                 </div>

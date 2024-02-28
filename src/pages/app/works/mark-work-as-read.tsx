@@ -4,8 +4,8 @@ import { filter } from 'lodash'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import { WorkType } from '@/api/fetch-for-works-with-filter'
 import { markWorkAsRead } from '@/api/mark-work-as-read'
-import { WorkType } from '@/api/schemas'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,

@@ -105,7 +105,7 @@ export function RecentSyncList() {
           <SyncItemList
             key={item.id}
             work={{
-              imageUrl: item.imageUrl,
+              imageUrl: item.imageUrl ?? '',
               nextChapter: item.nextChapter || 0,
               nextChapterUpdatedAt: item.nextChapterUpdatedAt || '',
               title: item.name,
