@@ -27,7 +27,9 @@ export function RefreshChapterButton() {
   return (
     <Button
       size="sm"
-      disabled={isPending}
+      // disabled={isPending}
+      aria-label="Sincronizar todas as obras"
+      disabled={true}
       variant="secondary"
       onClick={() => mutate()}
     >

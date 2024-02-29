@@ -19,9 +19,7 @@ export function Works() {
           <ActionsButtons />
         </aside>
 
-        <main className="flex justify-center ">
-          <WorkGallery />
-        </main>
+        <WorkGallery />
       </div>
     </>
   )

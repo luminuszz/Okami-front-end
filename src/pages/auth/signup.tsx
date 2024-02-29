@@ -64,7 +64,7 @@ export function SignUp() {
       form.reset()
       toast.success('Usuário registrado com sucesso')
 
-      navigate('/auth/checkout')
+      navigate('/')
     } catch (exception) {
       if (exception instanceof Error) {
         toast.error(exception.message)
@@ -160,12 +160,7 @@ export function SignUp() {
                 )}
               </Button>
 
-              <Button
-                asChild
-                type="button"
-                variant="link"
-                onClick={() => navigate('/auth/sign-up')}
-              >
+              <Button asChild type="button" variant="link">
                 <Link to="/auth/sign-in">Já possui uma conta ?</Link>
               </Button>
             </form>

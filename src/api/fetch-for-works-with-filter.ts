@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { okamiHttpGateway } from '@/lib/axios'
 
 const fetchWorksWithFilterSchema = z.object({
-  status: z.enum(['unread', 'read', 'dropped', 'finished']).optional(),
+  status: z.enum(['unread', 'read', 'dropped', 'finished']).nullable(),
 })
 
 type FetchWorksWithFilterInput = z.infer<typeof fetchWorksWithFilterSchema>
@@ -31,11 +31,9 @@ const fetchWorksWithFilterOutputSchema = z.array(workSchema)
 
 export type WorkType = z.infer<typeof workSchema>
 
-export async function fetchWorksWithFilter(filter: FetchWorksWithFilterInput) {
-  const params = fetchWorksWithFilterSchema.parse(filter)
-
+export async function fetchWorksWithFilter(filter?: FetchWorksWithFilterInput) {
   const { data } = await okamiHttpGateway.get('/work/list', {
-    params,
+    params: filter,
   })
 
   return fetchWorksWithFilterOutputSchema.parse(data)

@@ -41,7 +41,7 @@ export function Checkout() {
 
       const { paymentSessionId } = await createCheckout()
 
-      window.location.href = paymentSessionId
+      window.location.replace(paymentSessionId)
     } catch (error) {
       toast.error('Erro ao verificar assinatura ativa')
     }

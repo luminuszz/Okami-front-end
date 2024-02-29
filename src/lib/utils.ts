@@ -41,3 +41,11 @@ export const validateFileType = (data: FileList | File) => {
     data instanceof FileList ? data?.[0]?.type : data?.type,
   )
 }
+
+export const getDefaultImageFile = async () => {
+  const response = await fetch('/animes-default.jpg')
+
+  const blob = await response.blob()
+
+  return new File([blob], 'animes-default.jpg', { type: 'image/jpeg' })
+}

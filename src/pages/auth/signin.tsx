@@ -10,12 +10,19 @@ import { z } from 'zod'
 
 import { createSession } from '@/api/create-session'
 import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 const formLoginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string(),
 })
 
 type FormLogin = z.infer<typeof formLoginSchema>
@@ -23,7 +30,7 @@ type FormLogin = z.infer<typeof formLoginSchema>
 export function Signin() {
   const navigate = useNavigate()
 
-  const { register, handleSubmit } = useForm<FormLogin>({
+  const form = useForm<FormLogin>({
     resolver: zodResolver(formLoginSchema),
     values: {
       email: '',
@@ -66,48 +73,60 @@ export function Signin() {
               Acompanhe suas obras Favoritas e muito mais
             </p>
           </header>
-
-          <form
-            className="flex flex-col gap-4 "
-            onSubmit={handleSubmit(handleSigin)}
-          >
-            <div className="space-y-4">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                placeholder="user@email.com"
-                type="email"
-                {...register('email')}
-              />
-            </div>
-
-            <div className="space-y-4">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                placeholder="*********"
-                type="password"
-                {...register('password')}
-              />
-            </div>
-            <Button disabled={isPending} className="w-full" type="submit">
-              {isPending ? (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              ) : (
-                'Login'
-              )}
-            </Button>
-
-            <Button
-              disabled={isPending}
-              asChild
-              type="button"
-              variant="link"
-              onClick={() => navigate('/auth/sign-up')}
+          <Form {...form}>
+            <form
+              className="flex flex-col gap-4 "
+              onSubmit={form.handleSubmit(handleSigin)}
             >
-              <Link to="/auth/sign-up">Não possui uma conta ? </Link>
-            </Button>
-          </form>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="okami@gmail.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="*********"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button disabled={isPending} className="w-full" type="submit">
+                {isPending ? (
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                ) : (
+                  'Login'
+                )}
+              </Button>
+
+              <Button disabled={isPending} asChild type="button" variant="link">
+                <Link to="/auth/sign-up">Não possui uma conta ? </Link>
+              </Button>
+            </form>
+          </Form>
         </div>
       </div>
     </>

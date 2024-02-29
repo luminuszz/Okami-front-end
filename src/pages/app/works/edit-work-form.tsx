@@ -26,7 +26,7 @@ import { ImageSelector } from './image-selector'
 
 const editWorkSchema = z.object({
   name: z.string().min(1),
-  chapter: z.coerce.number().min(1).positive(),
+  chapter: z.coerce.number().min(0),
   url: z.string().url(),
   imageFile: z
     .instanceof(FileList)
@@ -204,8 +204,8 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
               <Button
                 disabled={
                   form.formState.isSubmitting ||
-                  !form.formState.isValid ||
-                  !form.formState.isDirty
+                  !form.formState.isDirty ||
+                  !form.formState.isValid
                 }
                 type="submit"
               >
