@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { parseISO } from 'date-fns'
-import { filter, sortBy } from 'lodash'
+import { compareDesc, parseISO } from 'date-fns'
+import { filter } from 'lodash'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -21,10 +21,15 @@ export function WorkGallery() {
     queryFn: () => fetchWorksWithFilter({ status }),
     queryKey: ['works', status].filter(Boolean),
     select: (works) => {
-      const filteredWorks = filter(works, (work) => work.name.includes(search))
+      const filteredWorks = filter(works, (work) =>
+        work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+      )
 
-      return sortBy(filteredWorks, (work) =>
-        parseISO(work.nextChapterUpdatedAt ?? work.updatedAt ?? work.createdAt),
+      return filteredWorks.sort((a, b) =>
+        compareDesc(
+          parseISO(a.nextChapterUpdatedAt ?? a.updatedAt ?? a.createdAt),
+          parseISO(b.nextChapterUpdatedAt ?? b.updatedAt ?? b.createdAt),
+        ),
       )
     },
   })
