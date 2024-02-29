@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { parseISO } from 'date-fns'
+import { filter, sortBy } from 'lodash'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -10,13 +12,21 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { WorkCard } from './workCard'
 
 export function WorkGallery() {
-  const [filter] = useSearchParams()
+  const [params] = useSearchParams()
 
-  const status = (filter.get('status') as FilterStatus) ?? null
+  const status = (params.get('status') as FilterStatus) ?? null
+  const search = params.get('name') ?? ''
 
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter({ status }),
     queryKey: ['works', status].filter(Boolean),
+    select: (works) => {
+      const filteredWorks = filter(works, (work) => work.name.includes(search))
+
+      return sortBy(filteredWorks, (work) =>
+        parseISO(work.nextChapterUpdatedAt ?? work.updatedAt ?? work.createdAt),
+      )
+    },
   })
 
   const hasWorks = works && works.length > 0
