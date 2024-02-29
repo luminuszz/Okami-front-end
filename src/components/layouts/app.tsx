@@ -25,6 +25,8 @@ export function AppLayout() {
         if (canRedirectToLogin) {
           navigate('/auth/sign-in', { replace: true })
         }
+
+        return Promise.reject(error)
       },
     )
 

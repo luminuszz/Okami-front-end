@@ -1,17 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Info } from 'lucide-react'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import { getUserAnalytics } from '@/api/get-user-analytics'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function UnreadWorksAmountCard() {
-  const filter = 'unread'
-
   const { data: totalWorksUnread, isLoading } = useQuery({
-    queryKey: ['works', filter],
-    queryFn: () => fetchWorksWithFilter({ status: filter }),
-    select: (works) => works.length,
+    queryKey: ['user-analytics'],
+    queryFn: getUserAnalytics,
+    select: ({ totalOfWorksUnread }) => totalOfWorksUnread,
   })
 
   if (isLoading) {

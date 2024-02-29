@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { okamiHttpGateway } from '@/lib/axios'
 import { parseDistanceByDate } from '@/lib/utils'
 
-import { WorkSchema } from './schemas'
+import { workSchema } from './fetch-for-works-with-filter'
 
 const parser = {
   PENDING: 'Pendente',
@@ -16,7 +16,7 @@ const scrappingReportSchema = z.object({
   totalOfPages: z.number(),
   data: z
     .array(
-      WorkSchema.extend({
+      workSchema.extend({
         refreshStatus: z
           .enum(['PENDING', 'SUCCESS', 'FAILED', 'NO_STATUS'])
           .nullable()
@@ -27,7 +27,7 @@ const scrappingReportSchema = z.object({
     .transform((works) =>
       works.map((work) => ({
         ...work,
-        updatedAt: parseDistanceByDate(work.updatedAt),
+        updatedAt: parseDistanceByDate(work.updatedAt ?? work.createdAt),
       })),
     ),
 })

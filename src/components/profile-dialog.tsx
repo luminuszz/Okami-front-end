@@ -20,7 +20,7 @@ export function ProfileDialog() {
       </DialogHeader>
       <div className="flex flex-col items-center justify-center gap-2">
         <Avatar className="size-[200px]">
-          <AvatarImage src={userDetails?.avatarImageUrl} />
+          <AvatarImage src={userDetails?.avatarImageUrl || ''} />
         </Avatar>
 
         <span className="text-sm font-bold">{userDetails?.name}</span>

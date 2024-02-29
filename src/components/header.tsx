@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
 import { NavLink } from './navlink'
+import { SubscriptionIndicator } from './subscripion-indicator'
 import { ThemeToggle } from './theme-toogle'
 import { Separator } from './ui/separator'
 
@@ -46,6 +47,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <SubscriptionIndicator />
           <ThemeToggle />
           <AccountMenu />
         </div>

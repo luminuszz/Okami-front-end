@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { compareDesc } from 'date-fns'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -13,25 +12,14 @@ import { WorkCard } from './workCard'
 export function WorkGallery() {
   const [filter] = useSearchParams()
 
-  const filterName = filter.get('name')
-
-  const status = (filter.get('status') as FilterStatus) ?? 'unread'
+  const status = (filter.get('status') as FilterStatus) ?? null
 
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter({ status }),
-    queryKey: ['works', status],
-    select: (works) =>
-      works
-        .filter((work) =>
-          work.name.toLowerCase().includes(filterName?.toLowerCase() ?? ''),
-        )
-        .sort((a, b) =>
-          compareDesc(
-            a.nextChapterUpdatedAt || '',
-            b.nextChapterUpdatedAt || '',
-          ),
-        ),
+    queryKey: ['works', status].filter(Boolean),
   })
+
+  const hasWorks = works && works.length > 0
 
   if (isLoading) {
     return (
@@ -43,9 +31,21 @@ export function WorkGallery() {
     )
   }
 
+  if (hasWorks) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+        {works.map((work) => (
+          <WorkCard key={work.id} work={work} />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-      {works?.map((work) => <WorkCard key={work.id} work={work} />)}
+      <div className="col-span-full text-center text-muted-foreground">
+        Nada por aqui, adicione uma obra para começar
+      </div>
     </div>
   )
 }

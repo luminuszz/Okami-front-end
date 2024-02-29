@@ -4,18 +4,25 @@ import { AxiosError } from 'axios'
 import { Loader2 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { createSession } from '@/api/create-session'
 import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 const formLoginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string(),
 })
 
 type FormLogin = z.infer<typeof formLoginSchema>
@@ -23,11 +30,7 @@ type FormLogin = z.infer<typeof formLoginSchema>
 export function Signin() {
   const navigate = useNavigate()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<FormLogin>({
+  const form = useForm<FormLogin>({
     resolver: zodResolver(formLoginSchema),
     values: {
       email: '',
@@ -35,29 +38,31 @@ export function Signin() {
     },
   })
 
-  const { mutateAsync: makeSession } = useMutation({
+  const { mutate: makeSession, isPending } = useMutation({
     mutationFn: createSession,
-  })
 
-  async function handleSigin(payload: FormLogin) {
-    try {
-      await makeSession(payload)
-
+    onSuccess() {
       toast.success('Login feito com sucesso')
-
       navigate('/', { replace: true })
-    } catch (err) {
+    },
+
+    onError(err) {
       if (err instanceof AxiosError && err.code === '401') {
         toast.error('Usuário ou senha inválidos!')
       } else {
         toast.error('Opa, algo deu errado! Tente novamente mais tarde.')
       }
-    }
+    },
+  })
+
+  function handleSigin(payload: FormLogin) {
+    makeSession(payload)
   }
 
   return (
     <>
       <Helmet title="Login" />
+
       <div className="p-8">
         <div className="flex w-[320px] flex-col justify-center gap-6">
           <header className="flex flex-col gap-2 text-center">
@@ -65,41 +70,63 @@ export function Signin() {
               Acessar Painel
             </h1>
             <p className="text-sm text-muted-foreground">
-              Acompanha suas obras Favoritas e muito mais
+              Acompanhe suas obras Favoritas e muito mais
             </p>
           </header>
-
-          <form
-            className="flex flex-col gap-4 "
-            onSubmit={handleSubmit(handleSigin)}
-          >
-            <div className="space-y-4">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                placeholder="user@email.com"
-                type="email"
-                {...register('email')}
+          <Form {...form}>
+            <form
+              className="flex flex-col gap-4 "
+              onSubmit={form.handleSubmit(handleSigin)}
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="okami@gmail.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-4">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                placeholder="*********"
-                type="password"
-                {...register('password')}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="*********"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <Button disabled={isSubmitting} className="w-full" type="submit">
-              {isSubmitting ? (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              ) : (
-                'Login'
-              )}
-            </Button>
-          </form>
+
+              <Button disabled={isPending} className="w-full" type="submit">
+                {isPending ? (
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                ) : (
+                  'Login'
+                )}
+              </Button>
+
+              <Button disabled={isPending} asChild type="button" variant="link">
+                <Link to="/auth/sign-up">Não possui uma conta ? </Link>
+              </Button>
+            </form>
+          </Form>
         </div>
       </div>
     </>

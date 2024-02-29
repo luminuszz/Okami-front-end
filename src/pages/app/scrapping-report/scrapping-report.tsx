@@ -94,7 +94,16 @@ export function ScrappingReport() {
                 <TableRow key={work.id}>
                   <TableCell>
                     <Dialog>
-                      <WorkDetails work={work} />
+                      <WorkDetails
+                        work={{
+                          category: work.category,
+                          name: work.name,
+                          refreshStatus: work.refreshStatus,
+                          url: work.url,
+                          imageUrl: work.imageUrl,
+                          updatedAt: work.updatedAt,
+                        }}
+                      />
                       <DialogTrigger asChild>
                         <Button variant="outline" size="icon">
                           <Search className="size-3" />

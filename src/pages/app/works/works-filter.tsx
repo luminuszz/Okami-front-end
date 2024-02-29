@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Book, BookCheck, BookMarked, BookX, Search, X } from 'lucide-react'
+import { Book, BookCheck, BookMarked, Search, X } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/select'
 
 const filterFormSchema = z.object({
-  name: z.string().optional(),
-  status: z.string().optional(),
+  name: z.string().optional().nullable(),
+  status: z.string().optional().nullable(),
 })
 
 type FilterForm = z.infer<typeof filterFormSchema>
@@ -28,8 +28,8 @@ export function WorksFilter() {
 
   const { handleSubmit, register, control, reset } = useForm<FilterForm>({
     values: {
-      name: filter.get('name') ?? '',
-      status: filter.get('status') ?? 'unread',
+      name: filter.get('name') ?? null,
+      status: filter.get('status') ?? null,
     },
   })
 
@@ -49,7 +49,7 @@ export function WorksFilter() {
       filter.delete('name')
       filter.delete('status')
 
-      queryClient.refetchQueries({ queryKey: ['works', 'unread'] })
+      queryClient.invalidateQueries({ queryKey: ['works'] })
 
       return filter
     })
@@ -72,7 +72,7 @@ export function WorksFilter() {
         control={control}
         name="status"
         render={({ field }) => (
-          <Select onValueChange={field.onChange} value={field.value}>
+          <Select onValueChange={field.onChange} value={field.value ?? ''}>
             <SelectTrigger className="h-8 w-[180px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -94,13 +94,6 @@ export function WorksFilter() {
                 <div className="flex items-center gap-2">
                   <BookCheck className="size-4" />
                   <span>Finalizados</span>
-                </div>
-              </SelectItem>
-
-              <SelectItem value="dropped">
-                <div className="flex items-center gap-2">
-                  <BookX className="size-4" />
-                  <span>Dropados</span>
                 </div>
               </SelectItem>
             </SelectContent>

@@ -2,10 +2,11 @@ import { Label } from '@radix-ui/react-dropdown-menu'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { filter } from 'lodash'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { WorkType } from '@/api/fetch-for-works-with-filter'
 import { markWorkAsRead } from '@/api/mark-work-as-read'
-import { WorkType } from '@/api/schemas'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -29,12 +30,15 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
   const [inputValue, setInputValue] = useState(work.chapter?.toString())
   const client = useQueryClient()
 
+  const [params] = useSearchParams()
+
   const { mutateAsync } = useMutation({
     mutationFn: markWorkAsRead,
     mutationKey: ['markWorkAsRead', work.id],
     onMutate: () => {
-      client.setQueryData<WorkType[]>(['works', 'unread'], (works) =>
-        filter(works, (value) => value.id !== work.id),
+      client.setQueryData<WorkType[]>(
+        ['works', params.get('status')].filter(Boolean),
+        (works) => filter(works, (value) => value.id !== work.id),
       )
     },
     onSuccess: () => {

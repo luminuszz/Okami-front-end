@@ -6,10 +6,11 @@ const getUserDetailsSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string().email(),
-  avatarImageUrl: z.string().url(),
+  avatarImageUrl: z.string().url().nullable(),
   avatarImageId: z.string(),
   finishedWorksCount: z.number(),
   readingWorksCount: z.number(),
+  paymentSubscriptionStatus: z.enum(['ACTIVE', 'INACTIVE']),
 })
 
 export type GetUserDetailsType = z.infer<typeof getUserDetailsSchema>
