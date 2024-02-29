@@ -9,9 +9,10 @@ import { Button } from '@/components/ui/button'
 
 interface ResyncWorkButtonProps {
   workId: string
+  isPending: boolean
 }
 
-export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
+export function ResyncWorkButton({ workId, isPending }: ResyncWorkButtonProps) {
   const queryClient = useQueryClient()
 
   const [query] = useSearchParams()
@@ -19,7 +20,7 @@ export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
   const {
     mutate: syncWork,
     isError,
-    isPending,
+    isPending: isMutating,
   } = useMutation({
     mutationKey: ['sync-work', workId],
     mutationFn: syncWorkChapter,
@@ -38,8 +39,6 @@ export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
         (syncWorkList: ScrapingReportResponse) => {
           const newWorkList = syncWorkList?.data?.map((work) => {
             if (work.id === workId) {
-              console.log('work', work)
-
               return {
                 ...work,
                 refreshStatus: 'Pendente',
@@ -62,7 +61,7 @@ export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
       data-isError={isError}
       className="data-[isError=true]:text-red-60 data-[isError=true]:border-red-600"
       variant="ghost"
-      disabled={isPending}
+      disabled={isMutating || isPending}
       aria-label="Desativado temporariamente"
       onClick={() => syncWork({ workId })}
     >
@@ -70,7 +69,11 @@ export function ResyncWorkButton({ workId }: ResyncWorkButtonProps) {
         data-loading={isPending}
         className="mr-2 size-4 data-[loading=true]:animate-spin"
       />
-      {isError ? 'Erro ao sincronizar' : 'Sincronizar'}
+      {isError
+        ? 'Erro ao sincronizar'
+        : isPending
+          ? 'Sincronizando'
+          : 'Sincronizar'}
     </Button>
   )
 }

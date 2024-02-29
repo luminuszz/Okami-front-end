@@ -14,7 +14,7 @@ import { WorkCard } from './workCard'
 export function WorkGallery() {
   const [params] = useSearchParams()
 
-  const status = (params.get('status') as FilterStatus) ?? null
+  const status = (params.get('status') as FilterStatus) ?? 'unread'
   const search = params.get('name') ?? ''
 
   const { data: works, isLoading } = useQuery({

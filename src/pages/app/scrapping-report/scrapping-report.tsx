@@ -6,7 +6,6 @@ import { z } from 'zod'
 
 import { fetchScrappingReport } from '@/api/fetch-scraping-report'
 import { Pagination } from '@/components/pagination'
-import { RefreshChapterButton } from '@/components/refresh-chapter-button'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
@@ -55,7 +54,6 @@ export function ScrappingReport() {
           <h1 className="text-3xl font-bold tracking-tighter">
             Sincronizações
           </h1>
-          <RefreshChapterButton />
         </div>
 
         <ScrappingFilters />
@@ -141,7 +139,10 @@ export function ScrappingReport() {
                   </TableCell>
 
                   <TableCell>
-                    <ResyncWorkButton workId={work.id} />
+                    <ResyncWorkButton
+                      workId={work.id}
+                      isPending={work.refreshStatus === 'Pendente'}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
