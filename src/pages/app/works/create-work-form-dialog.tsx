@@ -197,17 +197,17 @@ export function CreateWorkFormDialog() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="MANGA">
-                          <div className="flex items-center gap-2">
-                            <Book className="size-4" />
-                            <span>Manga</span>
-                          </div>
+                          <span>
+                            <Book className="mr-2 size-4" />
+                            Manga
+                          </span>
                         </SelectItem>
 
                         <SelectItem value="ANIME">
-                          <div className="flex items-center gap-2">
-                            <Tv className="size-4" />
-                            <span>Anime</span>
-                          </div>
+                          <span>
+                            <Tv className="mr-2 size-4" />
+                            Anime
+                          </span>
                         </SelectItem>
                       </SelectContent>
                     </Select>
