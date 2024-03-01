@@ -75,7 +75,7 @@ export function Signin() {
               Acessar Painel
             </h1>
             <p className="text-sm text-muted-foreground">
-              Acompanhe suas obras Favoritas e muito mais
+              Acompanhe suas obras favoritas e muito mais
             </p>
           </header>
           <Form {...form}>
