@@ -86,7 +86,7 @@ export function SignUp() {
           <header className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">Cadastro</h1>
             <p className="text-sm text-muted-foreground">
-              Assine para acompanhar suas obras Favoritas e muito mais...
+              Cadastre-se para acompanhar suas obras favoritas e muito mais...
             </p>
           </header>
 
