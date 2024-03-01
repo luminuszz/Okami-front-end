@@ -24,7 +24,9 @@ const formSchema = z
     name: z.string().min(4, 'Informe um nome com mais de 4 caracteres'),
     email: z.string().email('Informe um email válido'),
     password: z.string().min(8, 'Informe uma senha com mais de 8 caracteres'),
-    confirmPassword: z.string().min(8),
+    confirmPassword: z
+      .string()
+      .min(8, 'Informe uma senha com mais de 8 caracteres'),
   })
   .superRefine((context, ctx) => {
     const matchPassword = context.password === context.confirmPassword
@@ -67,7 +69,11 @@ export function SignUp() {
       navigate('/')
     } catch (exception) {
       if (exception instanceof Error) {
-        toast.error(exception.message)
+        if (exception.message === 'User already exists') {
+          toast.error('Usuário já existe')
+        } else {
+          toast.error('Erro ao registrar usuário')
+        }
       }
     }
   }

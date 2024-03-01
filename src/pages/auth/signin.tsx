@@ -21,8 +21,13 @@ import {
 import { Input } from '@/components/ui/input'
 
 const formLoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: z.string().email('Informe um email válido'),
+  password: z
+    .string({
+      required_error: 'Informe uma senha válida',
+      invalid_type_error: "'Informe uma senha válida'",
+    })
+    .min(8, 'Informe uma senha válida'),
 })
 
 type FormLogin = z.infer<typeof formLoginSchema>
@@ -114,7 +119,11 @@ export function Signin() {
                 )}
               />
 
-              <Button disabled={isPending} className="w-full" type="submit">
+              <Button
+                disabled={isPending || !form.formState.isValid}
+                className="w-full"
+                type="submit"
+              >
                 {isPending ? (
                   <Loader2 className="mr-2 size-4 animate-spin" />
                 ) : (

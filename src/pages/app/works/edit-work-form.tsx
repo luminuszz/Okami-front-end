@@ -145,11 +145,11 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
           onSubmit={form.handleSubmit(handleEditWork)}
           className="flex flex-col gap-2"
         >
-          <div className="m-auto flex h-[400px] w-[400px] justify-center">
+          <div className="m-auto flex h-[300px] w-[300px] justify-center">
             <ImageSelector />
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <FormField
               control={form.control}
               name="name"

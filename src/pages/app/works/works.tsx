@@ -14,7 +14,7 @@ export function Works() {
           Obras Atualizadas
         </h1>
 
-        <aside className="flex justify-between md:flex-col md:gap-4 xl:flex-row">
+        <aside className="flex justify-between sm:flex-col  md:gap-4 xl:flex-row">
           <WorksFilter />
           <ActionsButtons />
         </aside>

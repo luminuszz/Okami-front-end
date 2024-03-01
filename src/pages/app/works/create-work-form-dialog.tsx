@@ -162,11 +162,11 @@ export function CreateWorkFormDialog() {
           onSubmit={form.handleSubmit(handleCreateWork)}
           className="flex flex-col gap-2"
         >
-          <div className="m-auto flex h-[400px] w-[400px] justify-center">
+          <div className="m-auto flex h-[200px] w-[200px] justify-center">
             <ImageSelector />
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <FormField
               control={form.control}
               name="name"

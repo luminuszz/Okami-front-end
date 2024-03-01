@@ -64,7 +64,7 @@ export function WorksFilter() {
 
       <Input
         placeholder="Nome da obra"
-        className="h-8 w-[320px]"
+        className="h-8 w-full max-w-[320px]"
         {...register('name')}
       />
 
@@ -73,7 +73,7 @@ export function WorksFilter() {
         name="status"
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value ?? ''}>
-            <SelectTrigger className="h-8 w-[180px]">
+            <SelectTrigger className="h-8 w-full max-w-[180px] ">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
