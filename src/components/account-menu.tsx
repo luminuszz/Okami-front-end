@@ -39,7 +39,6 @@ export function AccountMenu() {
   return (
     <Dialog>
       <ProfileDialog />
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

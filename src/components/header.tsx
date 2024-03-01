@@ -5,6 +5,7 @@ import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
 import { NavLink } from './navlink'
 import { SubscriptionIndicator } from './subscripion-indicator'
+import { SyncTelegramPresentationDialog } from './sync-telegram-presentation-dialog'
 import { ThemeToggle } from './theme-toogle'
 import { Separator } from './ui/separator'
 
@@ -47,6 +48,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <SyncTelegramPresentationDialog />
           <SubscriptionIndicator />
           <ThemeToggle />
           <AccountMenu />
