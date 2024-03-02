@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Book, Tv } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -196,19 +195,8 @@ export function CreateWorkFormDialog() {
                         <SelectValue placeholder="Selecione o tipo da bora" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MANGA">
-                          <div className="flex gap-2">
-                            <Book className=" size-4" />
-                            <span>Manga</span>
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value="ANIME">
-                          <div className="flex gap-2">
-                            <Tv className=" size-4" />
-                            <span>Anime</span>
-                          </div>
-                        </SelectItem>
+                        <SelectItem value="MANGA">Manga</SelectItem>
+                        <SelectItem value="ANIME">Anime</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
