@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -55,7 +56,7 @@ export function CreateWorkFormDialog() {
   const [params] = useSearchParams()
   const queryClient = useQueryClient()
 
-  const currentFilter = params.get('status') ?? null
+  const currentFilter = params.get('status') ?? 'unread'
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
@@ -180,37 +181,27 @@ export function CreateWorkFormDialog() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo da obra</FormLabel>
+            <Label>Tipo da obra</Label>
 
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-10 w-full">
-                        <SelectValue placeholder="Selecione o tipo da bora" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="MANGA">
-                        <span>Manga</span>
-                      </SelectItem>
+            <Select
+              onValueChange={(value: any) => form.setValue('category', value)}
+              defaultValue={form.getValues('category')}
+            >
+              <FormControl>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Selecione o tipo da bora" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="MANGA">
+                  <span>Manga</span>
+                </SelectItem>
 
-                      <SelectItem value="ANIME">
-                        <span>Anime</span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <SelectItem value="ANIME">
+                  <span>Anime</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
             <FormField
               control={form.control}
