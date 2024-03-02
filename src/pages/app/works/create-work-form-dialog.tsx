@@ -186,25 +186,27 @@ export function CreateWorkFormDialog() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo da obra</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
                       <SelectTrigger className="h-10 w-full">
                         <SelectValue placeholder="Selecione o tipo da bora" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MANGA">
-                          <span>Manga</span>
-                        </SelectItem>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="MANGA">
+                        <span>Manga</span>
+                      </SelectItem>
 
-                        <SelectItem value="ANIME">
-                          <span>Anime</span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                      <SelectItem value="ANIME">
+                        <span>Anime</span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
                   <FormMessage />
                 </FormItem>
               )}
