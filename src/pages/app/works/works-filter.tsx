@@ -29,7 +29,7 @@ export function WorksFilter() {
   const { handleSubmit, register, control, reset } = useForm<FilterForm>({
     values: {
       name: filter.get('name') ?? null,
-      status: filter.get('status') ?? 'unread',
+      status: filter.get('status') ?? null,
     },
   })
 

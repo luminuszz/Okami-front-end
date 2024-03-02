@@ -48,10 +48,10 @@ const createWorkSchema = z.object({
 export type CreateWorkForm = z.infer<typeof createWorkSchema>
 
 export function CreateWorkFormDialog() {
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const queryClient = useQueryClient()
 
-  const currentFilter = params.get('status') ?? 'unread'
+  const currentFilter = params.get('status')
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
@@ -106,6 +106,13 @@ export function CreateWorkFormDialog() {
             query.queryKey.includes('user-quote')
           )
         },
+      })
+
+      setParams((params) => {
+        params.set('status', 'read')
+        params.set('name', '')
+
+        return params
       })
     },
     onError() {
