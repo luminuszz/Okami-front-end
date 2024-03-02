@@ -195,8 +195,13 @@ export function CreateWorkFormDialog() {
                         <SelectValue placeholder="Selecione o tipo da bora" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MANGA">Manga</SelectItem>
-                        <SelectItem value="ANIME">Anime</SelectItem>
+                        <SelectItem value="MANGA">
+                          <span>Manga</span>
+                        </SelectItem>
+
+                        <SelectItem value="ANIME">
+                          <span>Anime</span>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
