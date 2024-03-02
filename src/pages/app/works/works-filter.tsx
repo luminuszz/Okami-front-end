@@ -78,16 +78,20 @@ export function WorksFilter() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="unread">
-                <div className="flex items-center gap-2">
-                  <Book className="size-4" />
-                  <span> Não lidos</span>
-                </div>
+                <span>
+                  <div className="flex items-center gap-2">
+                    <Book className="size-4" />
+                    <span>Não lidos</span>
+                  </div>
+                </span>
               </SelectItem>
               <SelectItem value="read">
-                <div className="flex items-center gap-2">
-                  <BookMarked className="size-4" />
-                  <span>Lidos</span>
-                </div>
+                <span>
+                  <div className="flex items-center gap-2">
+                    <BookMarked className="size-4" />
+                    <span>Lidos</span>
+                  </div>
+                </span>
               </SelectItem>
 
               <SelectItem value="finished">
