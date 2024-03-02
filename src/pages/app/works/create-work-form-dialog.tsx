@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Book, Tv } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -184,8 +185,16 @@ export function CreateWorkFormDialog() {
                 value={category}
                 onSelected={(value) => form.setValue('category', value as any)}
                 options={[
-                  { label: 'Manga', value: 'MANGA' },
-                  { label: 'Anime', value: 'ANIME' },
+                  {
+                    label: 'Manga',
+                    value: 'MANGA',
+                    icon: <Book className="size-4" />,
+                  },
+                  {
+                    label: 'Anime',
+                    value: 'ANIME',
+                    icon: <Tv className="size-4" />,
+                  },
                 ]}
               />
             </div>
