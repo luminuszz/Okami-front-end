@@ -6,11 +6,13 @@ import { checkTelegramIntegration } from '@/api/check-telegram-integration'
 import { TelegramIcon } from './telegram-icon'
 import { Button } from './ui/button'
 import { DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { Skeleton } from './ui/skeleton'
 
 export function SyncTelegramPresentationDialog() {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['get-telegram-integration'],
     queryFn: checkTelegramIntegration,
+    enabled: true,
   })
 
   function handleCreateTelegramBotLink() {
@@ -19,11 +21,11 @@ export function SyncTelegramPresentationDialog() {
     window.open(link, '_blank')
   }
 
-  if (data?.isSubscribed) {
-    return null
+  if (isLoading) {
+    return <Skeleton />
   }
 
-  return (
+  return !data?.isSubscribed ? (
     <Dialog>
       <DialogTrigger asChild>
         <Button size="sm" variant="ghost">
@@ -49,5 +51,7 @@ export function SyncTelegramPresentationDialog() {
         </Button>
       </DialogContent>
     </Dialog>
+  ) : (
+    <></>
   )
 }
