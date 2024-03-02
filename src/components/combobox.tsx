@@ -18,6 +18,7 @@ export interface ComboBoxProps {
   value: string
   onSelected: (value: string) => void
   disabled?: boolean
+  disabledSearch?: boolean
 }
 
 export function ComboBox({
@@ -25,6 +26,7 @@ export function ComboBox({
   value,
   onSelected,
   disabled,
+  disabledSearch,
 }: ComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -52,7 +54,10 @@ export function ComboBox({
         align="start"
       >
         <Command>
-          <CommandInput placeholder="Pesquise a obra..." />
+          <CommandInput
+            disabled={disabledSearch}
+            placeholder="Pesquise a obra..."
+          />
           <CommandEmpty>Obra não encontrada</CommandEmpty>
           <CommandGroup>
             <ScrollArea className="h-48">

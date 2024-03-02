@@ -7,6 +7,7 @@ import { z } from 'zod'
 
 import { createWork } from '@/api/create-work'
 import { WorkType } from '@/api/fetch-for-works-with-filter'
+import { ComboBox } from '@/components/combobox'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -24,13 +25,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { getDefaultImageFile, validateFileType } from '@/lib/utils'
 
@@ -148,13 +142,15 @@ export function CreateWorkFormDialog() {
     createWorkMutation(formData)
   }
 
+  const category = form.watch('category')
+
   const needDisableButton =
     form.formState.isSubmitting || !form.formState.isValid
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar Obra</DialogTitle>
+        <DialogTitle>Adicionar obra</DialogTitle>
       </DialogHeader>
 
       <Form {...form}>
@@ -181,28 +177,18 @@ export function CreateWorkFormDialog() {
               )}
             />
 
-            <Label>Tipo da obra</Label>
-
-            <Select
-              onValueChange={(value: any) => form.setValue('category', value)}
-              defaultValue={form.getValues('category')}
-            >
-              <FormControl>
-                <SelectTrigger className="h-10 w-full">
-                  <SelectValue placeholder="Selecione o tipo da bora" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="MANGA">
-                  <span>Manga</span>
-                </SelectItem>
-
-                <SelectItem value="ANIME">
-                  <span>Anime</span>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-
+            <div className="flex flex-col gap-2">
+              <Label className="mb-2">Tipo da obra</Label>
+              <ComboBox
+                disabledSearch
+                value={category}
+                onSelected={(value) => form.setValue('category', value as any)}
+                options={[
+                  { label: 'Manga', value: 'MANGA' },
+                  { label: 'Anime', value: 'ANIME' },
+                ]}
+              />
+            </div>
             <FormField
               control={form.control}
               name="chapter"
@@ -234,7 +220,7 @@ export function CreateWorkFormDialog() {
                 </FormItem>
               )}
             />
-            <DialogClose asChild>
+            <DialogClose asChild className="mt-2">
               <Button disabled={needDisableButton} type="submit">
                 Adicionar
               </Button>
