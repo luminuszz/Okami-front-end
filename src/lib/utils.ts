@@ -49,3 +49,9 @@ export const getDefaultImageFile = async () => {
 
   return new File([blob], 'animes-default.jpg', { type: 'image/jpeg' })
 }
+
+export const isString = (value: unknown): value is string =>
+  typeof value === 'string'
+
+export const isFileList = (value: unknown): value is FileList =>
+  value instanceof FileList

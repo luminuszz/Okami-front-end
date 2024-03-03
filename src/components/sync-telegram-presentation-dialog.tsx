@@ -1,57 +1,44 @@
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
-import { useQuery } from '@tanstack/react-query'
 
-import { checkTelegramIntegration } from '@/api/check-telegram-integration'
-
+import { Can } from './permissions-provider'
 import { TelegramIcon } from './telegram-icon'
 import { Button } from './ui/button'
 import { DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
-import { Skeleton } from './ui/skeleton'
 
 export function SyncTelegramPresentationDialog() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['get-telegram-integration'],
-    queryFn: checkTelegramIntegration,
-    enabled: true,
-  })
-
   function handleCreateTelegramBotLink() {
     const link = `https://t.me/NotificationChapterBot?start`
 
     window.open(link, '_blank')
   }
 
-  if (isLoading) {
-    return <Skeleton />
-  }
+  return (
+    <Can I="show" a="telegram-button">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="ghost">
+            <TelegramIcon className="mr-2 size-4" fill="white" />
+            Vincular Telegram
+          </Button>
+        </DialogTrigger>
 
-  return !data?.isSubscribed ? (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost">
-          <TelegramIcon className="mr-2 size-4" fill="white" />
-          Vincular Telegram
-        </Button>
-      </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Receba Notificações no Telegram</DialogTitle>
+          </DialogHeader>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Receba Notificações no Telegram</DialogTitle>
-        </DialogHeader>
-
-        <div className="flex flex-col items-center justify-center gap-2">
-          <TelegramIcon className="size-20" fill="white" />
-          <p className="text-md text-muted-foreground">
-            Seja notificado assim que o status da sua obra mudar !
-          </p>
-        </div>
-        <Button onClick={handleCreateTelegramBotLink}>
-          <TelegramIcon className="mr-2 size-4" />
-          Vincular telegram
-        </Button>
-      </DialogContent>
-    </Dialog>
-  ) : (
-    <></>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <TelegramIcon className="size-20" fill="white" />
+            <p className="text-md text-muted-foreground">
+              Seja notificado assim que o status da sua obra mudar !
+            </p>
+          </div>
+          <Button onClick={handleCreateTelegramBotLink}>
+            <TelegramIcon className="mr-2 size-4" />
+            Vincular telegram
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </Can>
   )
 }

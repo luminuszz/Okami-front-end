@@ -1,4 +1,3 @@
-import { ImagePlus } from 'lucide-react'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { z } from 'zod'
@@ -10,7 +9,11 @@ import { Input } from '../../../components/ui/input'
 
 const parseClipboardFileSchema = z.instanceof(FileList).refine(validateFileType)
 
-export function ImageSelector() {
+interface ImageSelectorProps {
+  isRound?: boolean
+}
+
+export function ImageSelector({ isRound }: ImageSelectorProps) {
   const { watch, register, setValue } = useFormContext<EditWorkForm>()
 
   const imageData = watch('imageFile') as unknown as FileList
@@ -41,11 +44,11 @@ export function ImageSelector() {
 
   return (
     <label htmlFor="fileInput" className="relative cursor-pointer">
-      <ImagePlus className="absolute right-1 top-2 text-muted" />
       <img
+        data-isRound={isRound}
         src={imageUrl}
         alt="image"
-        className="size-full rounded bg-contain"
+        className="size-full rounded bg-contain data-[isRound]:rounded-full"
       />
 
       <Input

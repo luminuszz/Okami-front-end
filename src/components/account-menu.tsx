@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUserDetails } from '@/api/get-user-details'
 import { makeLogout } from '@/api/logout'
 
-import { ProfileDialog } from './profile-dialog'
+import { EditProfileDialog } from './profile-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import {
@@ -38,7 +38,7 @@ export function AccountMenu() {
 
   return (
     <Dialog>
-      <ProfileDialog />
+      <EditProfileDialog />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -83,7 +83,7 @@ export function AccountMenu() {
             <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 size-4" />
 
-              <span>Perfil</span>
+              <span>Editar Perfil</span>
             </DropdownMenuItem>
           </DialogTrigger>
 

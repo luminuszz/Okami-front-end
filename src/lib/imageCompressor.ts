@@ -6,7 +6,7 @@ export async function compressImageAsync(file: File) {
     new ImageCompressor(file, {
       convertSize: 0,
       resize: 'contain',
-      quality: 0.8,
+      quality: 0.2,
       success: resolve,
       error: reject,
     })

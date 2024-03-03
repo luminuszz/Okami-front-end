@@ -7,6 +7,7 @@ import { serviceWorkNotificationManager } from '@/lib/notifications'
 import { BroadCastEvents } from '@/lib/utils'
 
 import { Header } from '../header'
+import { PermissionsProvider } from '../permissions-provider'
 
 serviceWorkNotificationManager.registerServiceWorker()
 
@@ -50,12 +51,14 @@ export function AppLayout() {
   }, [queryClient])
 
   return (
-    <div className="flex min-h-screen flex-col antialiased">
-      <Header />
+    <PermissionsProvider>
+      <div className="flex min-h-screen flex-col antialiased">
+        <Header />
 
-      <div className="flex flex-1 flex-col gap-4 p-8 pt-6">
-        <Outlet />
+        <div className="flex flex-1 flex-col gap-4 p-8 pt-6">
+          <Outlet />
+        </div>
       </div>
-    </div>
+    </PermissionsProvider>
   )
 }
