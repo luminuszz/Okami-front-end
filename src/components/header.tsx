@@ -3,25 +3,33 @@ import { useNavigate } from 'react-router-dom'
 
 import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
+import { MobileMenu } from './mobile-menu'
 import { NavLink } from './navlink'
 import { SubscriptionIndicator } from './subscripion-indicator'
 import { SyncTelegramPresentationDialog } from './sync-telegram-presentation-dialog'
 import { ThemeToggle } from './theme-toogle'
-import { Separator } from './ui/separator'
 
 export function Header() {
   const navigate = useNavigate()
 
   return (
     <header className="border-b">
-      <div className="flex h-16 items-center gap-6 px-6">
+      <div className="flex h-16 items-center justify-between  gap-6 px-4 md:hidden">
         <Logo
-          className="h-10 w-10 cursor-pointer hover:opacity-90"
+          className="size-10 cursor-pointer  hover:opacity-90"
           onClick={() => navigate('/')}
         />
-        <Separator orientation="vertical" className="h-6" />
 
-        <nav className="flex items-center space-x-4 lg:space-x-6">
+        <MobileMenu />
+      </div>
+
+      <div className="hidden  h-16 items-center gap-6 px-6 md:flex">
+        <Logo
+          className="size-10 cursor-pointer hover:opacity-90"
+          onClick={() => navigate('/')}
+        />
+
+        <nav className="hidden  items-center space-x-4 md:flex lg:space-x-6">
           <NavLink
             to="/"
             className="flex flex-col items-center justify-center gap-2"
@@ -47,7 +55,7 @@ export function Header() {
           </NavLink>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto hidden items-center gap-2 md:flex">
           <SyncTelegramPresentationDialog />
           <SubscriptionIndicator />
           <ThemeToggle />

@@ -53,11 +53,7 @@ export function Checkout() {
 
   return (
     <div className="flex items-center justify-center">
-      {showLoading ? (
-        <Loader2 className="size-56 animate-spin text-muted-foreground " />
-      ) : (
-        <p>Redirecionando...</p>
-      )}
+      {showLoading ? <Loader2 className="size-32" /> : <p>Redirecionando...</p>}
     </div>
   )
 }

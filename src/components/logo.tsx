@@ -1,20 +1,28 @@
 import { useAtomValue } from 'jotai'
 import { ComponentProps } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 import { currentThemeAtom } from '@/store/theme'
 
-type Props = ComponentProps<'svg'>
+interface Props extends ComponentProps<'svg'> {
+  loading?: boolean
+}
 
-export function Logo(props: Props) {
+export function Logo({ loading, ...props }: Props) {
   const heme = useAtomValue(currentThemeAtom)
 
   const color = heme === 'dark' ? 'white' : 'black'
 
   return (
     <svg
+      {...props}
+      className={twMerge([
+        loading && 'animate-pulse',
+        'delay-0',
+        props.className,
+      ])}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1000.000000 1152.000000"
-      {...props}
     >
       <path
         fill={color}

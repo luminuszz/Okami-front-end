@@ -30,15 +30,20 @@ export function SubscriptionIndicator() {
     <Can I="show" a="subscriber-indicator" passThrough>
       {(can) =>
         can ? (
-          <Badge variant="outline" className="flex items-center space-x-1 py-1">
-            <Crown className="h-5 w-5 text-yellow-400" />
-            <span className="text-sm dark:text-gray-100">Premium</span>
-          </Badge>
+          <div className="flex justify-center">
+            <Badge
+              variant="outline"
+              className="flex items-center space-x-1 py-1"
+            >
+              <Crown className="h-5 w-5 text-yellow-400" />
+              <span className="text-sm dark:text-gray-100">Premium</span>
+            </Badge>
+          </div>
         ) : (
           <Button
             variant="secondary"
             onClick={handleRedirectToCheckout}
-            className="text-muted-foreground"
+            className="text-foreground"
           >
             <Crown className="mr-2 size-4 text-muted-foreground" />
             Assine o premium
