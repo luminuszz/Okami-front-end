@@ -55,6 +55,7 @@ export function CreateWorkFormDialog() {
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
+    reValidateMode: 'onChange',
     defaultValues: {
       chapter: 0,
       imageUrl: '/animes-default.jpg',
