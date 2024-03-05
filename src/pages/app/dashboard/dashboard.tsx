@@ -15,14 +15,14 @@ export function Dashboard() {
       <main className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tighter">Dashboard</h1>
 
-        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 ">
+        <section className="grid gap-4 md:grid-cols-4">
           <TotalWorksCard />
           <UnreadWorksAmountCard />
           <ReadWorksAmountCard />
           <FinishedWorksAmountCard />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-1 xl:grid-cols-9">
+        <section className="grid gap-2 md:grid-cols-2">
           <WorksInfoChart />
           <RecentSyncList />
         </section>

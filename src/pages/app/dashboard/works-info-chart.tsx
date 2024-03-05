@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { BarChart, Loader2 } from 'lucide-react'
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import colors from 'tailwindcss/colors'
 
 import { getUserAnalytics } from '@/api/get-user-analytics'
@@ -11,12 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useMediaQuery } from '@/lib/utils'
 
 export function WorksInfoChart() {
   const { data: analytics, isLoading } = useQuery({
     queryKey: ['user-analytics'],
     queryFn: getUserAnalytics,
   })
+
+  const isTablet = useMediaQuery('md')
 
   const data = [
     {
@@ -41,7 +44,7 @@ export function WorksInfoChart() {
   )
 
   return (
-    <Card className="xs:col-span-1 lg:col-span-5">
+    <Card>
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="text-base font-medium">
@@ -63,56 +66,61 @@ export function WorksInfoChart() {
         )}
 
         {!noHaveValues ? (
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart style={{ fontSize: 12 }}>
-              <Pie
-                dataKey="value"
-                data={data}
-                cx="50%"
-                cy="50%"
-                outerRadius={150}
-                innerRadius={100}
-                strokeWidth={8}
-                labelLine={false}
-                label={({
-                  cx,
-                  cy,
-                  midAngle,
-                  innerRadius,
-                  outerRadius,
-                  index,
-                }) => {
-                  const RADIAN = Math.PI / 180
-                  const radius = 12 + innerRadius + (outerRadius - innerRadius)
-                  const x = cx + radius * Math.cos(-midAngle * RADIAN)
-                  const y = cy + radius * Math.sin(-midAngle * RADIAN)
+          <>
+            <ResponsiveContainer height={400} width="100%">
+              <PieChart style={{ fontSize: 12 }}>
+                <Pie
+                  dataKey="value"
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={isTablet ? 100 : 150}
+                  innerRadius={isTablet ? 80 : 100}
+                  strokeWidth={8}
+                  labelLine={false}
+                  label={({
+                    cx,
+                    cy,
+                    midAngle,
+                    innerRadius,
+                    outerRadius,
+                    index,
+                  }) => {
+                    const RADIAN = Math.PI / 180
+                    const radius =
+                      12 + innerRadius + (outerRadius - innerRadius)
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
-                  const currentCell = data[index]
+                    const currentCell = data[index]
 
-                  return (
-                    <text
-                      x={x}
-                      y={y}
-                      className="fill-muted-foreground text-xs"
-                      textAnchor={x > cx ? 'start' : 'end'}
-                      dominantBaseline="central"
-                    >
-                      {`${currentCell.name}: ${currentCell.value}`}
-                    </text>
-                  )
-                }}
-              >
-                {data.map((data) => (
-                  <Cell
-                    key={data.name}
-                    fill={data.color}
-                    name={data.name}
-                    className="stroke-background hover:opacity-80"
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+                    return isTablet ? null : (
+                      <text
+                        x={x}
+                        y={y}
+                        className="fill-muted-foreground text-xs"
+                        textAnchor={x > cx ? 'start' : 'end'}
+                        dominantBaseline="central"
+                      >
+                        {`${currentCell.name}: ${currentCell.value}`}
+                      </text>
+                    )
+                  }}
+                >
+                  {data.map((data) => (
+                    <Cell
+                      key={data.name}
+                      fill={data.color}
+                      name={data.name}
+                      className="stroke-background hover:opacity-80"
+                    />
+                  ))}
+                </Pie>
+
+                {isTablet && <Legend />}
+              </PieChart>
+            </ResponsiveContainer>
+          </>
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <span className="text-muted-foreground">

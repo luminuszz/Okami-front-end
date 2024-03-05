@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -56,3 +57,33 @@ export const isString = (value: unknown): value is string =>
 
 export const isFileList = (value: unknown): value is FileList =>
   value instanceof FileList
+
+const mediaTypes = {
+  sm: '(min-width: 640px)',
+  md: '(min-width: 768px)',
+  lg: '(min-width: 1024px)',
+  xl: '(min-width: 1280px)',
+  '2xl': '(min-width: 1536px)',
+} as const
+
+export function useMediaQuery(media: keyof typeof mediaTypes) {
+  const [mediaMatch, setMediaMatch] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(mediaTypes[media])
+
+    setMediaMatch(!mediaQuery.matches)
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setMediaMatch(!e.matches)
+    }
+
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [media])
+
+  return mediaMatch
+}

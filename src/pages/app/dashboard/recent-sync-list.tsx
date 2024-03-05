@@ -53,18 +53,25 @@ const SyncItemList = ({ work }: SyncItemProps) => {
           </Avatar>
         </header>
 
-        <div className=" flex flex-col">
-          <p className="max-w-xs truncate text-base font-normal text-foreground">
+        <div
+          className="flex cursor-pointer flex-col"
+          onClick={() => window.open(work.url)}
+        >
+          <span className="break-words text-base font-normal  text-foreground md:max-w-xs">
             {work.title}
-          </p>
-
-          <span className="text-sm font-medium text-muted-foreground">
-            {`${message} - ${formattedUpdateAt}`}
           </span>
+
+          <p className="text-sm font-medium text-muted-foreground">
+            {`${message} - ${formattedUpdateAt}`}
+          </p>
         </div>
       </div>
 
-      <Button variant="ghost" onClick={() => window.open(work.url)}>
+      <Button
+        className="hidden md:flex"
+        variant="ghost"
+        onClick={() => window.open(work.url)}
+      >
         <ArrowRight className="mr-2 size-4" />
         Ir para o site
       </Button>
@@ -92,7 +99,7 @@ export function RecentSyncList() {
   const hasNoWorks = works?.length === 0
 
   return (
-    <Card className="xs:col-span-1 w-full lg:col-span-4">
+    <Card>
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="font-medium text-foreground">
