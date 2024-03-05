@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -35,7 +36,7 @@ const formSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'As senhas não são coincidentes',
-        path: ['password', 'confirmPassword'],
+        path: ['confirmPassword'],
       })
     }
   })
@@ -44,6 +45,8 @@ type FormType = z.infer<typeof formSchema>
 
 export function SignUp() {
   const navigate = useNavigate()
+
+  const [canShowPassword, setCanShowPassword] = useState(false)
 
   const { mutateAsync: registerUserCall } = useMutation({
     mutationKey: ['registerUser'],
@@ -77,6 +80,12 @@ export function SignUp() {
       }
     }
   }
+
+  function handleTogglePasswordShow() {
+    setCanShowPassword((prev) => !prev)
+  }
+
+  const inputPasswordType = canShowPassword ? 'text' : 'password'
 
   return (
     <>
@@ -131,11 +140,27 @@ export function SignUp() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="relative">
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="******" {...field} />
+                      <Input
+                        type={inputPasswordType}
+                        placeholder="******"
+                        {...field}
+                      />
                     </FormControl>
+
+                    {canShowPassword ? (
+                      <EyeOff
+                        onClick={handleTogglePasswordShow}
+                        className="absolute right-2 top-8"
+                      />
+                    ) : (
+                      <Eye
+                        onClick={handleTogglePasswordShow}
+                        className="absolute right-2 top-8"
+                      />
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -148,8 +173,13 @@ export function SignUp() {
                   <FormItem>
                     <FormLabel>Confirmar senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="******" {...field} />
+                      <Input
+                        type={inputPasswordType}
+                        placeholder="******"
+                        {...field}
+                      />
                     </FormControl>
+
                     <FormMessage />
                   </FormItem>
                 )}
