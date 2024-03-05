@@ -38,7 +38,7 @@ export function WorkGallery() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-6">
         {Array.from({ length: 50 }).map((_, index) => (
           <Skeleton className="h-[400px] w-[340px] gap-4 rounded" key={index} />
         ))}
