@@ -40,7 +40,8 @@ const createWorkSchema = z.object({
     .instanceof(FileList)
     .refine(validateFileType, { message: 'Tipo de arquivo invalido' })
     .transform((imageList) => imageList?.length && imageList[0])
-    .nullable(),
+    .nullable()
+    .optional(),
 
   imageUrl: z.string().optional(),
 })
@@ -62,40 +63,40 @@ export function CreateWorkFormDialog() {
     },
   })
 
+  const currentQueryKey = ['works', currentFilter]
+
   const { mutate: createWorkMutation } = useMutation({
     mutationKey: ['create-work'],
     mutationFn: createWork,
     onMutate() {
-      const toastId = toast.loading('Adicionando obra')
-
-      queryClient.setQueryData(
-        ['works', currentFilter].filter(Boolean),
-        (works: WorkType[]) => {
-          const values = form.getValues()
-
-          const newWork = {
-            category: values.category,
-            chapter: values.chapter,
-            createdAt: new Date().toISOString(),
-            id: Math.random().toString(),
-            imageUrl: values.imageUrl ?? '',
-            name: values.name,
-            hasNewChapter: false,
-            imageId: '',
-            isDropped: false,
-            isFinished: false,
-            nextChapterUpdatedAt: null,
-            nextChapter: null,
-            updatedAt: new Date().toISOString(),
-            url: values.url,
-            isStales: true,
-          }
-
-          return [...works, newWork]
-        },
+      const cache = queryClient.getQueryData<WorkType[] | undefined>(
+        currentQueryKey,
       )
 
-      return toastId
+      if (!cache) return
+
+      queryClient.setQueryData(currentQueryKey, () => {
+        const values = form.getValues()
+        const newWork = {
+          category: values.category,
+          chapter: values.chapter,
+          createdAt: new Date().toISOString(),
+          id: Math.random().toString(),
+          imageUrl: values.imageUrl ?? '',
+          name: values.name,
+          hasNewChapter: false,
+          imageId: '',
+          isDropped: false,
+          isFinished: false,
+          nextChapterUpdatedAt: null,
+          nextChapter: null,
+          updatedAt: new Date().toISOString(),
+          url: values.url,
+          isStales: true,
+        }
+
+        return [...cache, newWork]
+      })
     },
 
     onSuccess() {
@@ -116,39 +117,37 @@ export function CreateWorkFormDialog() {
         return params
       })
     },
-    onError() {
+    onError(error) {
+      console.log(error)
       toast.error('Erro ao adicionar obra')
 
-      queryClient.setQueryData(
-        ['works', currentFilter].filter(Boolean),
-        (works: any[]) => {
-          return works.filter((work) => !work.isStales)
-        },
-      )
-    },
-
-    onSettled(_, __, ___, toastId) {
-      console.log('onSettled', toastId)
-      toast.dismiss(toastId)
+      queryClient.setQueryData(['works', currentFilter], (works: any[]) => {
+        return works.filter((work) => !work.isStales)
+      })
     },
   })
 
   async function handleCreateWork({ imageFile, ...values }: CreateWorkForm) {
-    if (!imageFile) {
-      imageFile = await getDefaultImageFile()
+    try {
+      if (!imageFile) {
+        imageFile = await getDefaultImageFile()
+      }
+
+      const compressedImage = await compressImageAsync(imageFile)
+
+      const formData = new FormData()
+
+      formData.set('category', values.category)
+      formData.set('name', values.name)
+      formData.set('chapter', values.chapter.toString())
+      formData.set('url', values.url)
+      formData.set('file', compressedImage)
+
+      createWorkMutation(formData)
+    } catch (error) {
+      console.log(error)
+      toast.error('Houve um erro ao criar a obra')
     }
-
-    const compressedImage = await compressImageAsync(imageFile)
-
-    const formData = new FormData()
-
-    formData.set('category', values.category)
-    formData.set('name', values.name)
-    formData.set('chapter', values.chapter.toString())
-    formData.set('url', values.url)
-    formData.set('file', compressedImage)
-
-    createWorkMutation(formData)
   }
 
   const category = form.watch('category')

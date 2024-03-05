@@ -52,8 +52,10 @@ export function Signin() {
     },
 
     onError(err) {
-      if (err instanceof AxiosError && err.code === '401') {
-        toast.error('Usuário ou senha inválidos!')
+      if (err instanceof AxiosError) {
+        if ([400, 401].includes(err.status!)) {
+          toast.error('Usuário ou senha inválidos!')
+        }
       } else {
         toast.error('Opa, algo deu errado! Tente novamente mais tarde.')
       }

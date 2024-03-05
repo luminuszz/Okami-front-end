@@ -37,7 +37,7 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
     mutationKey: ['markWorkAsRead', work.id],
     onMutate: () => {
       client.setQueryData<WorkType[]>(
-        ['works', params.get('status')].filter(Boolean),
+        ['works', params.get('status')],
         (works) => filter(works, (value) => value.id !== work.id),
       )
     },

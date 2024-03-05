@@ -41,7 +41,7 @@ export function DeleteWorkDialog() {
     mutationFn: deleteWork,
     onMutate: (workId) => {
       queryClient.setQueryData<WorkType[]>(
-        ['works', currentFilter].filter(Boolean),
+        ['works', currentFilter],
         (works) => {
           return filter(works, (value) => value.id !== workId)
         },

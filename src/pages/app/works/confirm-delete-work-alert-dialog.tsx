@@ -31,7 +31,7 @@ export function ConfirmDeleteWorkAlertDialog({
 
   const currentFilter = params.get('status')
 
-  const queryKey = ['works', currentFilter].filter(Boolean)
+  const queryKey = ['works', currentFilter]
 
   const { mutate: deleteWorkMutation } = useMutation({
     mutationFn: deleteWork,
