@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
-import { Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -34,6 +35,7 @@ type FormLogin = z.infer<typeof formLoginSchema>
 
 export function Signin() {
   const navigate = useNavigate()
+  const [canShowPassword, setCanShowPassword] = useState(false)
 
   const form = useForm<FormLogin>({
     resolver: zodResolver(formLoginSchema),
@@ -53,7 +55,7 @@ export function Signin() {
 
     onError(err) {
       if (err instanceof AxiosError) {
-        if ([400, 401].includes(err.status!)) {
+        if ([400, 401].includes(err.response?.status || 0)) {
           toast.error('Usuário ou senha inválidos!')
         }
       } else {
@@ -64,6 +66,10 @@ export function Signin() {
 
   function handleSigin(payload: FormLogin) {
     makeSession(payload)
+  }
+
+  function handleTogglePasswordShow() {
+    setCanShowPassword((prev) => !prev)
   }
 
   return (
@@ -107,15 +113,26 @@ export function Signin() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="relative">
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <Input
-                        type="password"
+                        type={canShowPassword ? 'text' : 'password'}
                         placeholder="*********"
                         {...field}
                       />
                     </FormControl>
+                    {canShowPassword ? (
+                      <EyeOff
+                        onClick={handleTogglePasswordShow}
+                        className="absolute right-2 top-8"
+                      />
+                    ) : (
+                      <Eye
+                        onClick={handleTogglePasswordShow}
+                        className="absolute right-2 top-8"
+                      />
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

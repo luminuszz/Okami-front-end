@@ -116,6 +116,8 @@ export function CreateWorkFormDialog() {
 
         return params
       })
+
+      form.reset()
     },
     onError(error) {
       console.log(error)

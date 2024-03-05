@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
@@ -71,8 +72,8 @@ export function SignUp() {
 
       navigate('/')
     } catch (exception) {
-      if (exception instanceof Error) {
-        if (exception.message === 'User already exists') {
+      if (exception instanceof AxiosError) {
+        if (exception.response?.data?.message === 'User already exists') {
           toast.error('Usuário já existe')
         } else {
           toast.error('Erro ao registrar usuário')
