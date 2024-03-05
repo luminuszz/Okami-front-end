@@ -201,14 +201,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
               )}
             />
             <DialogClose asChild>
-              <Button
-                disabled={
-                  form.formState.isSubmitting ||
-                  !form.formState.isDirty ||
-                  !form.formState.isValid
-                }
-                type="submit"
-              >
+              <Button disabled={form.formState.isSubmitting} type="submit">
                 Salvar
               </Button>
             </DialogClose>

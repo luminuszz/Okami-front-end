@@ -80,11 +80,9 @@ export function MarkWorksAsFinishedDialog() {
       </div>
 
       <DialogFooter>
-        <DialogClose asChild>
-          <Button disabled={!selectOption} onClick={handleMarkFinished}>
-            Finalizar
-          </Button>
-        </DialogClose>
+        <Button disabled={!selectOption} onClick={handleMarkFinished}>
+          Finalizar
+        </Button>
 
         <DialogClose asChild>
           <Button disabled={!selectOption} variant="secondary">

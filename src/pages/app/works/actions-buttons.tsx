@@ -1,7 +1,6 @@
 import { DialogTrigger } from '@radix-ui/react-dialog'
-import { BookmarkCheck, BookmarkPlus, BookmarkX } from 'lucide-react'
+import { BookmarkCheck, BookmarkPlus } from 'lucide-react'
 
-import { DeleteWorkDialog } from '@/components/delete-work-dialog'
 import { MarkWorksAsFinishedDialog } from '@/components/mark-work-as-finished-dialog'
 import { usePermissions } from '@/components/permissions-provider'
 import { QuoteExceedLimit } from '@/components/quote-execeed-limit-dialog'
@@ -34,15 +33,6 @@ export function ActionsButtons() {
           <Button variant="secondary" size="sm">
             <BookmarkCheck className="mr-2 size-4 text-muted-foreground" />
             Finalizar obra
-          </Button>
-        </DialogTrigger>
-      </Dialog>
-      <Dialog>
-        <DeleteWorkDialog />
-        <DialogTrigger asChild>
-          <Button variant="destructive" size="sm">
-            <BookmarkX className="mr-2 size-4 text-muted-foreground" />
-            Excluir obra
           </Button>
         </DialogTrigger>
       </Dialog>

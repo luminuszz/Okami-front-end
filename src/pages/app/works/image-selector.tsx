@@ -32,7 +32,9 @@ export function ImageSelector({ isRound }: ImageSelectorProps) {
 
       if (!parsedFileList.success) return
 
-      setValue('imageFile', parsedFileList.data as any, { shouldDirty: true })
+      setValue('imageFile', parsedFileList.data as any, {
+        shouldDirty: true,
+      })
     }
 
     return () => {

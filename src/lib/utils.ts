@@ -34,6 +34,7 @@ export const acceptFileTypes = [
   'image/jpeg',
   'image/jpg',
   'image/webp',
+  'image/blob',
 ]
 
 export const validateFileType = (data: FileList | File) => {

@@ -98,15 +98,13 @@ export function DeleteWorkDialog() {
       </div>
 
       <DialogFooter>
-        <DialogClose asChild>
-          <Button
-            disabled={!selectOption}
-            variant="destructive"
-            onClick={handleDeleteWork}
-          >
-            Excluir
-          </Button>
-        </DialogClose>
+        <Button
+          disabled={!selectOption}
+          variant="destructive"
+          onClick={handleDeleteWork}
+        >
+          Excluir
+        </Button>
 
         <DialogClose asChild>
           <Button variant="secondary">Cancelar</Button>

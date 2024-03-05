@@ -1,16 +1,18 @@
 import { Dialog } from '@radix-ui/react-dialog'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Book, BookCheck, Clock } from 'lucide-react'
+import { Book, BookCheck, Clock, Trash } from 'lucide-react'
 
 import { WorkType } from '@/api/fetch-for-works-with-filter'
+import { ConfirmDeleteWorkAlertDialog } from '@/components/confirm-delete-work-alert-dialog'
+import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { DialogTrigger } from '@/components/ui/dialog'
 
@@ -44,10 +46,26 @@ export function WorkCard({ work }: WorksCardProps) {
 
   return (
     <Card>
+      <div className="flex justify-end p-2">
+        <AlertDialog>
+          <ConfirmDeleteWorkAlertDialog
+            work={{ name: work.name, workId: work.id }}
+          />
+          <AlertDialogTrigger asChild>
+            <Button
+              className="text-muted-foreground"
+              variant="ghost"
+              size="icon"
+            >
+              <Trash size="20" />
+            </Button>
+          </AlertDialogTrigger>
+        </AlertDialog>
+      </div>
       <CardHeader>
-        <CardDescription className="truncate text-center text-lg">
+        <CardTitle className="truncate text-center text-lg">
           {work.name}
-        </CardDescription>
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col justify-center gap-4 text-center">
         <div className="h-[400px] w-full">
