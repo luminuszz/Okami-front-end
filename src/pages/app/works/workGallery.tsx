@@ -19,7 +19,7 @@ export function WorkGallery() {
 
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter({ status }),
-    queryKey: ['works', status].filter(Boolean),
+    queryKey: ['works', status],
     select: (works) => {
       const filteredWorks = filter(works, (work) =>
         work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
@@ -48,7 +48,7 @@ export function WorkGallery() {
 
   if (hasWorks) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-6">
         {works.map((work) => (
           <WorkCard key={work.id} work={work} />
         ))}

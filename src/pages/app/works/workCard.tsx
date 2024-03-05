@@ -4,7 +4,6 @@ import { ptBR } from 'date-fns/locale'
 import { Book, BookCheck, Clock, Trash } from 'lucide-react'
 
 import { WorkType } from '@/api/fetch-for-works-with-filter'
-import { ConfirmDeleteWorkAlertDialog } from '@/components/confirm-delete-work-alert-dialog'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { DialogTrigger } from '@/components/ui/dialog'
+import { ConfirmDeleteWorkAlertDialog } from '@/pages/app/works/confirm-delete-work-alert-dialog'
 
 import { EditWorkFormDialog } from './edit-work-form'
 import { MarkWorksAsReadDialog } from './mark-work-as-read'
@@ -45,7 +45,7 @@ export function WorkCard({ work }: WorksCardProps) {
     work.category === 'ANIME' ? 'Último episodio ' : 'Último Capitulo '
 
   return (
-    <Card>
+    <Card className="max-w-xl">
       <div className="flex justify-end p-2">
         <AlertDialog>
           <ConfirmDeleteWorkAlertDialog
