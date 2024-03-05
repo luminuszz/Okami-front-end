@@ -65,7 +65,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     },
   })
 
-  const { mutate: uploadImageMutation } = useMutation({
+  const { mutateAsync: uploadImageMutation } = useMutation({
     mutationKey: ['upload-work-image', work.id],
     mutationFn: uploadWorkImage,
     onMutate: (formData) => {
@@ -121,7 +121,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       formData.append('file', compressedImage)
       formData.append('id', work.id)
 
-      uploadImageMutation(formData)
+      await uploadImageMutation(formData)
     }
 
     uploadWorkMutation({
