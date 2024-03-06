@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { getUserDetails } from '@/api/get-user-details'
 import { makeLogout } from '@/api/logout'
+import { queryClient } from '@/lib/react-query'
 
 import { EditProfileDialog } from './profile-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -31,6 +32,11 @@ export function AccountMenu() {
     mutationFn: makeLogout,
     onMutate: () => {
       navigate('/auth/sign-in')
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ['user-details'],
+      })
     },
   })
 

@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AlertCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { getUserDetails, GetUserDetailsType } from '@/api/get-user-details'
+import { updateUserCall } from '@/api/update-user'
 import { uploadAvatarImage } from '@/api/upload-avatar-image'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { isFileList } from '@/lib/utils'
@@ -19,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 
@@ -38,11 +41,26 @@ export function EditProfileDialog() {
     queryFn: getUserDetails,
   })
 
+  function uploadCache(user?: Partial<GetUserDetailsType>) {
+    const cache = queryClient.getQueryData<GetUserDetailsType>(['user-details'])
+
+    queryClient.setQueryData<GetUserDetailsType>(['user-details'], () => {
+      if (!user || !cache) return
+
+      return {
+        ...cache,
+        ...user,
+      }
+    })
+
+    return cache
+  }
+
   const {
     handleSubmit,
     register,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, dirtyFields },
   } = useForm<EditProfileFormType>({
     resolver: zodResolver(editProfileSchema),
     values: {
@@ -60,52 +78,58 @@ export function EditProfileDialog() {
       : ''
     : avatar
 
+  const { mutateAsync: updateUser } = useMutation({
+    mutationFn: updateUserCall,
+    mutationKey: ['update-user-profile'],
+
+    onMutate(newData) {
+      const oldCache = uploadCache({ name: newData.name })
+
+      return oldCache
+    },
+    onError(_, __, oldCache?: GetUserDetailsType) {
+      if (oldCache) {
+        uploadCache(oldCache)
+      }
+    },
+  })
+
   const { mutateAsync: uploadAvatar } = useMutation({
     mutationKey: ['upload-avatar-image', userDetails?.id],
     mutationFn: uploadAvatarImage,
-    onError(_, __, context?: GetUserDetailsType) {
-      if (context) {
-        queryClient.setQueryData<GetUserDetailsType>(['user-details'], context)
+
+    onError(_, __, oldCache?: GetUserDetailsType) {
+      if (oldCache) {
+        uploadCache(oldCache)
       }
     },
 
     onMutate() {
-      const cached = queryClient.getQueryData<GetUserDetailsType>([
-        'user-details',
-      ])
+      const oldCache = uploadCache({
+        avatarImageUrl,
+      })
 
-      if (cached) {
-        queryClient.setQueryData<GetUserDetailsType>(['user-details'], {
-          ...cached,
-          avatarImageUrl: avatarImageUrl ?? '',
-          email: userDetails?.email ?? '',
-          name: userDetails?.name ?? '',
-        })
-      }
-
-      return cached
+      return oldCache
     },
   })
 
-  async function handleEditProfile({
-    avatar,
-    name,
-    email,
-  }: EditProfileFormType) {
+  async function handleEditProfile({ avatar, name }: EditProfileFormType) {
     const formData = new FormData()
 
     try {
-      if (isFileList(avatar)) {
+      if (isFileList(avatar) && dirtyFields.avatar) {
         const compressedImage = await compressImageAsync(avatar[0])
 
         formData.set('avatar', compressedImage)
-        formData.set('name', name)
-        formData.set('email', email ?? '')
 
         await uploadAvatar(formData)
 
-        toast.success('Perfil atualizado com sucesso')
+        toast.success('Imagem do perfil atualizada com sucesso')
       }
+
+      await updateUser({ name })
+
+      toast.success('Perfil atualizado com sucesso')
     } catch (error) {
       toast.error('Erro ao atualizar perfil')
     }
@@ -144,18 +168,27 @@ export function EditProfileDialog() {
           <Label className="text-right" htmlFor="name">
             Nome
           </Label>
-          <Input
-            disabled
-            className="col-span-3"
-            id="name"
-            {...register('name')}
-          />
+          <Input className="col-span-3" id="name" {...register('name')} />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-right" htmlFor="name">
-            Email
-          </Label>
+          <div className="flex gap-2">
+            <Label className="text-right" htmlFor="name">
+              Email
+            </Label>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <AlertCircle className="size-4 text-muted-foreground" />
+              </HoverCardTrigger>
+
+              <HoverCardContent>
+                <p className="text-xs text-muted-foreground">
+                  Temporariamente indisponível
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+
           <Input
             disabled
             className="col-span-3"
