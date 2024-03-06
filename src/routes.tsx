@@ -83,6 +83,26 @@ export const router = createBrowserRouter([
           }
         },
       },
+      {
+        path: '/auth/password/send-reset-email',
+        lazy: async () => {
+          const { SendResetPasswordEmail } = await import(
+            './pages/auth/send-reset-password-email'
+          )
+          return {
+            element: <SendResetPasswordEmail />,
+          }
+        },
+      },
+      {
+        path: '/auth/password/reset-password/:codeToken',
+        lazy: async () => {
+          const { ResetPassword } = await import('./pages/auth/reset-password')
+          return {
+            element: <ResetPassword />,
+          }
+        },
+      },
     ],
   },
 ])

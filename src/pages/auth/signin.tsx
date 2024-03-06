@@ -149,10 +149,27 @@ export function Signin() {
                   'Login'
                 )}
               </Button>
+              <div className="flex flex-col gap-2 text-center">
+                <Button
+                  disabled={isPending}
+                  asChild
+                  type="button"
+                  variant="link"
+                >
+                  <Link to="/auth/sign-up">Não possui uma conta ? </Link>
+                </Button>
 
-              <Button disabled={isPending} asChild type="button" variant="link">
-                <Link to="/auth/sign-up">Não possui uma conta ? </Link>
-              </Button>
+                <Button
+                  disabled={isPending}
+                  asChild
+                  type="button"
+                  variant="link"
+                >
+                  <Link to="/auth/password/send-reset-email">
+                    Esqueceu a senha ?
+                  </Link>
+                </Button>
+              </div>
             </form>
           </Form>
         </div>
