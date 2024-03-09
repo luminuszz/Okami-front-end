@@ -5,6 +5,7 @@ import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
 import { MobileMenu } from './mobile-menu'
 import { NavLink } from './navlink'
+import { Notification } from './notification-indicator'
 import { SubscriptionIndicator } from './subscripion-indicator'
 import { SyncTelegramPresentationDialog } from './sync-telegram-presentation-dialog'
 import { ThemeToggle } from './theme-toogle'
@@ -20,7 +21,10 @@ export function Header() {
           onClick={() => navigate('/')}
         />
 
-        <MobileMenu />
+        <div className="flex gap-4">
+          <Notification />
+          <MobileMenu />
+        </div>
       </div>
 
       <div className="hidden  h-16 items-center gap-6 px-6 md:flex">
@@ -59,6 +63,7 @@ export function Header() {
           <SyncTelegramPresentationDialog />
           <SubscriptionIndicator />
           <ThemeToggle />
+          <Notification />
           <AccountMenu />
         </div>
       </div>
