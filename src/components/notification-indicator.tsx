@@ -19,11 +19,11 @@ import {
 
 function NotificationIndicator() {
   return (
-    <span className="absolute right-0 top-0 size-2 rounded-full bg-muted-foreground"></span>
+    <span className="absolute right-0 top-0 size-2 rounded-full bg-primary"></span>
   )
 }
 interface NotificationItemProps {
-  content?: {
+  content: {
     imageUrl: string
     message: string
     nextChapter: number
@@ -33,14 +33,26 @@ interface NotificationItemProps {
 }
 
 function NotificationItem({ content }: NotificationItemProps) {
-  const formattedUpdateAt = parseDistanceByDate(content?.createdAt ?? '')
+  const formattedUpdateAt = parseDistanceByDate(content.createdAt)
 
   return (
-    <div className="flex max-w-2xl flex-1 flex-col gap-2  p-2">
-      <p className="break-words text-sm text-muted-foreground">
-        Obra atualizada: {content?.name}!
-      </p>
-      <span className="text-xs text-muted-foreground">{formattedUpdateAt}</span>
+    <aside className="w-full max-w-[400px] p-2">
+      <div className="flex  gap-2 ">
+        <div className="relative flex">
+          <span className="absolute size-2 animate-ping rounded-full bg-primary opacity-75" />
+          <span className="size-2 rounded-full bg-primary" />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="break-words text-sm text-muted-foreground">
+            Obra atualizada: {content?.name}!
+          </p>
+
+          <span className="text-xs text-muted-foreground">
+            {formattedUpdateAt}
+          </span>
+        </div>
+      </div>
 
       <div className="flex justify-end">
         <Link
@@ -52,7 +64,7 @@ function NotificationItem({ content }: NotificationItemProps) {
           Ir para obra
         </Link>
       </div>
-    </div>
+    </aside>
   )
 }
 
