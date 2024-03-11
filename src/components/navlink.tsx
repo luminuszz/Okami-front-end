@@ -1,17 +1,20 @@
 import { Link, LinkProps, useLocation } from 'react-router-dom'
 
+import { isString } from '@/lib/utils'
+
 interface NavLinkProps extends LinkProps {
-  to: string
   children: React.ReactNode
 }
 
 export function NavLink({ to, children, ...props }: NavLinkProps) {
   const { pathname } = useLocation()
 
+  const isActive = isString(to) ? pathname === to : to.pathname === pathname
+
   return (
     <Link
-      data-active={pathname === to}
       {...props}
+      data-active={isActive}
       to={to}
       className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground data-[active=true]:text-foreground"
     >

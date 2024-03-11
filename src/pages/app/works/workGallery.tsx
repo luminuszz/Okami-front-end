@@ -21,16 +21,20 @@ export function WorkGallery() {
     queryFn: () => fetchWorksWithFilter({ status }),
     queryKey: ['works', status],
     select: (works) => {
-      const filteredWorks = filter(works, (work) =>
-        work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-      )
+      if (search) {
+        works = filter(works, (work) =>
+          work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+        )
+      }
 
-      return filteredWorks.sort((a, b) =>
-        compareDesc(
+      return works.sort((a, b) => {
+        const compare: [Date, Date] = [
           parseISO(a.nextChapterUpdatedAt ?? a.updatedAt ?? a.createdAt),
           parseISO(b.nextChapterUpdatedAt ?? b.updatedAt ?? b.createdAt),
-        ),
-      )
+        ]
+
+        return compareDesc(...compare)
+      })
     },
   })
 
