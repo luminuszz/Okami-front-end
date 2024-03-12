@@ -1,10 +1,12 @@
 import {} from '@radix-ui/react-dropdown-menu'
-import { useQuery } from '@tanstack/react-query'
-import { some } from 'lodash'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { filter } from 'lodash'
 import { Bell } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { getRecentNotifications } from '@/api/get-recent-notifications'
+import { markNotificationAsRead } from '@/api/mark-notification-as-read'
+import { NotificationType } from '@/api/schemas'
 import { parseDistanceByDate } from '@/lib/utils'
 
 import { Button } from './ui/button'
@@ -29,6 +31,7 @@ interface NotificationItemProps {
     nextChapter: number
     name: string
     createdAt: string
+    readAt: string | null
   }
 }
 
@@ -38,10 +41,12 @@ function NotificationItem({ content }: NotificationItemProps) {
   return (
     <aside className="w-full max-w-[400px] p-2">
       <div className="flex  gap-2 ">
-        <div className="relative flex">
-          <span className="absolute size-2 animate-ping rounded-full bg-primary opacity-75" />
-          <span className="size-2 rounded-full bg-primary" />
-        </div>
+        {!content.readAt && (
+          <div className="relative flex">
+            <span className="absolute size-2 animate-ping rounded-full bg-primary opacity-75" />
+            <span className="size-2 rounded-full bg-primary" />
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <p className="break-words text-sm text-muted-foreground">
@@ -68,18 +73,64 @@ function NotificationItem({ content }: NotificationItemProps) {
   )
 }
 
+interface UpdateNotificationCache {
+  notificationId: string
+  readAt: string | null
+}
+
 export function Notification() {
+  const queryClient = useQueryClient()
+
+  const queryNotificationsKey = ['recent-notifications']
+
+  function updateNotificationCacheStatus({
+    notificationId,
+    readAt,
+  }: UpdateNotificationCache) {
+    queryClient.setQueryData<NotificationType[]>(
+      queryNotificationsKey,
+      (cache) => {
+        if (!cache) return []
+
+        return cache.map((item) =>
+          item.id === notificationId ? { ...item, readAt } : item,
+        )
+      },
+    )
+  }
+
+  const { mutate: markAsRead } = useMutation({
+    mutationKey: ['mark-notification-as-read'],
+    mutationFn: markNotificationAsRead,
+
+    onMutate(notificationId) {
+      updateNotificationCacheStatus({
+        notificationId,
+        readAt: new Date().toISOString(),
+      })
+    },
+
+    onError(_, notificationId) {
+      updateNotificationCacheStatus({
+        notificationId,
+        readAt: null,
+      })
+    },
+  })
+
   const { data: notifications } = useQuery({
-    queryKey: ['recent-notifications'],
+    queryKey: queryNotificationsKey,
     queryFn: getRecentNotifications,
     select: (data) => data?.slice(0, 5),
   })
 
-  const hasNewNotifications = some(notifications, { readAt: null })
+  const hasNotifications = !!notifications?.length
 
-  function markAsRead() {
-    // eslint-disable-next-line no-console
-  }
+  const unreadNotificationsCount = filter(notifications, {
+    readAt: null,
+  }).length
+
+  const hasNewNotifications = !!unreadNotificationsCount
 
   return (
     <DropdownMenu>
@@ -97,15 +148,34 @@ export function Notification() {
       <DropdownMenuContent>
         <DropdownMenuLabel className="flex flex-col gap-2">
           <strong className="text-sm">Notificações</strong>
-          <span className="text-xs text-muted-foreground">{`Você tem ${notifications?.length ?? 0} novas mensagens`}</span>
+          {hasNotifications && (
+            <span className="text-xs text-muted-foreground">{`Você tem ${unreadNotificationsCount} novas mensagens`}</span>
+          )}
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />
 
+        {!hasNotifications && (
+          <DropdownMenuItem>
+            <p className="text-muted-foreground">Nenhuma notificação</p>
+          </DropdownMenuItem>
+        )}
+
         {notifications?.map((item) => (
-          <DropdownMenuItem key={item.id} onClick={markAsRead}>
+          <DropdownMenuItem
+            key={item.id}
+            onClick={() => {
+              if (!item.readAt) {
+                markAsRead(item.id)
+              }
+            }}
+          >
             <NotificationItem
-              content={{ ...item.content, createdAt: item.createdAt }}
+              content={{
+                ...item.content,
+                createdAt: item.createdAt,
+                readAt: item.readAt,
+              }}
             />
           </DropdownMenuItem>
         ))}
