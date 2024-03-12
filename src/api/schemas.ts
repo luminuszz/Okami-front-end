@@ -13,7 +13,7 @@ export const notificationSchema = z.object({
   }),
   createdAt: z.string(),
   id: z.string(),
-  readAt: z.null(),
+  readAt: z.string().nullable(),
 })
 
 export type NotificationType = z.infer<typeof notificationSchema>
