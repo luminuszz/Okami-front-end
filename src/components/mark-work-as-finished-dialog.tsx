@@ -64,7 +64,7 @@ export function MarkWorksAsFinishedDialog() {
   }, [])
 
   return (
-    <DialogContent>
+    <DialogContent className="mx-2">
       <DialogHeader className="gap-2">
         <DialogTitle>Finalizar obra</DialogTitle>
       </DialogHeader>
@@ -79,7 +79,7 @@ export function MarkWorksAsFinishedDialog() {
         />
       </div>
 
-      <DialogFooter>
+      <DialogFooter className="flex-col gap-4 md:flex-row">
         <Button disabled={!selectOption} onClick={handleMarkFinished}>
           Finalizar
         </Button>

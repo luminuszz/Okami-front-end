@@ -158,7 +158,7 @@ export function CreateWorkFormDialog() {
     form.formState.isSubmitting || !form.formState.isValid
 
   return (
-    <DialogContent>
+    <DialogContent className="mx-2">
       <DialogHeader>
         <DialogTitle>Adicionar obra</DialogTitle>
       </DialogHeader>

@@ -74,7 +74,7 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
         />
       </div>
 
-      <DialogFooter>
+      <DialogFooter className="flex-col gap-4 md:flex-row">
         <DialogClose asChild>
           <Button onClick={handleMarkRead}>Marcar</Button>
         </DialogClose>

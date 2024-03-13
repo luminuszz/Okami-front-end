@@ -29,7 +29,7 @@ export function MobileMenu() {
         </DrawerTrigger>
 
         <DrawerContent>
-          <DrawerHeader>
+          <DrawerHeader className="justify-center">
             <div className="flex items-center gap-2">
               <Logo
                 className="size-10 cursor-pointer hover:opacity-90"
@@ -41,8 +41,8 @@ export function MobileMenu() {
 
           <Separator orientation="horizontal" />
 
-          <section className=" p-2 px-4">
-            <nav className="flex flex-col justify-center space-y-4 ">
+          <section className="p-2 px-4">
+            <nav className="flex  flex-col items-center justify-center space-y-4 ">
               <NavLink to="/">Home</NavLink>
               <NavLink to="/works">Obras</NavLink>
               <NavLink to="/scrapping-report">Relatório</NavLink>

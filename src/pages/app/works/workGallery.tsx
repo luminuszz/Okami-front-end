@@ -44,7 +44,7 @@ export function WorkGallery() {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-6">
         {Array.from({ length: 50 }).map((_, index) => (
-          <Skeleton className="h-[400px] w-[340px] gap-4 rounded" key={index} />
+          <Skeleton className="h-[600px] max-w-xl gap-4 rounded" key={index} />
         ))}
       </div>
     )
@@ -62,7 +62,7 @@ export function WorkGallery() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-      <div className="col-span-full text-center text-muted-foreground">
+      <div className="text-muted`-foreground col-span-full text-center">
         Nada por aqui, adicione uma obra para começar
       </div>
     </div>

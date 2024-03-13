@@ -145,7 +145,7 @@ export function Notification() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent>
+      <DropdownMenuContent className="mr-2 w-[300px] sm:w-full">
         <DropdownMenuLabel className="flex flex-col gap-2">
           <strong className="text-sm">Notificações</strong>
           {hasNotifications && (

@@ -107,7 +107,7 @@ export function MobileWorkFilters() {
                 <SelectTrigger className="h-8 w-full  ">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent align="center">
                   <SelectItem value="unread">
                     <span>
                       <div className="flex items-center gap-2">
