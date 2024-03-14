@@ -1,5 +1,3 @@
-const channel = new BroadcastChannel('service-worker-events')
-
 const BroadCastEvents = {
   newChapterAvailable: 'new-chapter-available',
 }
@@ -11,9 +9,15 @@ self.addEventListener('push', function (event) {
     badge: './okami-logo.png',
   }
 
-  channel.postMessage({
-    type: BroadCastEvents.newChapterAvailable,
-    data: options.body,
-  })
+  event.waitUntil(
+    self.clients.matchAll().then(function (clients) {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: BroadCastEvents.newChapterAvailable,
+        })
+      })
+    }),
+  )
+
   event.waitUntil(self.registration.showNotification('Okami Web', options))
 })

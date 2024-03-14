@@ -11,8 +11,6 @@ import { PermissionsProvider } from '../permissions-provider'
 
 serviceWorkNotificationManager.registerServiceWorker()
 
-const channel = new BroadcastChannel('service-worker-events')
-
 export function AppLayout() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -37,18 +35,23 @@ export function AppLayout() {
   }, [navigate])
 
   useEffect(() => {
-    channel.onmessage = ({ data }) => {
-      if (data.type === BroadCastEvents.newChapterAvailable) {
+    const handleMessage = (event: { data: { type: string } }) => {
+      if (event.data.type === BroadCastEvents.newChapterAvailable) {
         queryClient.invalidateQueries({
-          queryKey: ['works', 'unread', 'scrappingReport'],
+          predicate: (query) =>
+            ['works', 'unread', 'scrappingReport'].includes(
+              String(query.queryKey[0]),
+            ),
         })
       }
     }
 
+    navigator.serviceWorker.addEventListener('message', handleMessage)
+
     return () => {
-      channel.onmessage = null
+      navigator.serviceWorker.removeEventListener('message', handleMessage)
     }
-  }, [queryClient])
+  }, [])
 
   return (
     <PermissionsProvider>
