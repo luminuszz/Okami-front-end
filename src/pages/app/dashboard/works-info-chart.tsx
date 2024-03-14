@@ -39,7 +39,7 @@ export function WorksInfoChart() {
     },
   ]
 
-  const noHaveValues = Object.values(analytics ?? {}).some(
+  const noHaveValues = Object.values(analytics ?? {}).every(
     (value) => value === 0,
   )
 
