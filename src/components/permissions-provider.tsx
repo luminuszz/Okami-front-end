@@ -39,6 +39,7 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
     paymentSubscriptionStatus:
       userQuery?.data?.paymentSubscriptionStatus ?? 'INACTIVE',
     trialQuoteLimit: userQuoteQuery?.data?.limit ?? 0,
+    notionDatabaseId: userQuery?.data?.notionDatabaseId,
   } satisfies UserAbilityDetails
 
   const ability = defineAbilityForUser(user)

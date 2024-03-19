@@ -11,6 +11,7 @@ const getUserDetailsSchema = z.object({
   finishedWorksCount: z.number(),
   readingWorksCount: z.number(),
   paymentSubscriptionStatus: z.enum(['ACTIVE', 'INACTIVE']),
+  notionDatabaseId: z.string().optional(),
 })
 
 export type GetUserDetailsType = z.infer<typeof getUserDetailsSchema>
