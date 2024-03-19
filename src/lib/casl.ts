@@ -4,7 +4,7 @@ export interface UserAbilityDetails {
   paymentSubscriptionStatus: 'ACTIVE' | 'INACTIVE'
   trialQuoteLimit: number
   isTelegramSubscriber: boolean
-  notionDatabaseId?: string
+  notionDatabaseId?: string | null
 }
 
 type Actions = 'show' | 'use' | 'create'

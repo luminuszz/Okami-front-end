@@ -153,7 +153,11 @@ export function EditProfileDialog() {
             {avatarImageUrl ? (
               <AvatarImage src={avatarImageUrl} />
             ) : (
-              <AvatarFallback>Algo aqui</AvatarFallback>
+              <AvatarFallback className="flex justify-center px-2">
+                <span className="text-center text-muted-foreground ">
+                  Clique para adicionar uma imagem
+                </span>
+              </AvatarFallback>
             )}
           </Avatar>
           <input
