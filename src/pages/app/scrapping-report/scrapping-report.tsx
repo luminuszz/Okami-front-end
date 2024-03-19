@@ -6,6 +6,8 @@ import { z } from 'zod'
 
 import { fetchScrappingReport } from '@/api/fetch-scraping-report'
 import { Pagination } from '@/components/pagination'
+import { Can } from '@/components/permissions-provider'
+import { SyncNotionButton } from '@/components/sync-notion-button'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
@@ -56,7 +58,13 @@ export function ScrappingReport() {
           </h1>
         </div>
 
-        <ScrappingFilters />
+        <header className="flex justify-between">
+          <ScrappingFilters />
+
+          <Can I="show" a="sync-notion-button">
+            <SyncNotionButton />
+          </Can>
+        </header>
 
         <div className="rounded-sm border">
           <Table>
