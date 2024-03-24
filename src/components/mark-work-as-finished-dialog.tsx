@@ -28,7 +28,7 @@ export function MarkWorksAsFinishedDialog() {
     queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
 
-  const { mutate: markAsFinished } = useMutation({
+  const { mutate: markAsFinished, isPending } = useMutation({
     mutationKey: ['mark-works-at-finished', selectOption],
     mutationFn: markWorksAsFinished,
     onMutate: (workId) => {
@@ -40,6 +40,11 @@ export function MarkWorksAsFinishedDialog() {
     },
     onSuccess: () => {
       toast.success('Obra finalizada com sucesso')
+      queryClient.invalidateQueries({
+        queryKey: ['works', 'finished'],
+      })
+
+      setSelectOption('')
     },
     onError: () => {
       toast.error('Erro ao finalizar obra')
@@ -80,9 +85,14 @@ export function MarkWorksAsFinishedDialog() {
       </div>
 
       <DialogFooter className="flex-col gap-4 md:flex-row">
-        <Button disabled={!selectOption} onClick={handleMarkFinished}>
-          Finalizar
-        </Button>
+        <DialogClose asChild>
+          <Button
+            disabled={!selectOption || isPending}
+            onClick={handleMarkFinished}
+          >
+            Finalizar
+          </Button>
+        </DialogClose>
 
         <DialogClose asChild>
           <Button disabled={!selectOption} variant="secondary">
