@@ -25,6 +25,7 @@ export const workSchema = z.object({
   nextChapter: z.number().nullable(),
   isDropped: z.boolean(),
   createdAt: z.string(),
+  userId: z.string(),
 })
 
 const fetchWorksWithFilterOutputSchema = z.array(workSchema)

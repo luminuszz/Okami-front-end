@@ -4,6 +4,7 @@ import { ptBR } from 'date-fns/locale'
 import { Book, BookCheck, Clock, Trash } from 'lucide-react'
 
 import { WorkType } from '@/api/fetch-for-works-with-filter'
+import { Can } from '@/components/permissions-provider.tsx'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -132,9 +133,11 @@ export function WorkCard({ work }: WorksCardProps) {
             }}
           />
 
-          <DialogTrigger asChild>
-            <Button variant="outline">Editar</Button>
-          </DialogTrigger>
+          <Can I="edit" this={{ ...work, kind: 'work' }}>
+            <DialogTrigger asChild>
+              <Button variant="outline">Editar</Button>
+            </DialogTrigger>
+          </Can>
         </Dialog>
 
         {work.isFinished && (

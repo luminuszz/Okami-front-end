@@ -1,18 +1,17 @@
 import { createContextualCan } from '@casl/react'
 import { useQuery } from '@tanstack/react-query'
-import { createContext, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 
+import { AppAbilities, defineAbilityFrom } from '@/acl/abilities.ts'
+import { UserRoles } from '@/acl/roles.ts'
+import { UserSubject } from '@/acl/user-subject.ts'
 import { checkTelegramIntegration } from '@/api/check-telegram-integration'
 import { getUserDetails } from '@/api/get-user-details'
 import { getUserTrialQuote } from '@/api/get-user-trial-quote'
-import defineAbilityForUser, {
-  UserAbilities,
-  UserAbilityDetails,
-} from '@/lib/casl'
 
-export const AbilityContext = createContext<UserAbilities>({} as UserAbilities)
+export const AbilityContext = createContext<AppAbilities>({} as AppAbilities)
 
-export const Can = createContextualCan<UserAbilities>(AbilityContext.Consumer)
+export const Can = createContextualCan<AppAbilities>(AbilityContext.Consumer)
 
 interface PermissionsProviderProps {
   children: React.ReactNode
@@ -39,20 +38,24 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
     paymentSubscriptionStatus:
       userQuery?.data?.paymentSubscriptionStatus ?? 'INACTIVE',
     trialQuoteLimit: userQuoteQuery?.data?.limit ?? 0,
-    notionDatabaseId: userQuery?.data?.notionDatabaseId,
-  } satisfies UserAbilityDetails
+    notionDatabaseId: userQuery?.data?.notionDatabaseId ?? null,
+    kind: 'User',
+    id: userQuery?.data?.id ?? '',
+  } satisfies UserSubject
 
-  const ability = defineAbilityForUser(user)
+  const role: UserRoles = user.paymentSubscriptionStatus
+    ? 'SUBSCRIBED_USER'
+    : 'UNSUBSCRIBED_USER'
+
+  const ability = defineAbilityFrom(user, role)
 
   return (
-    <AbilityContext.Provider value={ability as UserAbilities}>
+    <AbilityContext.Provider value={ability as AppAbilities}>
       {children}
     </AbilityContext.Provider>
   )
 }
 
 export function usePermissions() {
-  const context = useContext(AbilityContext)
-
-  return context
+  return useContext(AbilityContext)
 }
