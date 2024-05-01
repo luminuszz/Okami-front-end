@@ -2,9 +2,11 @@ import { Dialog } from '@radix-ui/react-dialog'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Book, BookCheck, Clock, Trash } from 'lucide-react'
+import colors from 'tailwindcss/colors'
 
 import { WorkType } from '@/api/fetch-for-works-with-filter'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -95,6 +97,24 @@ export function WorkCard({ work }: WorksCardProps) {
             {`${lastChapter} ${work.chapter}`}
           </Button>
         )}
+
+        <div className="gap-2">
+          {work.tags?.map((tag) => {
+            const color =
+              colors[tag.color as keyof typeof colors] ?? colors.gray
+
+            return (
+              <Badge
+                className="text-gray-100"
+                style={{ background: color[600] }}
+                variant="outline"
+                key={tag.id}
+              >
+                {tag.name}
+              </Badge>
+            )
+          })}
+        </div>
 
         <div className="flex items-center justify-center gap-1">
           <Clock className="size-5" />
