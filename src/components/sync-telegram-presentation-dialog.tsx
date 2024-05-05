@@ -1,4 +1,5 @@
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { Can } from './permissions-provider'
 import { TelegramIcon } from './telegram-icon'
@@ -6,11 +7,17 @@ import { Button } from './ui/button'
 import { DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 export function SyncTelegramPresentationDialog() {
+  const isLoading =
+    useQueryClient().getQueryState(['get-telegram-integration'])?.status ===
+    'pending'
+
   function handleCreateTelegramBotLink() {
     const link = `https://t.me/NotificationChapterBot?start`
 
     window.open(link, '_blank')
   }
+
+  if (isLoading) return null
 
   return (
     <Can I="show" a="telegram-button">

@@ -10,7 +10,7 @@ import { Dialog } from '@/components/ui/dialog'
 import { CreateWorkFormDialog } from './create-work-form-dialog'
 
 export function ActionsButtons() {
-  const permissions = usePermissions()
+  const { permissions } = usePermissions()
 
   const canShowPaymentDialog = permissions.cannot('create', 'work')
 

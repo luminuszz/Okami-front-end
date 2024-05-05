@@ -1,5 +1,5 @@
 import { createContextualCan } from '@casl/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useContext } from 'react'
 
 import { checkTelegramIntegration } from '@/api/check-telegram-integration'
@@ -52,7 +52,16 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
 }
 
 export function usePermissions() {
+  const queryClient = useQueryClient()
+
+  const isLoadingPermissions = [
+    queryClient.getQueryState(['user-details'])?.status === 'pending',
+    queryClient.getQueryState(['get-telegram-integration'])?.status ===
+      'pending',
+    queryClient.getQueryState(['user-quote'])?.status === 'pending',
+  ].some(Boolean)
+
   const context = useContext(AbilityContext)
 
-  return context
+  return { permissions: context, isLoadingPermissions }
 }
