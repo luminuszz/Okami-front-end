@@ -70,13 +70,13 @@ export function WorkCard({ work }: WorksCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col justify-center gap-4 text-center">
-        <div className="h-[400px] w-full">
+        <object data={work.imageUrl ?? ''} className="h-[400px] w-full">
           <img
             className="size-full rounded bg-cover"
-            src={work.imageUrl ?? ''}
+            src="/okami-logo.png"
             alt={work.name}
           />
-        </div>
+        </object>
 
         {work.hasNewChapter ? (
           <Button

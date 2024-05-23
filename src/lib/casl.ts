@@ -7,9 +7,9 @@ export interface UserAbilityDetails {
   notionDatabaseId?: string | null
 }
 
-type Actions = 'show' | 'use' | 'create'
+export type Actions = 'show' | 'use' | 'create'
 
-type Subject =
+export type Subject =
   | 'telegram-button'
   | 'subscriber-indicator'
   | 'work'
