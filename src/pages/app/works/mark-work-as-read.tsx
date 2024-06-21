@@ -1,12 +1,14 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { filter } from 'lodash'
+import { filter, find } from 'lodash'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { WorkType } from '@/api/fetch-for-works-with-filter'
+import { markNotificationAsRead } from '@/api/mark-notification-as-read.ts'
 import { markWorkAsRead } from '@/api/mark-work-as-read'
+import { NotificationType } from '@/api/schemas.ts'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -46,15 +48,45 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
     },
   })
 
+  const { mutate: markNotificationAsReadCall } = useMutation({
+    mutationFn: markNotificationAsRead,
+    mutationKey: ['markNotificationWorkAsRead', work.id],
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ['recent-notifications'] })
+    },
+  })
+
   const message = work.type === 'ANIME' ? 'Episodio' : 'Capitulo'
 
   async function handleMarkRead() {
     try {
       await mutateAsync({ chapter: parseInt(inputValue), workId: work.id })
 
+      markWorkNotification()
+
       toast.success('Obra atualizada com sucesso')
     } catch (e) {
       toast.error('Erro ao atualizar obra')
+    }
+  }
+
+  function markWorkNotification() {
+    const currentNotifications = client.getQueryData<NotificationType[]>([
+      'recent-notifications',
+    ])
+
+    if (currentNotifications?.length) {
+      const notification = find(currentNotifications, ({ content, readAt }) => {
+        return (
+          content.nextChapter >= Number(inputValue) &&
+          content.name === work.name &&
+          readAt === null
+        )
+      })
+
+      if (notification) {
+        markNotificationAsReadCall(notification.id)
+      }
     }
   }
 

@@ -1,4 +1,3 @@
-import {} from '@radix-ui/react-dropdown-menu'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { filter } from 'lodash'
 import { Bell } from 'lucide-react'
@@ -38,6 +37,8 @@ interface NotificationItemProps {
 function NotificationItem({ content }: NotificationItemProps) {
   const formattedUpdateAt = parseDistanceByDate(content.createdAt)
 
+  const isChapter = content.message.normalize('NFC').includes('Capítulo')
+
   return (
     <aside className="w-full max-w-[400px] p-2">
       <div className="flex  gap-2 ">
@@ -52,6 +53,9 @@ function NotificationItem({ content }: NotificationItemProps) {
           <p className="break-words text-sm text-muted-foreground">
             Obra atualizada: {content?.name}!
           </p>
+          <span className="fon text-xs font-medium text-muted-foreground">
+            {`${isChapter ? 'Capitulo' : 'Episodio'} ${content.nextChapter}`}
+          </span>
 
           <span className="text-xs text-muted-foreground">
             {formattedUpdateAt}
