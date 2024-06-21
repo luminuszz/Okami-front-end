@@ -29,7 +29,7 @@ export function ScrappingReport() {
 
   const page = z.coerce
     .number()
-    .transform((value) => value - 1)
+    .transform((value) => (value > 0 ? value - 1 : 0))
     .parse(query.get('page') ?? '1')
 
   const filter = (query.get('filter') as 'PENDING' | 'SUCCESS' | 'FAILED') ?? ''
