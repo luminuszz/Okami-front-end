@@ -82,7 +82,7 @@ interface UpdateNotificationCache {
   readAt: string | null
 }
 
-export function Notification() {
+export function NotificationTab() {
   const queryClient = useQueryClient()
 
   const queryNotificationsKey = ['recent-notifications']

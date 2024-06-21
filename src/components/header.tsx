@@ -5,7 +5,7 @@ import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
 import { MobileMenu } from './mobile-menu'
 import { NavLink } from './navlink'
-import { Notification } from './notification-indicator'
+import { NotificationTab } from './notification-indicator'
 import { SubscriptionIndicator } from './subscripion-indicator'
 import { SyncTelegramPresentationDialog } from './sync-telegram-presentation-dialog'
 import { ThemeToggle } from './theme-toogle'
@@ -22,7 +22,7 @@ export function Header() {
         />
 
         <div className="flex gap-4">
-          <Notification />
+          <NotificationTab />
           <MobileMenu />
         </div>
       </div>
@@ -66,7 +66,7 @@ export function Header() {
           <SyncTelegramPresentationDialog />
           <SubscriptionIndicator />
           <ThemeToggle />
-          <Notification />
+          <NotificationTab />
           <AccountMenu />
         </div>
       </div>

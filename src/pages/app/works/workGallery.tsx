@@ -6,6 +6,7 @@ import { useSearchParams } from 'react-router-dom'
 import {
   fetchWorksWithFilter,
   FilterStatus,
+  WorkType,
 } from '@/api/fetch-for-works-with-filter'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -20,23 +21,25 @@ export function WorkGallery() {
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter({ status }),
     queryKey: ['works', status],
-    select: (works) => {
-      if (search) {
-        works = filter(works, (work) =>
-          work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-        )
-      }
-
-      return works.sort((a, b) => {
-        const compare: [Date, Date] = [
-          parseISO(a.nextChapterUpdatedAt ?? a.updatedAt ?? a.createdAt),
-          parseISO(b.nextChapterUpdatedAt ?? b.updatedAt ?? b.createdAt),
-        ]
-
-        return compareDesc(...compare)
-      })
-    },
+    select: filterAndSortWorks,
   })
+
+  function filterAndSortWorks(works: WorkType[]) {
+    if (search) {
+      works = filter(works, (work) =>
+        work.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+      )
+    }
+
+    return works.sort((a, b) => {
+      const compare: [Date, Date] = [
+        parseISO(a.nextChapterUpdatedAt ?? a.updatedAt ?? a.createdAt),
+        parseISO(b.nextChapterUpdatedAt ?? b.updatedAt ?? b.createdAt),
+      ]
+
+      return compareDesc(...compare)
+    })
+  }
 
   const hasWorks = works && works.length > 0
 
@@ -50,21 +53,21 @@ export function WorkGallery() {
     )
   }
 
-  if (hasWorks) {
+  if (!hasWorks) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-6">
-        {works.map((work) => (
-          <WorkCard key={work.id} work={work} />
-        ))}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+        <div className="text-muted`-foreground col-span-full text-center">
+          Nada por aqui, adicione uma obra para começar
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-      <div className="text-muted`-foreground col-span-full text-center">
-        Nada por aqui, adicione uma obra para começar
-      </div>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-6">
+      {works.map((work) => (
+        <WorkCard key={work.id} work={work} />
+      ))}
     </div>
   )
 }

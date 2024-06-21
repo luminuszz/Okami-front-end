@@ -5,7 +5,6 @@ import { toast } from 'sonner'
 
 import { deleteWork } from '@/api/delete-work'
 import { WorkType } from '@/api/fetch-for-works-with-filter'
-
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -14,7 +13,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../../../components/ui/alert-dialog'
+} from '@/components/ui/alert-dialog.tsx'
 
 export interface ConfirmDeleteWorkAlertDialogProps {
   work: {
