@@ -1,5 +1,6 @@
 import { createContextualCan } from '@casl/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import type { ReactNode } from 'react'
 import { createContext, useContext } from 'react'
 
 import { checkTelegramIntegration } from '@/api/check-telegram-integration'
@@ -15,7 +16,7 @@ export const AbilityContext = createContext<UserAbilities>({} as UserAbilities)
 export const Can = createContextualCan<UserAbilities>(AbilityContext.Consumer)
 
 interface PermissionsProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function PermissionsProvider({ children }: PermissionsProviderProps) {

@@ -9,9 +9,9 @@ interface Props extends ComponentProps<'svg'> {
 }
 
 export function Logo({ loading, ...props }: Props) {
-  const heme = useAtomValue(currentThemeAtom)
+  const theme = useAtomValue(currentThemeAtom)
 
-  const color = heme === 'dark' ? 'white' : 'black'
+  const color = theme === 'dark' ? 'white' : 'black'
 
   return (
     <svg
