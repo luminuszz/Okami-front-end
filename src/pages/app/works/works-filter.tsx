@@ -1,9 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
 import { Book, BookCheck, BookMarked, Search, X } from 'lucide-react'
-import { Controller, useForm } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
-import { z } from 'zod'
+import { Controller } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,50 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useFilters } from '@/pages/app/works/use-filters.ts'
 
 import { MobileWorkFilters } from './mobile-works-filter'
 
-const filterFormSchema = z.object({
-  name: z.string().optional().nullable(),
-  status: z.string().optional().nullable(),
-})
-
-type FilterForm = z.infer<typeof filterFormSchema>
-
 export function WorksFilter() {
-  const queryClient = useQueryClient()
-
-  const [filter, setFilter] = useSearchParams()
-
-  const { handleSubmit, register, control, reset } = useForm<FilterForm>({
-    values: {
-      name: filter.get('name') ?? null,
-      status: filter.get('status') ?? null,
-    },
-    resolver: zodResolver(filterFormSchema),
-  })
-
-  function handleSetFilter(data: FilterForm) {
-    setFilter((filter) => {
-      filter.set('name', data.name ?? '')
-      filter.set('status', data.status ?? '')
-
-      return filter
-    })
-  }
-
-  function handleResetFilter() {
-    setFilter((filter) => {
-      reset()
-
-      filter.delete('name')
-      filter.delete('status')
-
-      queryClient.invalidateQueries({ queryKey: ['works'] })
-
-      return filter
-    })
-  }
+  const {
+    handleSetFilter,
+    handleResetFilter,
+    handleSubmit,
+    control,
+    register,
+  } = useFilters()
 
   return (
     <>
