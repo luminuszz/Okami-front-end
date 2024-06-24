@@ -16,7 +16,7 @@ export function ScrappingFilters() {
   const currentFilter = query.get('filter')
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-1 sm:flex-row sm:gap-4">
       <Button
         onClick={() => handleSetFilter('PENDING')}
         variant={currentFilter === 'PENDING' ? 'secondary' : 'ghost'}

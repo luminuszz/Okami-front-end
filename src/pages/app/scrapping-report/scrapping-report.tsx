@@ -52,13 +52,13 @@ export function ScrappingReport() {
       <Helmet title="Sincronizações" />
 
       <div className="flex  flex-col gap-4">
-        <div className="flex justify-between">
-          <h1 className="text-3xl font-bold tracking-tighter">
+        <div className="flex justify-center md:justify-start">
+          <h1 className="text-center text-3xl font-bold tracking-tighter md:text-left">
             Sincronizações
           </h1>
         </div>
 
-        <header className="flex justify-between">
+        <header className="flex  flex-col-reverse justify-center  md:flex-row md:justify-between">
           <ScrappingFilters />
 
           <Can I="show" a="sync-notion-button">
@@ -158,7 +158,7 @@ export function ScrappingReport() {
           </Table>
         </div>
 
-        <div className="px- flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between md:flex-row">
           <div className="flex text-sm font-medium">
             Total de {totalOfWorks} sincronizações
           </div>

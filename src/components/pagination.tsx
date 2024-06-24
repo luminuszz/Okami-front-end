@@ -50,18 +50,21 @@ export function Pagination({ totalOfPages, currentPage }: PaginationProps) {
             />
           )}
         </PaginationItem>
-        {listOfPages.map((value) => (
-          <PaginationItem key={value} className="cursor-pointer">
-            <PaginationLink
-              isActive={value === currentPage}
-              onClick={() => {
-                handlePageChange(value)
-              }}
-            >
-              {value + 1}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
+
+        <div className="hidden md:visible">
+          {listOfPages.map((value) => (
+            <PaginationItem key={value} className="cursor-pointer">
+              <PaginationLink
+                isActive={value === currentPage}
+                onClick={() => {
+                  handlePageChange(value)
+                }}
+              >
+                {value + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+        </div>
 
         {!listOfPages.includes(totalOfPages - 1) && <PaginationEllipsis />}
 
