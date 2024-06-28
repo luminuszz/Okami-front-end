@@ -12,7 +12,7 @@ interface ResyncWorkButtonProps {
   isPending: boolean
 }
 
-export function ResyncWorkButton({ workId, isPending }: ResyncWorkButtonProps) {
+export function RsyncWorkButton({ workId, isPending }: ResyncWorkButtonProps) {
   const queryClient = useQueryClient()
 
   const [query] = useSearchParams()

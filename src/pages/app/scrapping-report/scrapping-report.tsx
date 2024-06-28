@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { fetchScrappingReport } from '@/api/fetch-scraping-report'
 import { Pagination } from '@/components/pagination'
 import { Can } from '@/components/permissions-provider'
+import { RsyncAllWorksButton } from '@/components/rsync-all-works-button.tsx'
 import { SyncNotionButton } from '@/components/sync-notion-button'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
@@ -20,7 +21,7 @@ import {
 } from '@/components/ui/table'
 
 import { EmptyLoadingTable } from './empty-loading-table'
-import { ResyncWorkButton } from './re-sync-work-buttont'
+import { RsyncWorkButton } from './rsync-work-button.tsx'
 import { ScrappingFilters } from './scrapping-filter'
 import { WorkDetails } from './work-details'
 
@@ -61,9 +62,15 @@ export function ScrappingReport() {
         <header className="flex  flex-col-reverse justify-center  md:flex-row md:justify-between">
           <ScrappingFilters />
 
-          <Can I="show" a="sync-notion-button">
-            <SyncNotionButton />
-          </Can>
+          <div className="flex items-center justify-center gap-2">
+            <Can I="show" a="sync-notion-button">
+              <SyncNotionButton />
+            </Can>
+
+            <Can I="show" a="rsync-works-button">
+              <RsyncAllWorksButton />
+            </Can>
+          </div>
         </header>
 
         <div className="rounded-sm border">
@@ -147,7 +154,7 @@ export function ScrappingReport() {
                   </TableCell>
 
                   <TableCell>
-                    <ResyncWorkButton
+                    <RsyncWorkButton
                       workId={work.id}
                       isPending={work.refreshStatus === 'Pendente'}
                     />

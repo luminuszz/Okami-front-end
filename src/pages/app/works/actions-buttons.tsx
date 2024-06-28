@@ -10,7 +10,7 @@ import { Dialog } from '@/components/ui/dialog'
 import { CreateWorkFormDialog } from './create-work-form-dialog'
 
 export function ActionsButtons() {
-  const { permissions, isLoadingPermissions } = usePermissions()
+  const { permissions } = usePermissions()
 
   const canCreateWork = permissions.can('create', 'work')
 
@@ -20,7 +20,7 @@ export function ActionsButtons() {
         {canCreateWork ? <CreateWorkFormDialog /> : <QuoteExceedLimit />}
 
         <DialogTrigger asChild>
-          <Button size="sm" disabled={isLoadingPermissions}>
+          <Button size="sm">
             <BookmarkPlus className="mr-2 size-4" />
             Adicionar obra
           </Button>

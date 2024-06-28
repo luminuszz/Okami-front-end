@@ -14,6 +14,7 @@ export type Subject =
   | 'subscriber-indicator'
   | 'work'
   | 'sync-notion-button'
+  | 'rsync-works-button'
 
 export type UserAbilities = PureAbility<[Actions, Subject]>
 
@@ -38,6 +39,10 @@ export default function defineAbilityForUser(user: UserAbilityDetails) {
 
   if (user?.notionDatabaseId) {
     ability.can('show', 'sync-notion-button')
+  }
+
+  if (user.paymentSubscriptionStatus === 'ACTIVE') {
+    ability.can('show', 'rsync-works-button')
   }
 
   return ability.build()
