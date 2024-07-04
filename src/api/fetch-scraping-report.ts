@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { okamiHttpGateway } from '@/lib/axios'
-import { parseDistanceByDate } from '@/lib/utils'
+import { parseDistanceByDate } from '@/utils/helpers.ts'
 
 import { workSchema } from './fetch-for-works-with-filter'
 
@@ -34,9 +34,11 @@ const scrappingReportSchema = z.object({
 
 export type ScrapingReportResponse = z.infer<typeof scrappingReportSchema>
 
+export type ScrapingFilterStatus = 'PENDING' | 'SUCCESS' | 'FAILED'
+
 interface Params {
   page: number
-  filter?: 'PENDING' | 'SUCCESS' | 'FAILED'
+  filter?: ScrapingFilterStatus
 }
 
 export async function fetchScrappingReport({ page, filter }: Params) {

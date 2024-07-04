@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { validateFileType } from '@/lib/utils'
+import { validateFileType } from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 

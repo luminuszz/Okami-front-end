@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { useMediaQuery } from '@/lib/utils'
+import { useMediaQuery } from '@/utils/helpers.ts'
 
 export function WorksInfoChart() {
   const { data: analytics, isLoading } = useQuery({

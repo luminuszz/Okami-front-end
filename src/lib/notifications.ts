@@ -3,7 +3,7 @@ import { registerSubscription } from '@/api/register-subscription'
 
 export class ServiceWorkerNotification {
   constructor() {
-    this.requestNotifications()
+    void this.requestNotifications()
   }
 
   async requestNotifications() {

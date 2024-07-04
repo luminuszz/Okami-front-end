@@ -27,7 +27,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { getDefaultImageFile, validateFileType } from '@/lib/utils'
+import { getDefaultImageFile, validateFileType } from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 

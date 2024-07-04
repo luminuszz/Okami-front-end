@@ -52,7 +52,7 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
     mutationFn: markNotificationAsRead,
     mutationKey: ['markNotificationWorkAsRead', work.id],
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: ['recent-notifications'] })
+      void client.invalidateQueries({ queryKey: ['recent-notifications'] })
     },
   })
 
