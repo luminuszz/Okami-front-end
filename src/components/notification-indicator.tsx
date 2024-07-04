@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { getRecentNotifications } from '@/api/get-recent-notifications'
 import { markNotificationAsRead } from '@/api/mark-notification-as-read'
 import { NotificationType } from '@/api/schemas'
-import { parseDistanceByDate } from '@/lib/utils'
+import { parseDistanceByDate } from '@/utils/helpers.ts'
 
 import { Button } from './ui/button'
 import {

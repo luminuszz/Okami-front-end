@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { RefreshCcw, Search } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
-import { z } from 'zod'
 
-import { fetchScrappingReport } from '@/api/fetch-scraping-report'
+import {
+  fetchScrappingReport,
+  ScrapingFilterStatus,
+} from '@/api/fetch-scraping-report'
 import { Pagination } from '@/components/pagination'
 import { Can } from '@/components/permissions-provider'
 import { RsyncAllWorksButton } from '@/components/rsync-all-works-button.tsx'
@@ -19,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { parsePageQuery } from '@/utils/helpers.ts'
 
 import { EmptyLoadingTable } from './empty-loading-table'
 import { RsyncWorkButton } from './rsync-work-button.tsx'
@@ -28,12 +31,8 @@ import { WorkDetails } from './work-details'
 export function ScrappingReport() {
   const [query] = useSearchParams()
 
-  const page = z.coerce
-    .number()
-    .transform((value) => (value > 0 ? value - 1 : 0))
-    .parse(query.get('page') ?? '1')
-
-  const filter = (query.get('filter') as 'PENDING' | 'SUCCESS' | 'FAILED') ?? ''
+  const page = parsePageQuery(query.get('page'))
+  const filter = (query.get('filter') as ScrapingFilterStatus) ?? ''
 
   const {
     data: works,
@@ -43,10 +42,9 @@ export function ScrappingReport() {
   } = useQuery({
     queryKey: ['scrappingReport', page, filter],
     queryFn: () => fetchScrappingReport({ page, filter }),
-    refetchOnWindowFocus: true,
   })
 
-  const totalOfWorks = (works?.totalOfPages ?? 10) * 10
+  const totalOfWorks = works?.totalOfPages ? works.totalOfPages * 10 : 0
 
   return (
     <>

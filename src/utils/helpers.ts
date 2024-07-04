@@ -3,6 +3,7 @@ import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -86,4 +87,11 @@ export function useMediaQuery(media: keyof typeof mediaTypes) {
   }, [media])
 
   return mediaMatch
+}
+
+export function parsePageQuery(value: unknown = '1') {
+  return z
+    .number()
+    .transform((value) => (value > 0 ? value - 1 : 0))
+    .parse(value)
 }

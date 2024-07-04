@@ -39,7 +39,7 @@ export function useFilters() {
       filter.delete('name')
       filter.delete('status')
 
-      queryClient.invalidateQueries({ queryKey: ['works'] })
+      void queryClient.invalidateQueries({ queryKey: ['works'] })
 
       return filter
     })

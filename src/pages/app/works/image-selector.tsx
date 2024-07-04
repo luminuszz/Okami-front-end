@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { z } from 'zod'
 
-import { validateFileType } from '@/lib/utils'
 import { EditWorkForm } from '@/pages/app/works/edit-work-form'
+import { validateFileType } from '@/utils/helpers.ts'
 
 import { Input } from '../../../components/ui/input'
 

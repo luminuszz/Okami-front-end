@@ -1,6 +1,6 @@
 import { Link, LinkProps, useLocation } from 'react-router-dom'
 
-import { isString } from '@/lib/utils'
+import { isString } from '@/utils/helpers.ts'
 
 interface NavLinkProps extends LinkProps {
   children: React.ReactNode

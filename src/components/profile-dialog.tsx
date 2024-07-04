@@ -9,7 +9,7 @@ import { getUserDetails, GetUserDetailsType } from '@/api/get-user-details'
 import { updateUserCall } from '@/api/update-user'
 import { uploadAvatarImage } from '@/api/upload-avatar-image'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { isFileList } from '@/lib/utils'
+import { isFileList } from '@/utils/helpers.ts'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'

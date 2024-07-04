@@ -1,11 +1,12 @@
 import { useSearchParams } from 'react-router-dom'
 
+import { ScrapingFilterStatus } from '@/api/fetch-scraping-report.ts'
 import { Button } from '@/components/ui/button'
 
 export function ScrappingFilters() {
   const [query, setQuery] = useSearchParams()
 
-  function handleSetFilter(filter: string) {
+  function handleSetFilter(filter: ScrapingFilterStatus) {
     setQuery((query) => {
       query.set('filter', filter !== query.get('filter') ? filter : '')
 

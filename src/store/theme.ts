@@ -1,6 +1,6 @@
 import { atomWithStorage } from 'jotai/utils'
 
-import { LocalStorageKeys } from '@/lib/utils'
+import { LocalStorageKeys } from '@/utils/helpers.ts'
 
 type Theme = 'dark' | 'light'
 
