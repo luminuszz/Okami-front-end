@@ -90,7 +90,7 @@ export function useMediaQuery(media: keyof typeof mediaTypes) {
 }
 
 export function parsePageQuery(value: unknown = '1') {
-  return z
+  return z.coerce
     .number()
     .transform((value) => (value > 0 ? value - 1 : 0))
     .parse(value)
