@@ -6,10 +6,8 @@ import { createContext, useContext } from 'react'
 import { checkTelegramIntegration } from '@/api/check-telegram-integration'
 import { getUserDetails } from '@/api/get-user-details'
 import { getUserTrialQuote } from '@/api/get-user-trial-quote'
-import defineAbilityForUser, {
-  UserAbilities,
-  UserAbilityDetails,
-} from '@/lib/casl'
+import { UserAbilities, UserAbilityDetails } from '@/app/permissions'
+import defineAbilityForUser from '@/lib/casl'
 
 export const AbilityContext = createContext<UserAbilities>({} as UserAbilities)
 
@@ -41,6 +39,7 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
       userQuery?.data?.paymentSubscriptionStatus ?? 'INACTIVE',
     trialQuoteLimit: userQuoteQuery?.data?.limit ?? 0,
     notionDatabaseId: userQuery?.data?.notionDatabaseId,
+    role: userQuery?.data?.role || 'USER',
   } satisfies UserAbilityDetails
 
   const ability = defineAbilityForUser(user)

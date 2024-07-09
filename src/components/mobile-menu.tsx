@@ -46,6 +46,7 @@ export function MobileMenu() {
               <NavLink to="/">Home</NavLink>
               <NavLink to="/works">Obras</NavLink>
               <NavLink to="/scrapping-report">Relatório</NavLink>
+              <NavLink to="/admin">Administração</NavLink>
             </nav>
           </section>
 

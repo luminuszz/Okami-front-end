@@ -9,9 +9,9 @@ import { RouterProvider } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/sonner'
 
+import { currentThemeAtom } from './app/store/theme'
 import { queryClient } from './lib/react-query'
 import { router } from './routes'
-import { currentThemeAtom } from './store/theme'
 
 export function App() {
   const theme = useAtomValue(currentThemeAtom)

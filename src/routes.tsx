@@ -4,7 +4,6 @@ import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
 import { NotFound } from './pages/404'
 import { Dashboard } from './pages/app/dashboard/dashboard'
-import { ScrappingReport } from './pages/app/scrapping-report/scrapping-report'
 import { Works } from './pages/app/works/works'
 
 export const router = createBrowserRouter([
@@ -24,7 +23,24 @@ export const router = createBrowserRouter([
       },
       {
         path: '/scrapping-report',
-        element: <ScrappingReport />,
+        lazy: async () => {
+          const { ScrappingReport } = await import(
+            './pages/app/scrapping-report/scrapping-report'
+          )
+
+          return {
+            element: <ScrappingReport />,
+          }
+        },
+      },
+      {
+        path: '/admin',
+        lazy: async () => {
+          const { AdminPage } = await import('./pages/app/admin/index.tsx')
+          return {
+            element: <AdminPage />,
+          }
+        },
       },
     ],
   },

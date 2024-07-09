@@ -1,6 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { Moon, Sun } from 'lucide-react'
 
+import { currentThemeAtom } from '@/app/store/theme'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -8,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { currentThemeAtom } from '@/store/theme'
 
 export function ThemeToggle() {
   const setTheme = useSetAtom(currentThemeAtom)

@@ -1,49 +1,26 @@
-import { AbilityBuilder, createMongoAbility, PureAbility } from '@casl/ability'
+import { AbilityBuilder, createMongoAbility } from '@casl/ability'
 
-export interface UserAbilityDetails {
-  paymentSubscriptionStatus: 'ACTIVE' | 'INACTIVE'
-  trialQuoteLimit: number
-  isTelegramSubscriber: boolean
-  notionDatabaseId?: string | null
-}
-
-export type Actions = 'show' | 'use' | 'create'
-
-export type Subject =
-  | 'telegram-button'
-  | 'subscriber-indicator'
-  | 'work'
-  | 'sync-notion-button'
-  | 'rsync-works-button'
-
-export type UserAbilities = PureAbility<[Actions, Subject]>
+import {
+  permissions,
+  UserAbilities,
+  UserAbilityDetails,
+} from '@/app/permissions'
 
 export default function defineAbilityForUser(user: UserAbilityDetails) {
-  const ability = new AbilityBuilder<UserAbilities>(createMongoAbility)
+  const builder = new AbilityBuilder<UserAbilities>(createMongoAbility)
 
-  if (user.paymentSubscriptionStatus === 'ACTIVE') {
-    ability.can('show', 'subscriber-indicator')
+  const hasPermissions = typeof permissions[user.role] === 'function'
+
+  if (!hasPermissions) {
+    throw new Error('Invalid role')
   }
 
-  if (user.paymentSubscriptionStatus === 'ACTIVE' && user.notionDatabaseId) {
-    ability.can('show', 'sync-notion-button')
-  }
+  permissions[user.role](user, builder)
 
-  if (user.trialQuoteLimit > 0) {
-    ability.can('create', 'work')
-  }
+  const ability = builder.build()
 
-  if (!user.isTelegramSubscriber) {
-    ability.can('show', 'telegram-button')
-  }
+  ability.can = ability.can.bind(ability)
+  ability.cannot = ability.cannot.bind(ability)
 
-  if (user?.notionDatabaseId) {
-    ability.can('show', 'sync-notion-button')
-  }
-
-  if (user.paymentSubscriptionStatus === 'ACTIVE') {
-    ability.can('show', 'rsync-works-button')
-  }
-
-  return ability.build()
+  return ability
 }

@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { ComponentProps } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import { currentThemeAtom } from '@/store/theme'
+import { currentThemeAtom } from '@/app/store/theme'
 
 interface Props extends ComponentProps<'svg'> {
   loading?: boolean
