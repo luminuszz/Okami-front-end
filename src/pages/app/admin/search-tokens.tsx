@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { compareDesc, format } from 'date-fns'
-import { Plus } from 'lucide-react'
+import { Plus, Trash } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -8,6 +8,10 @@ import {
   SearchToken,
   SearchtokenType,
 } from '@/api/get-search-tokens-by-type'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog.tsx'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
@@ -25,12 +29,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { DeleteSearchTokenDialog } from '@/pages/app/admin/delete-search-token-dialog.tsx'
 
 import { EmptyLoadingTable } from '../scrapping-report/empty-loading-table'
 import { AddNewSearchTokenDialog } from './add-new-search-token-dialog'
 
 export const searchTokenTypeParam = 'search-token-type' as const
-
 export const searchTokenQueryKey = 'search-tokens' as const
 
 function formatSearchTokenList(list: SearchToken[]) {
@@ -120,6 +124,7 @@ export function SearchTokens() {
             <TableHead>Token</TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Criado em</TableHead>
+            <TableHead></TableHead>
           </TableHeader>
           <TableBody>
             {isLoading && <EmptyLoadingTable />}
@@ -130,6 +135,16 @@ export function SearchTokens() {
                 <TableCell>{token.token}</TableCell>
                 <TableCell>{token.type}</TableCell>
                 <TableCell>{token.createdAt}</TableCell>
+                <TableCell>
+                  <AlertDialog>
+                    <DeleteSearchTokenDialog searchToken={token} />
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Trash className="size-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </AlertDialog>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
