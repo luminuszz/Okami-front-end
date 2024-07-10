@@ -45,7 +45,7 @@ export function ConfirmDeleteWorkAlertDialog({
     },
     onSuccess() {
       toast.success('Obra excluída com sucesso')
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['user-quote'],
       })
     },

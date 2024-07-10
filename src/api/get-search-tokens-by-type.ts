@@ -16,7 +16,7 @@ const searchTokenSchema = z.object({
 type SearchToken = z.infer<typeof searchTokenSchema>
 
 export async function getSearchTokenByType(type: SearchtokenType) {
-  const response = await okamiHttpGateway.get('/work/search-token', {
+  const response = await okamiHttpGateway.get('/search-token', {
     params: {
       type,
     },

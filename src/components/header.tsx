@@ -1,6 +1,8 @@
 import { BarChart4, Book, Home, Shield } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import { Can } from '@/components/permissions-provider'
+
 import { AccountMenu } from './account-menu'
 import { Logo } from './logo'
 import { MobileMenu } from './mobile-menu'
@@ -61,13 +63,15 @@ export function Header() {
             Relatório
           </NavLink>
 
-          <NavLink
-            to="/admin"
-            className="flex flex-col items-center justify-center gap-2"
-          >
-            <Shield className="mr-1 h-4 w-4" />
-            Administração
-          </NavLink>
+          <Can I="show" a="admin-section">
+            <NavLink
+              to="/admin"
+              className="flex flex-col items-center justify-center gap-2"
+            >
+              <Shield className="mr-1 h-4 w-4" />
+              Administração
+            </NavLink>
+          </Can>
         </nav>
 
         <div className="ml-auto hidden items-center gap-2 md:flex">

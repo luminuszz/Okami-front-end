@@ -6,5 +6,5 @@ export interface CreateSearchToken {
 }
 
 export async function createSearchToken(data: CreateSearchToken) {
-  await okamiHttpGateway.post('/work/search-token', data)
+  await okamiHttpGateway.post('/search-token', data)
 }

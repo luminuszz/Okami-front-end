@@ -170,7 +170,7 @@ export function ScrappingReport() {
 
           <div className="flex">
             <Pagination
-              totalOfPages={works?.totalOfPages || 0}
+              totalOfPages={works?.totalOfPages ?? 0}
               currentPage={page}
             />
           </div>

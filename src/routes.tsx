@@ -1,4 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, redirect } from 'react-router-dom'
+
+import { getUserDetails } from '@/api/get-user-details.ts'
 
 import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
@@ -35,6 +37,17 @@ export const router = createBrowserRouter([
       },
       {
         path: '/admin',
+
+        async loader() {
+          const user = await getUserDetails()
+
+          if (user.role !== 'ADMIN') return redirect('/')
+
+          return {
+            user,
+          }
+        },
+
         lazy: async () => {
           const { AdminPage } = await import('./pages/app/admin/index.tsx')
           return {
