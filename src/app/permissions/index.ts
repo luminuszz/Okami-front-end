@@ -41,6 +41,10 @@ export const permissions: Record<USER_ROLE, PermissionsByRole> = {
     if (!user.notionDatabaseId) {
       cannot('show', 'sync-notion-button')
     }
+
+    if(user.isTelegramSubscriber) {
+      cannot('show', 'telegram-button')
+    }
   },
   SUBSCRIBED_USER(user, { can, cannot }) {
     can('show', 'subscriber-indicator')
