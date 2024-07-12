@@ -1,3 +1,5 @@
+import * as process from 'node:process'
+
 import { z } from 'zod'
 
 export const envSchema = z.object({
@@ -9,4 +11,15 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>
 
-export const env = envSchema.parse(import.meta.env) as Env
+export const getEnv = () => {
+  const env = envSchema.safeParse(process.env)
+
+  if (!env.success) {
+    console.error('Missing environment variables: ', env.error)
+    return process.env as unknown as Env
+  }
+
+  return env.data
+}
+
+export const env = getEnv()
