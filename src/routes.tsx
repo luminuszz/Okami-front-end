@@ -1,6 +1,7 @@
 import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import { getUserDetails } from '@/api/get-user-details.ts'
+import { env } from '@/utils/env.ts'
 
 import { AppLayout } from './components/layouts/app'
 import { AuthLayout } from './components/layouts/auth'
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
+    errorElement: !env.VITE_IS_DEV ? <NotFound /> : null,
 
     children: [
       {
