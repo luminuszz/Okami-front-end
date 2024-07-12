@@ -49,10 +49,10 @@ const createTagSchema = z.object({
 
 type CreateTagForm = z.infer<typeof createTagSchema>
 
-const queryTagCacheKey = [getTagsQueryKey, 0]
-
 export function CreateTagDialog() {
   const client = useQueryClient()
+
+  const queryTagCacheKey = [getTagsQueryKey, 0]
 
   const form = useForm<CreateTagForm>({
     resolver: zodResolver(createTagSchema),
