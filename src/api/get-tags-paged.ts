@@ -16,6 +16,8 @@ const tagResponse = z.object({
 
 export type Tag = z.infer<typeof tagSchema>
 
+export type TagResponse = z.infer<typeof tagResponse>
+
 export async function getTagsPaged(page: number) {
   const response = await okamiHttpGateway.get('/tags', {
     params: {

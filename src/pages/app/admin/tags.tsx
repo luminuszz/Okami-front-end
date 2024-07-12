@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Tag } from 'lucide-react'
+import { Pencil, Tag } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import colors from 'tailwindcss/colors'
 
@@ -16,11 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { CreateTagDialog } from '@/pages/app/admin/create-tag-dialog.tsx'
+import { UpdateTagDialog } from '@/pages/app/admin/update-tag-dialog.tsx'
 import { parsePageQuery } from '@/utils/helpers.ts'
 
 import { EmptyLoadingTable } from '../scrapping-report/empty-loading-table'
 
-const getTagsQueryKey = 'tags' as const
+export const getTagsQueryKey = 'tags' as const
 
 export function Tags() {
   const [params] = useSearchParams()
@@ -53,6 +55,7 @@ export function Tags() {
 
       <aside className="flex justify-end">
         <Dialog>
+          <CreateTagDialog />
           <DialogTrigger asChild>
             <Button variant="outline">
               <Tag className="mr-2 size-4" />
@@ -68,6 +71,7 @@ export function Tags() {
             <TableHead>Id</TableHead>
             <TableHead>Nome</TableHead>
             <TableHead>Slug</TableHead>
+            <TableHead>Cor</TableHead>
             <TableHead>Cor</TableHead>
           </TableHeader>
           <TableBody>{isLoading && <EmptyLoadingTable />}</TableBody>
@@ -86,6 +90,16 @@ export function Tags() {
                 >
                   {tag.color}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                <Dialog>
+                  <UpdateTagDialog tag={tag} />
+                  <DialogTrigger asChild>
+                    <Button size="icon" variant="ghost">
+                      <Pencil className="size-4 text-muted-foreground" />
+                    </Button>
+                  </DialogTrigger>
+                </Dialog>
               </TableCell>
             </TableRow>
           ))}
