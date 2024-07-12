@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -21,7 +20,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 
@@ -83,9 +81,7 @@ export function EditProfileDialog() {
     mutationKey: ['update-user-profile'],
 
     onMutate(newData) {
-      const oldCache = uploadCache({ name: newData.name })
-
-      return oldCache
+      return uploadCache({ name: newData.name })
     },
     onError(_, __, oldCache?: GetUserDetailsType) {
       if (oldCache) {
@@ -105,15 +101,17 @@ export function EditProfileDialog() {
     },
 
     onMutate() {
-      const oldCache = uploadCache({
+      return uploadCache({
         avatarImageUrl,
       })
-
-      return oldCache
     },
   })
 
-  async function handleEditProfile({ avatar, name }: EditProfileFormType) {
+  async function handleEditProfile({
+    avatar,
+    name,
+    email,
+  }: EditProfileFormType) {
     const formData = new FormData()
 
     try {
@@ -127,7 +125,7 @@ export function EditProfileDialog() {
         toast.success('Imagem do perfil atualizada com sucesso')
       }
 
-      await updateUser({ name })
+      await updateUser({ name, email })
 
       toast.success('Perfil atualizado com sucesso')
     } catch (error) {
@@ -180,21 +178,9 @@ export function EditProfileDialog() {
             <Label className="text-right" htmlFor="name">
               Email
             </Label>
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <AlertCircle className="size-4 text-muted-foreground" />
-              </HoverCardTrigger>
-
-              <HoverCardContent>
-                <p className="text-xs text-muted-foreground">
-                  Temporariamente indisponível
-                </p>
-              </HoverCardContent>
-            </HoverCard>
           </div>
 
           <Input
-            disabled
             className="col-span-3"
             id="name"
             {...register('email')}

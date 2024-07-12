@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { differenceBy, map } from 'lodash'
+import { map } from 'lodash'
 import { Tag as TagIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -33,14 +33,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { getTagsQueryKey } from '@/pages/app/admin/tags.tsx'
+import { getAvailableTagColors } from '@/utils/helpers.ts'
 
-type ColorKey = keyof typeof colors
-
-const excludeColors = ['black', 'white', 'transparent', 'inherit', 'current']
-
-const availableColors = differenceBy(Object.keys(colors), excludeColors) as [
-  ColorKey,
-]
+const availableColors = getAvailableTagColors()
 
 const options = availableColors.map((color) => ({
   color,
@@ -53,6 +48,8 @@ const createTagSchema = z.object({
 })
 
 type CreateTagForm = z.infer<typeof createTagSchema>
+
+const queryTagCacheKey = [getTagsQueryKey, 0]
 
 export function CreateTagDialog() {
   const client = useQueryClient()
@@ -68,20 +65,13 @@ export function CreateTagDialog() {
   const createTagMutation = useMutation({
     mutationFn: createTag,
     mutationKey: ['create-tag'],
-    onError(_, __, tagId) {
+    onError(_, __, oldCache?: TagResponse) {
       toast.error('Houve um erro ao criar a tag')
-
-      client.setQueryData<TagResponse>([getTagsQueryKey], (cache) => {
-        if (!cache) return cache
-
-        cache.data = cache.data.filter((tag) => tag.id !== tagId)
-
-        return cache
-      })
+      client.setQueryData(queryTagCacheKey, oldCache)
     },
     onSettled() {
       void client.invalidateQueries({
-        queryKey: [getTagsQueryKey],
+        queryKey: queryTagCacheKey,
       })
     },
     onSuccess() {
@@ -95,17 +85,24 @@ export function CreateTagDialog() {
         id: Math.random().toString(),
       }
 
-      client.setQueryData<TagResponse>([getTagsQueryKey], (cache) => {
-        if (!cache) return cache
-
-        cache.data.push(tag)
-
-        return cache
-      })
-
-      return tag.id
+      return uploadCache([tag])
     },
   })
+
+  function uploadCache(tagList: Tag[] = []) {
+    const oldCache = client.getQueryData<TagResponse>(queryTagCacheKey)
+
+    client.setQueryData(queryTagCacheKey, () => {
+      if (!oldCache) return oldCache
+
+      return {
+        ...oldCache,
+        data: [...oldCache.data, ...tagList],
+      }
+    })
+
+    return oldCache
+  }
 
   return (
     <DialogContent>

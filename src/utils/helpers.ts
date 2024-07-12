@@ -1,8 +1,10 @@
 import { type ClassValue, clsx } from 'clsx'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { differenceBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import colors from 'tailwindcss/colors'
 import { z } from 'zod'
 
 export function cn(...inputs: ClassValue[]) {
@@ -94,4 +96,12 @@ export function parsePageQuery(value: unknown = '1') {
     .number()
     .transform((value) => (value > 0 ? value - 1 : 0))
     .parse(value)
+}
+
+export type ColorKey = keyof typeof colors
+
+export function getAvailableTagColors() {
+  const excludeColors = ['black', 'white', 'transparent', 'inherit', 'current']
+
+  return differenceBy(Object.keys(colors), excludeColors) as [ColorKey]
 }

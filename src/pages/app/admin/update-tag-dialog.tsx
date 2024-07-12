@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { differenceBy, map } from 'lodash'
+import { map } from 'lodash'
 import { Tag as TagIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 import colors from 'tailwindcss/colors'
 import { z } from 'zod'
 
-import { TagResponse } from '@/api/get-tags-paged.ts'
+import { Tag, TagResponse } from '@/api/get-tags-paged.ts'
 import { updateTag } from '@/api/update-tag.ts'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,15 +34,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { getTagsQueryKey } from '@/pages/app/admin/tags.tsx'
-import { parsePageQuery } from '@/utils/helpers.ts'
-
-type ColorKey = keyof typeof colors
-
-const excludeColors = ['black', 'white', 'transparent', 'inherit', 'current']
-
-const availableColors = differenceBy(Object.keys(colors), excludeColors) as [
+import {
   ColorKey,
-]
+  getAvailableTagColors,
+  parsePageQuery,
+} from '@/utils/helpers.ts'
+
+const availableColors = getAvailableTagColors()
 
 const options = availableColors.map((color) => ({
   color,
@@ -85,7 +83,7 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
   const updateTagMutation = useMutation({
     mutationFn: updateTag,
     mutationKey: ['update-tag'],
-    onError(_, __, oldCache) {
+    onError(_, __, oldCache?: TagResponse) {
       toast.error('Houve um erro ao editar a tag')
 
       client.setQueryData(currentTagsQueryKey, oldCache)
@@ -99,26 +97,11 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
       toast.success('Tag editada com sucesso')
     },
     onMutate(args) {
-      const oldCache = client.getQueryData<TagResponse>(currentTagsQueryKey)
-
-      client.setQueryData<TagResponse>(currentTagsQueryKey, (cache) => {
-        if (!cache) return cache
-
-        cache.data = cache.data.map((tag) => {
-          if (tag.id === args.id) {
-            return {
-              ...tag,
-              ...args,
-            }
-          }
-
-          return tag
-        })
-
-        return cache
+      return uploadCache({
+        name: args.name,
+        color: args.color,
+        id: args.id,
       })
-
-      return oldCache
     },
   })
 
@@ -132,6 +115,30 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
     })
   }
 
+  function uploadCache(tagUpdated: Partial<Tag>) {
+    const oldCache = client.getQueryData<TagResponse>(currentTagsQueryKey)
+
+    client.setQueryData(currentTagsQueryKey, () => {
+      const tags = oldCache?.data?.map((item) => {
+        if (item.id === tagUpdated.id) {
+          return {
+            ...item,
+            name: tagUpdated.name ?? item.name,
+            color: tagUpdated.color ?? item.color,
+          }
+        }
+
+        return item
+      })
+
+      return {
+        ...oldCache,
+        data: tags ?? [],
+      }
+    })
+
+    return oldCache
+  }
   return (
     <DialogContent>
       <DialogHeader>
