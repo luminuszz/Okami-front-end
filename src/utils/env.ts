@@ -4,7 +4,7 @@ export const envSchema = z.object({
   VITE_API_URL: z.string(),
   VITE_STRIPE_PUBLIC_KEY: z.string(),
   VITE_DEFAULT_WORK_IMAGE: z.string(),
-  VITE_IS_DEV: z.coerce.boolean().optional().default(false),
+  VITE_IS_DEV: z.string().or(z.coerce.boolean()).optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
