@@ -9,4 +9,14 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>
 
-export const env = envSchema.parse(import.meta.env) as Env
+export const parseEnv = () => {
+  const results = envSchema.safeParse(import.meta.env)
+
+  if (results.success) return results.data
+
+  console.log({ error: results.error.errors })
+
+  throw new Error(results.error.errors.join('\n'))
+}
+
+export const env = parseEnv()
