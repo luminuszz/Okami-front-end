@@ -7,20 +7,20 @@ import {
   getSearchTokenByType,
   SearchToken,
   SearchtokenType,
-} from '@/api/get-search-tokens-by-type'
+} from '@/api/get-search-tokens-by-type.ts'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button.tsx'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select.tsx'
 import {
   Table,
   TableBody,
@@ -29,10 +29,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
-import { DeleteSearchTokenDialog } from '@/pages/app/admin/delete-search-token-dialog.tsx'
+import { DeleteSearchTokenDialog } from '@/pages/app/admin/search-tokens/delete-search-token-dialog.tsx'
 
-import { EmptyLoadingTable } from '../scrapping-report/empty-loading-table'
-import { AddNewSearchTokenDialog } from './add-new-search-token-dialog'
+import { EmptyLoadingTable } from '../../scrapping-report/empty-loading-table.tsx'
+import { AddNewSearchTokenDialog } from './add-new-search-token-dialog.tsx'
 
 export const searchTokenTypeParam = 'search-token-type' as const
 export const searchTokenQueryKey = 'search-tokens' as const

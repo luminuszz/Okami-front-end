@@ -6,18 +6,18 @@ import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { createSearchToken } from '@/api/create-search-token'
+import { createSearchToken } from '@/api/create-search-token.ts'
 import {
   SearchToken,
   SearchtokenType,
 } from '@/api/get-search-tokens-by-type.ts'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button.tsx'
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog.tsx'
 import {
   Form,
   FormControl,
@@ -25,19 +25,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/form.tsx'
+import { Input } from '@/components/ui/input.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select.tsx'
 import {
   searchTokenQueryKey,
   searchTokenTypeParam,
-} from '@/pages/app/admin/search-tokens.tsx'
+} from '@/pages/app/admin/search-tokens/search-tokens.tsx'
 
 const createSearchTokenSchema = z.object({
   token: z.string().min(1),

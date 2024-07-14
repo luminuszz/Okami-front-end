@@ -13,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx'
-import { searchTokenQueryKey } from '@/pages/app/admin/search-tokens.tsx'
+import { searchTokenQueryKey } from '@/pages/app/admin/search-tokens/search-tokens.tsx'
 
 export interface DeleteSearchTokenDialogProps {
   searchToken: {

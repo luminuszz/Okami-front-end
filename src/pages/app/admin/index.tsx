@@ -2,9 +2,9 @@ import { ReactNode } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchTokens } from '@/pages/app/admin/search-tokens.tsx'
+import { SearchTokens } from '@/pages/app/admin/search-tokens/search-tokens.tsx'
 import { TabLink } from '@/pages/app/admin/TabLink.tsx'
-import { Tags } from '@/pages/app/admin/tags.tsx'
+import { Tags } from '@/pages/app/admin/tags/tags.tsx'
 
 export const sectionMap: Record<string, ReactNode> = {
   'search-tokens': <SearchTokens />,

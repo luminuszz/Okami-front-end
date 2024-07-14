@@ -3,6 +3,7 @@ import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { differenceBy } from 'lodash'
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { twMerge } from 'tailwind-merge'
 import colors from 'tailwindcss/colors'
 import { z } from 'zod'
@@ -104,4 +105,10 @@ export function getAvailableTagColors() {
   const excludeColors = ['black', 'white', 'transparent', 'inherit', 'current']
 
   return differenceBy(Object.keys(colors), excludeColors) as [ColorKey]
+}
+
+export function useGetCurrentPage(customParamKey = 'page') {
+  const [params] = useSearchParams()
+
+  return parsePageQuery(params.get(customParamKey))
 }

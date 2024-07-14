@@ -1,13 +1,13 @@
+import { AlertDialog, AlertDialogTrigger } from '@radix-ui/react-alert-dialog'
 import { useQuery } from '@tanstack/react-query'
-import { Pencil, Tag } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { Pencil, Tag, Trash } from 'lucide-react'
 import colors from 'tailwindcss/colors'
 
 import { getTagsPaged } from '@/api/get-tags-paged.ts'
 import { Pagination } from '@/components/pagination.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button.tsx'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog.tsx'
 import {
   Table,
   TableBody,
@@ -16,18 +16,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
-import { CreateTagDialog } from '@/pages/app/admin/create-tag-dialog.tsx'
-import { UpdateTagDialog } from '@/pages/app/admin/update-tag-dialog.tsx'
-import { parsePageQuery } from '@/utils/helpers.ts'
+import { CreateTagDialog } from '@/pages/app/admin/tags/create-tag-dialog.tsx'
+import { DeleteTagAlertConfirmDialog } from '@/pages/app/admin/tags/delete-tag-alert-confirm-dialog.tsx'
+import { UpdateTagDialog } from '@/pages/app/admin/tags/update-tag-dialog.tsx'
+import { ColorKey, useGetCurrentPage } from '@/utils/helpers.ts'
 
-import { EmptyLoadingTable } from '../scrapping-report/empty-loading-table'
+import { EmptyLoadingTable } from '../../scrapping-report/empty-loading-table.tsx'
 
 export const getTagsQueryKey = 'tags' as const
 
-export function Tags() {
-  const [params] = useSearchParams()
+const defaultItemPerPage = 20
 
-  const currentPage = parsePageQuery(params.get('page'))
+export function Tags() {
+  const currentPage = useGetCurrentPage()
 
   const { isLoading, data: results } = useQuery({
     queryKey: [getTagsQueryKey, currentPage],
@@ -37,11 +38,13 @@ export function Tags() {
         totalOfPages,
         tags: data.map((item) => ({
           ...item,
-          themeColor: colors[item.color as keyof typeof colors] ?? colors.gray,
+          themeColor: colors[item.color as ColorKey] ?? colors.gray,
         })),
       }
     },
   })
+
+  const totalOfTags = defaultItemPerPage * (results?.totalOfPages ?? 0)
 
   return (
     <section className="flex flex-col gap-4">
@@ -100,13 +103,26 @@ export function Tags() {
                     </Button>
                   </DialogTrigger>
                 </Dialog>
+
+                <AlertDialog>
+                  <DeleteTagAlertConfirmDialog tag={tag} />
+                  <AlertDialogTrigger asChild>
+                    <Button size="icon" variant="ghost">
+                      <Trash className="size-4 text-muted-foreground" />
+                    </Button>
+                  </AlertDialogTrigger>
+                </AlertDialog>
               </TableCell>
             </TableRow>
           ))}
         </Table>
       </div>
 
-      <div className="flex flex-col items-center justify-end md:flex-row">
+      <div className="flex flex-col items-center justify-between md:flex-row">
+        <p className="text-sm text-muted-foreground ">
+          Total de {totalOfTags} tags
+        </p>
+
         <div className="flex">
           <Pagination
             totalOfPages={results?.totalOfPages ?? 0}

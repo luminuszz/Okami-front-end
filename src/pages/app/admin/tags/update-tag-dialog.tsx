@@ -3,19 +3,20 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { map } from 'lodash'
 import { Tag as TagIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import colors from 'tailwindcss/colors'
 import { z } from 'zod'
 
-import { createTag } from '@/api/create-tag.ts'
 import { Tag, TagResponse } from '@/api/get-tags-paged.ts'
-import { Button } from '@/components/ui/button'
+import { updateTag } from '@/api/update-tag.ts'
+import { Button } from '@/components/ui/button.tsx'
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog.tsx'
 import {
   Form,
   FormControl,
@@ -23,17 +24,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/form.tsx'
+import { Input } from '@/components/ui/input.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { getTagsQueryKey } from '@/pages/app/admin/tags.tsx'
-import { getAvailableTagColors } from '@/utils/helpers.ts'
+} from '@/components/ui/select.tsx'
+import { getTagsQueryKey } from '@/pages/app/admin/tags/tags.tsx'
+import {
+  ColorKey,
+  getAvailableTagColors,
+  parsePageQuery,
+} from '@/utils/helpers.ts'
 
 const availableColors = getAvailableTagColors()
 
@@ -42,84 +47,109 @@ const options = availableColors.map((color) => ({
   label: color.replace(/([A-Z])/g, ' $1').toLowerCase(),
 }))
 
-const createTagSchema = z.object({
-  name: z.string().min(1).max(255),
-  color: z.enum(availableColors),
+const updateTagSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  color: z.enum(availableColors).optional(),
 })
 
-type CreateTagForm = z.infer<typeof createTagSchema>
+type UpdateFormTag = z.infer<typeof updateTagSchema>
 
-export function CreateTagDialog() {
+export type CreateTagDialogProps = {
+  tag: {
+    id: string
+    color: string
+    name: string
+  }
+}
+
+export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
   const client = useQueryClient()
 
-  const queryTagCacheKey = [getTagsQueryKey, 0]
-
-  const form = useForm<CreateTagForm>({
-    resolver: zodResolver(createTagSchema),
-    values: {
-      color: 'inherit',
-      name: '',
+  const form = useForm<UpdateFormTag>({
+    resolver: zodResolver(updateTagSchema),
+    defaultValues: {
+      name: tag.name,
+      color: tag.color as ColorKey,
     },
   })
 
-  const createTagMutation = useMutation({
-    mutationFn: createTag,
-    mutationKey: ['create-tag'],
+  const [params] = useSearchParams()
+
+  const currentTagsQueryKey = [
+    getTagsQueryKey,
+    parsePageQuery(params.get('page')),
+  ]
+
+  const updateTagMutation = useMutation({
+    mutationFn: updateTag,
+    mutationKey: ['update-tag'],
     onError(_, __, oldCache?: TagResponse) {
-      toast.error('Houve um erro ao criar a tag')
-      client.setQueryData(queryTagCacheKey, oldCache)
+      toast.error('Houve um erro ao editar a tag')
+
+      client.setQueryData(currentTagsQueryKey, oldCache)
     },
     onSettled() {
       void client.invalidateQueries({
-        queryKey: queryTagCacheKey,
+        queryKey: currentTagsQueryKey,
       })
     },
     onSuccess() {
-      toast.success('Tag busca criado com sucesso')
+      toast.success('Tag editada com sucesso')
     },
     onMutate(args) {
-      const tag: Tag = {
+      return uploadCache({
         name: args.name,
         color: args.color,
-        slug: args.name,
-        id: Math.random().toString(),
-      }
-
-      return uploadCache([tag])
+        id: args.id,
+      })
     },
   })
 
-  function uploadCache(tagList: Tag[] = []) {
-    const oldCache = client.getQueryData<TagResponse>(queryTagCacheKey)
+  function handleSubmit(values: UpdateFormTag) {
+    const parsedName = values?.name === tag.name ? undefined : values.name
 
-    client.setQueryData(queryTagCacheKey, () => {
-      if (!oldCache) return oldCache
+    updateTagMutation.mutate({
+      id: tag.id,
+      color: values.color,
+      name: parsedName,
+    })
+  }
+
+  function uploadCache(tagUpdated: Partial<Tag>) {
+    const oldCache = client.getQueryData<TagResponse>(currentTagsQueryKey)
+
+    client.setQueryData(currentTagsQueryKey, () => {
+      const tags = oldCache?.data?.map((item) => {
+        if (item.id === tagUpdated.id) {
+          return {
+            ...item,
+            name: tagUpdated.name ?? item.name,
+            color: tagUpdated.color ?? item.color,
+          }
+        }
+
+        return item
+      })
 
       return {
         ...oldCache,
-        data: [...oldCache.data, ...tagList],
+        data: tags ?? [],
       }
     })
 
     return oldCache
   }
-
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
           <TagIcon className="size-4" />
-          <span>Adicionar nova tag</span>
+          <span>Editar Tag</span>
         </DialogTitle>
       </DialogHeader>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit((values) =>
-            createTagMutation.mutate(values),
-          )}
-          className="space-y-4"
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -172,14 +202,29 @@ export function CreateTagDialog() {
               </FormItem>
             )}
           />
-          <DialogClose asChild className="mt-2">
-            <Button
-              disabled={!form.formState.isValid && createTagMutation.isPending}
-              type="submit"
-            >
-              Adicionar
-            </Button>
-          </DialogClose>
+          <div className="flex justify-end">
+            <DialogClose asChild className="mt-2">
+              <Button
+                variant="ghost"
+                disabled={
+                  !form.formState.isValid && updateTagMutation.isPending
+                }
+              >
+                Cancelar
+              </Button>
+            </DialogClose>
+
+            <DialogClose asChild className="mt-2">
+              <Button
+                disabled={
+                  !form.formState.isValid && updateTagMutation.isPending
+                }
+                type="submit"
+              >
+                Salvar
+              </Button>
+            </DialogClose>
+          </div>
         </form>
       </Form>
     </DialogContent>
