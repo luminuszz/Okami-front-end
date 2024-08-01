@@ -1,15 +1,36 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { DialogClose, DialogTitle } from '@radix-ui/react-dialog'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { differenceBy, map } from 'lodash'
+import { Plus, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useInView } from 'react-intersection-observer'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { getTagsPaged, Tag, tagSchema } from '@/api/get-tags-paged.ts'
 import { WorkType } from '@/api/schemas'
 import { updateWork } from '@/api/update-work'
 import { uploadWorkImage } from '@/api/upload-work-image'
+import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button'
-import { DialogContent, DialogHeader } from '@/components/ui/dialog'
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command.tsx'
+import {
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -19,8 +40,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover.tsx'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { validateFileType } from '@/utils/helpers.ts'
+import { getTagColor, validateFileType } from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 
@@ -35,6 +61,7 @@ const editWorkSchema = z.object({
     .nullable(),
 
   imageUrl: z.string().optional(),
+  tags: z.array(tagSchema).optional(),
 })
 
 export type EditWorkForm = z.infer<typeof editWorkSchema>
@@ -48,11 +75,28 @@ interface EditWorkFormDialogProps {
     imageUrl: string
     type: string
     hasNewChapter: boolean
+    tags?: Tag[]
   }
 }
 
 export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
+  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
+  const [ref, inView] = useInView()
+
+  const { data, fetchNextPage, isPending, isFetching } = useInfiniteQuery({
+    queryKey: ['tags-select'],
+    queryFn: ({ pageParam }) => getTagsPaged(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.nextPage === lastPage.totalOfPages
+        ? undefined
+        : lastPage.nextPage,
+    getPreviousPageParam: (firstPage) => firstPage.previousPage,
+    select: ({ pages }) => {
+      return pages.flatMap(({ data }) => data)
+    },
+  })
 
   const form = useForm<EditWorkForm>({
     resolver: zodResolver(editWorkSchema),
@@ -62,6 +106,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       url: work.url,
       imageFile: null,
       imageUrl: work.imageUrl,
+      tags: work.tags,
     },
   })
 
@@ -129,10 +174,34 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       chapter: payload.chapter,
       name: payload.name,
       url: payload.url,
+      tagsId: map(payload.tags, 'id'),
     })
   }
 
   const currentChapterLabel = work.type === 'ANIME' ? 'Episodio' : 'Capitulo'
+
+  const formTags = form.watch('tags') ?? []
+
+  const availableTags = differenceBy(data, formTags, 'id')
+
+  function handleRemoveTag(tagId: string) {
+    form.setValue(
+      'tags',
+      formTags.filter((tag) => tag.id !== tagId),
+    )
+  }
+
+  useEffect(() => {
+    if (!isPending && inView && !isFetching) {
+      void fetchNextPage()
+    }
+  }, [isPending, inView, fetchNextPage, isFetching])
+
+  useEffect(() => {
+    return () => {
+      form.reset()
+    }
+  }, [form])
 
   return (
     <DialogContent>
@@ -166,6 +235,74 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
 
             <FormField
               control={form.control}
+              render={({ field }) => (
+                <>
+                  <FormLabel>Tags</FormLabel>
+
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <div className="flex items-center justify-between ">
+                      <div className="space-x-1">
+                        {field?.value?.map((tag) => {
+                          return (
+                            <Badge
+                              key={tag.id}
+                              className="text-gray-100"
+                              style={{ background: getTagColor(tag.color) }}
+                              variant="outline"
+                            >
+                              <X
+                                onClick={() => handleRemoveTag(tag.id)}
+                                className="mr-2 size-4 cursor-pointer"
+                              />
+                              <p>{tag.name}</p>
+                            </Badge>
+                          )
+                        })}
+                      </div>
+
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-2">
+                          <Plus className="size-4" />
+                        </Button>
+                      </PopoverTrigger>
+                    </div>
+
+                    <PopoverContent align="center">
+                      <Command>
+                        <CommandInput
+                          placeholder="Pesquisar tags..."
+                          isPending={isPending || isFetching}
+                        />
+                        <CommandEmpty>Sem tags</CommandEmpty>
+                        <CommandList>
+                          {availableTags?.map((tag) => (
+                            <CommandItem
+                              key={tag.id}
+                              onSelect={() => {
+                                form.setValue('tags', [...formTags, tag])
+                              }}
+                            >
+                              <Badge
+                                className="space-y-1 text-gray-100"
+                                style={{ background: getTagColor(tag.color) }}
+                                variant="outline"
+                              >
+                                {tag.name}
+                              </Badge>
+                            </CommandItem>
+                          ))}
+                          <div ref={ref}></div>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </>
+              )}
+              name="tags"
+            />
+
+            <FormField
+              control={form.control}
               name="chapter"
               render={({ field }) => (
                 <FormItem>
@@ -190,11 +327,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
                 <FormItem>
                   <FormLabel>URL</FormLabel>
                   <FormControl>
-                    <Input
-                      type="url"
-                      placeholder="http://anime.com"
-                      {...field}
-                    />
+                    <Input type="url" placeholder="anime.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
