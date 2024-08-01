@@ -112,3 +112,7 @@ export function useGetCurrentPage(customParamKey = 'page') {
 
   return parsePageQuery(params.get(customParamKey))
 }
+
+export const getTagColor = (color: ColorKey | string) => {
+  return colors[color as keyof typeof colors]?.[600] ?? colors.gray[600]
+}

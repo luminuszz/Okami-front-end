@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { okamiHttpGateway } from '@/lib/axios.ts'
 
-const tagSchema = z.object({
+export const tagSchema = z.object({
   id: z.string(),
   color: z.string(),
   slug: z.string(),
@@ -25,5 +25,10 @@ export async function getTagsPaged(page: number) {
     },
   })
 
-  return tagResponse.parse(response.data)
+  return {
+    ...tagResponse.parse(response.data),
+    nextPage: page + 1,
+    previousPage: page - 1 < 0 ? 0 : page - 1,
+    lastPage: response.data.totalOfPages,
+  }
 }

@@ -7,6 +7,7 @@ const updateWorkSchema = z.object({
   name: z.string().optional(),
   url: z.string().url().optional(),
   chapter: z.number().optional(),
+  tagsId: z.array(z.string()).optional(),
 })
 
 type UpdateWorkInput = z.infer<typeof updateWorkSchema>

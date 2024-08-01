@@ -149,6 +149,7 @@ export function WorkCard({ work }: WorksCardProps) {
               url: work.url,
               type: work.category,
               hasNewChapter: work.hasNewChapter,
+              tags: work?.tags,
             }}
           />
 
