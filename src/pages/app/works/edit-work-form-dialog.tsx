@@ -1,30 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { differenceBy, map } from 'lodash'
-import { Plus, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useInView } from 'react-intersection-observer'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { getTagsPaged, Tag, tagSchema } from '@/api/get-tags-paged.ts'
+import { Tag, tagSchema } from '@/api/get-tags-paged.ts'
 import { WorkType } from '@/api/schemas'
 import { updateWork } from '@/api/update-work'
 import { uploadWorkImage } from '@/api/upload-work-image'
-import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command.tsx'
 import {
   DialogClose,
   DialogContent,
@@ -40,13 +25,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover.tsx'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { getTagColor, validateFileType } from '@/utils/helpers.ts'
+import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
+import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
+import { validateFileType } from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 
@@ -64,7 +46,7 @@ const editWorkSchema = z.object({
   tags: z.array(tagSchema).optional(),
 })
 
-export type EditWorkForm = z.infer<typeof editWorkSchema>
+export type EditWorkFormDialog = z.infer<typeof editWorkSchema>
 
 interface EditWorkFormDialogProps {
   work: {
@@ -80,25 +62,13 @@ interface EditWorkFormDialogProps {
 }
 
 export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
-  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
-  const [ref, inView] = useInView()
 
-  const { data, fetchNextPage, isPending, isFetching } = useInfiniteQuery({
-    queryKey: ['tags-select'],
-    queryFn: ({ pageParam }) => getTagsPaged(pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) =>
-      lastPage.nextPage === lastPage.totalOfPages
-        ? undefined
-        : lastPage.nextPage,
-    getPreviousPageParam: (firstPage) => firstPage.previousPage,
-    select: ({ pages }) => {
-      return pages.flatMap(({ data }) => data)
-    },
-  })
+  const { isPending, fetchNextPage, isFetching, tags } = useFetchTagsInfinity()
 
-  const form = useForm<EditWorkForm>({
+  const isLoadingTags = isPending || isFetching
+
+  const form = useForm<EditWorkFormDialog>({
     resolver: zodResolver(editWorkSchema),
     values: {
       name: work.name,
@@ -137,14 +107,14 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   const { mutate: uploadWorkMutation } = useMutation({
     mutationKey: ['update-work', work.id],
     mutationFn: updateWork,
-    onSuccess: () => {
+    onSuccess() {
       toast.success('Obra atualizada com sucesso')
     },
-    onError: () => {
+    onError() {
       toast.error('Erro ao atualizar obra')
     },
 
-    onMutate: (payload) => {
+    onMutate(payload) {
       queryClient.setQueriesData<WorkType[]>(
         {
           queryKey: ['works'],
@@ -157,7 +127,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     },
   })
 
-  async function handleEditWork({ imageFile, ...payload }: EditWorkForm) {
+  async function handleEditWork({ imageFile, ...payload }: EditWorkFormDialog) {
     if (imageFile) {
       const compressedImage = await compressImageAsync(imageFile)
 
@@ -182,7 +152,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
 
   const formTags = form.watch('tags') ?? []
 
-  const availableTags = differenceBy(data, formTags, 'id')
+  const availableTags = differenceBy(tags, formTags, 'id')
 
   function handleRemoveTag(tagId: string) {
     form.setValue(
@@ -191,20 +161,8 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     )
   }
 
-  useEffect(() => {
-    if (!isPending && inView && !isFetching) {
-      void fetchNextPage()
-    }
-  }, [isPending, inView, fetchNextPage, isFetching])
-
-  useEffect(() => {
-    return () => {
-      form.reset()
-    }
-  }, [form])
-
   return (
-    <DialogContent>
+    <DialogContent onCloseAutoFocus={() => form.reset()}>
       <DialogHeader>
         <DialogTitle>Editar Obra</DialogTitle>
       </DialogHeader>
@@ -238,64 +196,16 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
               render={({ field }) => (
                 <>
                   <FormLabel>Tags</FormLabel>
-
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <div className="flex items-center justify-between ">
-                      <div className="space-x-1">
-                        {field?.value?.map((tag) => {
-                          return (
-                            <Badge
-                              key={tag.id}
-                              className="text-gray-100"
-                              style={{ background: getTagColor(tag.color) }}
-                              variant="outline"
-                            >
-                              <X
-                                onClick={() => handleRemoveTag(tag.id)}
-                                className="mr-2 size-4 cursor-pointer"
-                              />
-                              <p>{tag.name}</p>
-                            </Badge>
-                          )
-                        })}
-                      </div>
-
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon" className="ml-2">
-                          <Plus className="size-4" />
-                        </Button>
-                      </PopoverTrigger>
-                    </div>
-
-                    <PopoverContent align="center">
-                      <Command>
-                        <CommandInput
-                          placeholder="Pesquisar tags..."
-                          isPending={isPending || isFetching}
-                        />
-                        <CommandEmpty>Sem tags</CommandEmpty>
-                        <CommandList>
-                          {availableTags?.map((tag) => (
-                            <CommandItem
-                              key={tag.id}
-                              onSelect={() => {
-                                form.setValue('tags', [...formTags, tag])
-                              }}
-                            >
-                              <Badge
-                                className="space-y-1 text-gray-100"
-                                style={{ background: getTagColor(tag.color) }}
-                                variant="outline"
-                              >
-                                {tag.name}
-                              </Badge>
-                            </CommandItem>
-                          ))}
-                          <div ref={ref}></div>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <TagsSelect
+                    isLoading={isLoadingTags}
+                    options={availableTags}
+                    onEndReached={fetchNextPage}
+                    handleRemoveTag={handleRemoveTag}
+                    handleAddTag={(tags) => {
+                      field.onChange(tags)
+                    }}
+                    value={field.value ?? []}
+                  />
                 </>
               )}
               name="tags"

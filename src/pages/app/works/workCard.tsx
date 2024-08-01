@@ -18,7 +18,7 @@ import {
 import { DialogTrigger } from '@/components/ui/dialog'
 import { ConfirmDeleteWorkAlertDialog } from '@/pages/app/works/confirm-delete-work-alert-dialog'
 
-import { EditWorkFormDialog } from './edit-work-form'
+import { EditWorkFormDialog } from './edit-work-form-dialog.tsx'
 import { MarkWorksAsReadDialog } from './mark-work-as-read'
 
 export interface WorksCardProps {

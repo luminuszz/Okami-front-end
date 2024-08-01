@@ -2,10 +2,9 @@ import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { z } from 'zod'
 
-import { EditWorkForm } from '@/pages/app/works/edit-work-form'
+import { Input } from '@/components/ui/input.tsx'
+import { EditWorkFormDialog } from '@/pages/app/works/edit-work-form-dialog.tsx'
 import { validateFileType } from '@/utils/helpers.ts'
-
-import { Input } from '../../../components/ui/input'
 
 const parseClipboardFileSchema = z.instanceof(FileList).refine(validateFileType)
 
@@ -14,7 +13,7 @@ interface ImageSelectorProps {
 }
 
 export function ImageSelector({ isRound }: ImageSelectorProps) {
-  const { watch, register, setValue } = useFormContext<EditWorkForm>()
+  const { watch, register, setValue } = useFormContext<EditWorkFormDialog>()
 
   const imageData = watch('imageFile') as unknown as FileList
 

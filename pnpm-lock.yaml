@@ -166,10 +166,10 @@ importers:
         specifier: ^20.11.15
         version: 20.11.15
       '@types/react':
-        specifier: ^18.2.43
+        specifier: ^18.2.51
         version: 18.2.51
       '@types/react-dom':
-        specifier: ^18.2.17
+        specifier: ^18.2.18
         version: 18.2.18
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -193,7 +193,7 @@ importers:
         specifier: ^3.4.1
         version: 3.4.1
       typescript:
-        specifier: ^5.2.2
+        specifier: ^5.3.3
         version: 5.3.3
       vite:
         specifier: 5.2.6
@@ -1722,8 +1722,8 @@ packages:
     resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
     engines: {node: '>= 6'}
 
-  caniuse-lite@1.0.30001582:
-    resolution: {integrity: sha512-vsJG3V5vgfduaQGVxL53uSX/HUzxyr2eA8xCo36OLal7sRcSZbibJtLeh0qja4sFOr/QQGt4opB4tOy+eOgAxg==}
+  caniuse-lite@1.0.30001646:
+    resolution: {integrity: sha512-dRg00gudiBDDTmUhClSdv3hqRfpbOnU28IpI1T6PBTLWa+kOj0681C8uML3PifYfREuBrVjDGhL3adYpBT6spw==}
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -3248,6 +3248,9 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tslib@2.6.3:
+    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
+
   tsutils@3.21.0:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
     engines: {node: '>= 6'}
@@ -4530,7 +4533,7 @@ snapshots:
 
   '@swc/helpers@0.5.2':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@tanstack/eslint-plugin-query@5.20.1(eslint@8.56.0)(typescript@5.3.3)':
     dependencies:
@@ -4901,7 +4904,7 @@ snapshots:
   autoprefixer@10.4.17(postcss@8.4.33):
     dependencies:
       browserslist: 4.22.3
-      caniuse-lite: 1.0.30001582
+      caniuse-lite: 1.0.30001646
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -4945,7 +4948,7 @@ snapshots:
 
   browserslist@4.22.3:
     dependencies:
-      caniuse-lite: 1.0.30001582
+      caniuse-lite: 1.0.30001646
       electron-to-chromium: 1.4.653
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.3)
@@ -4968,7 +4971,7 @@ snapshots:
 
   camelcase-css@2.0.1: {}
 
-  caniuse-lite@1.0.30001582: {}
+  caniuse-lite@1.0.30001646: {}
 
   chalk@2.4.2:
     dependencies:
@@ -5951,7 +5954,7 @@ snapshots:
       '@next/env': 14.1.0
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001582
+      caniuse-lite: 1.0.30001646
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.2.0
@@ -6571,6 +6574,8 @@ snapshots:
   tslib@1.14.1: {}
 
   tslib@2.6.2: {}
+
+  tslib@2.6.3: {}
 
   tsutils@3.21.0(typescript@5.3.3):
     dependencies:
