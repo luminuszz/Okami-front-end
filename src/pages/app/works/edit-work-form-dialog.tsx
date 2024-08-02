@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
-import { validateFileType } from '@/utils/helpers.ts'
+import { useDebounceState, validateFileType } from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 
@@ -43,7 +43,7 @@ const editWorkSchema = z.object({
     .nullable(),
 
   imageUrl: z.string().optional(),
-  tags: z.array(tagSchema).optional(),
+  tags: z.array(tagSchema),
 })
 
 export type EditWorkFormDialog = z.infer<typeof editWorkSchema>
@@ -57,16 +57,17 @@ interface EditWorkFormDialogProps {
     imageUrl: string
     type: string
     hasNewChapter: boolean
-    tags?: Tag[]
+    tags: Tag[]
   }
 }
 
 export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   const queryClient = useQueryClient()
+  const [search, setSearch] = useDebounceState('', 300)
 
-  const { isPending, fetchNextPage, isFetching, tags } = useFetchTagsInfinity()
-
-  const isLoadingTags = isPending || isFetching
+  const { fetchNextPage, tags } = useFetchTagsInfinity({
+    search,
+  })
 
   const form = useForm<EditWorkFormDialog>({
     resolver: zodResolver(editWorkSchema),
@@ -76,7 +77,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       url: work.url,
       imageFile: null,
       imageUrl: work.imageUrl,
-      tags: work.tags,
+      tags: work.tags ?? [],
     },
   })
 
@@ -150,11 +151,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
 
   const currentChapterLabel = work.type === 'ANIME' ? 'Episodio' : 'Capitulo'
 
-  const formTags = form.watch('tags') ?? []
-
-  const availableTags = differenceBy(tags, formTags, 'id')
-
-  function handleRemoveTag(tagId: string) {
+  function handleRemoveTag(tagId: string, formTags: Tag[]) {
     form.setValue(
       'tags',
       formTags.filter((tag) => tag.id !== tagId),
@@ -197,10 +194,12 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
                 <>
                   <FormLabel>Tags</FormLabel>
                   <TagsSelect
-                    isLoading={isLoadingTags}
-                    options={availableTags}
+                    onSearch={setSearch}
+                    options={differenceBy(tags, field.value, 'id')}
                     onEndReached={fetchNextPage}
-                    handleRemoveTag={handleRemoveTag}
+                    handleRemoveTag={(tagId) =>
+                      handleRemoveTag(tagId, field.value)
+                    }
                     handleAddTag={(tags) => {
                       field.onChange(tags)
                     }}

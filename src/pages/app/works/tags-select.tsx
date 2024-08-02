@@ -28,6 +28,7 @@ export interface TagsSelectProps {
   handleAddTag: (tag: Tag[]) => void
   value: Tag[]
   isLoading?: boolean
+  onSearch?: (search: string) => void
 }
 
 export function TagsSelect({
@@ -37,6 +38,7 @@ export function TagsSelect({
   handleRemoveTag,
   value,
   isLoading,
+  onSearch,
 }: TagsSelectProps) {
   const [open, setOpen] = useAtom(tagSelectorIsOpen)
   const [ref, inView] = useInView()
@@ -80,7 +82,11 @@ export function TagsSelect({
 
       <PopoverContent align="center">
         <Command>
-          <CommandInput placeholder="Pesquisar tags..." isPending={isLoading} />
+          <CommandInput
+            onValueChange={onSearch}
+            placeholder="Pesquisar tags..."
+            isPending={isLoading}
+          />
           <CommandEmpty>Sem tags</CommandEmpty>
           <CommandList>
             {options?.map((tag) => (
