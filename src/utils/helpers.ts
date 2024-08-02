@@ -116,3 +116,23 @@ export function useGetCurrentPage(customParamKey = 'page') {
 export const getTagColor = (color: ColorKey | string) => {
   return colors[color as keyof typeof colors]?.[600] ?? colors.gray[600]
 }
+
+export function useDebounceState<T>(
+  initialValue: T,
+  delay: number,
+): [T, (value: T) => void] {
+  const [value, setValue] = useState<T>(initialValue)
+  const [debouncedValue, setDebouncedValue] = useState<T>(initialValue)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return [debouncedValue, setValue]
+}

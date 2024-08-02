@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -19,9 +19,11 @@ export function ImageSelector({ isRound }: ImageSelectorProps) {
 
   const defaultImageUrl = watch('imageUrl')
 
-  const imageUrl = imageData?.length
-    ? URL.createObjectURL(imageData[0])
-    : defaultImageUrl
+  const imageUrl = useMemo(
+    () =>
+      imageData?.length ? URL.createObjectURL(imageData[0]) : defaultImageUrl,
+    [imageData, defaultImageUrl],
+  )
 
   useEffect(() => {
     document.onpaste = (event) => {
@@ -31,7 +33,7 @@ export function ImageSelector({ isRound }: ImageSelectorProps) {
 
       if (!parsedFileList.success) return
 
-      setValue('imageFile', parsedFileList.data as any, {
+      setValue('imageFile', parsedFileList.data as never, {
         shouldDirty: true,
       })
     }
