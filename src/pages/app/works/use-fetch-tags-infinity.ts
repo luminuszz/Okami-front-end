@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { chain } from 'lodash'
+import { chain, flatMap } from 'lodash'
 import { useCallback } from 'react'
 
 import { filterTagsBySearch } from '@/api/filter-tags-by-search.ts'
@@ -17,23 +17,24 @@ export interface UseTagsSelectParams {
 export function useFetchTagsInfinity({
   search = '',
 }: UseTagsSelectParams): UseTagsSelectReturn {
-  const { data, fetchNextPage, isPending, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['tags-select-infinity'],
-      queryFn: ({ pageParam }) => getTagsPaged(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) =>
-        lastPage.nextPage === lastPage.totalOfPages
-          ? undefined
-          : lastPage.nextPage,
-      getPreviousPageParam: (firstPage) => firstPage.previousPage,
-      select({ pages }) {
-        return chain(pages)
-          .flatMap((page) => page.data)
-          .unionBy('id')
-          .value()
-      },
-    })
+  const {
+    data: tagsFromInfinityQuery = [],
+    fetchNextPage,
+    isPending,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['tags-select-infinity'],
+    queryFn: ({ pageParam }) => getTagsPaged(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.nextPage === lastPage.totalOfPages
+        ? undefined
+        : lastPage.nextPage,
+    getPreviousPageParam: (firstPage) => firstPage.previousPage,
+    select({ pages }) {
+      return flatMap(pages, (page) => page.data)
+    },
+  })
 
   const { data: filteredTags = [], isFetching: isFetchingTagsSelectSearch } =
     useQuery({
@@ -59,8 +60,13 @@ export function useFetchTagsInfinity({
     search,
   ])
 
+  const currentTags = chain(tagsFromInfinityQuery)
+    .concat(filteredTags)
+    .uniqBy('id')
+    .value()
+
   return {
     fetchNextPage: handleFetchNextPage,
-    tags: filteredTags?.length ? filteredTags : data?.flat() ?? [],
+    tags: currentTags,
   }
 }

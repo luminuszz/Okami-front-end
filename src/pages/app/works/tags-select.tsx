@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 import { Plus, X } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 import { Tag } from '@/api/get-tags-paged.ts'
@@ -45,6 +45,8 @@ export function TagsSelect({
 
   const handler = useCallback(onEndReached, [onEndReached])
 
+  const tags = useMemo(() => value, [value])
+
   useEffect(() => {
     if (inView) {
       handler()
@@ -53,24 +55,30 @@ export function TagsSelect({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-between px-2">
         <div className="space-x-1">
-          {value.map((tag) => {
-            return (
-              <Badge
-                key={tag.id}
-                className="text-gray-100"
-                style={{ background: getTagColor(tag.color) }}
-                variant="outline"
-              >
-                <X
-                  onClick={() => handleRemoveTag(tag.id)}
-                  className="mr-2 size-4 cursor-pointer"
-                />
-                <p>{tag.name}</p>
-              </Badge>
-            )
-          })}
+          {tags.length ? (
+            tags.map((tag) => {
+              return (
+                <Badge
+                  key={tag.id}
+                  className="text-gray-100"
+                  style={{ background: getTagColor(tag.color) }}
+                  variant="outline"
+                >
+                  <X
+                    onClick={() => handleRemoveTag(tag.id)}
+                    className="mr-2 size-4 cursor-pointer"
+                  />
+                  <p>{tag.name}</p>
+                </Badge>
+              )
+            })
+          ) : (
+            <span className="text-center text-sm text-muted-foreground">
+              Adicionar tags
+            </span>
+          )}
         </div>
 
         <PopoverTrigger asChild>

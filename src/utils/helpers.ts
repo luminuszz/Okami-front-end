@@ -1,3 +1,4 @@
+import { QueryKey, useQueryClient } from '@tanstack/react-query'
 import { type ClassValue, clsx } from 'clsx'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -7,6 +8,8 @@ import { useSearchParams } from 'react-router-dom'
 import { twMerge } from 'tailwind-merge'
 import colors from 'tailwindcss/colors'
 import { z } from 'zod'
+
+import { queryClient } from '@/lib/react-query.ts'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -135,4 +138,31 @@ export function useDebounceState<T>(
   }, [value, delay])
 
   return [debouncedValue, setValue]
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const isFunction = (value: unknown): value is Function =>
+  typeof value === 'function'
+
+type ValueOrFalsy<Type> = Type | null | undefined
+
+type UpdateCacheHandler<CacheType> = (cache: CacheType) => CacheType
+
+type UpdateCacheParam<CacheType> = CacheType | UpdateCacheHandler<CacheType>
+
+export function useUpdateQueryCache<CacheType>(key: QueryKey) {
+  const client = useQueryClient()
+
+  function updateCache(resolve: UpdateCacheParam<ValueOrFalsy<CacheType>>) {
+    const originalCache = queryClient.getQueryData<CacheType>(key) ?? null
+
+    client.setQueryData(
+      key,
+      isFunction(resolve) ? resolve(originalCache) : resolve,
+    )
+
+    return originalCache
+  }
+
+  return updateCache
 }

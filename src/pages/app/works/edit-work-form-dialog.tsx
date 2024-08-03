@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { differenceBy, map } from 'lodash'
 import { useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -28,7 +29,11 @@ import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
-import { useDebounceState, validateFileType } from '@/utils/helpers.ts'
+import {
+  useDebounceState,
+  useUpdateQueryCache,
+  validateFileType,
+} from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 
@@ -62,8 +67,13 @@ interface EditWorkFormDialogProps {
 }
 
 export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
-  const queryClient = useQueryClient()
   const [search, setSearch] = useDebounceState('', 300)
+  const [params] = useSearchParams()
+
+  const updateWorksWithFilterCache = useUpdateQueryCache<WorkType[]>([
+    'works',
+    params.get('status') ?? '',
+  ])
 
   const { fetchNextPage, tags } = useFetchTagsInfinity({
     search,
@@ -86,45 +96,45 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     mutationFn: uploadWorkImage,
     onMutate: (formData) => {
       const imageUrl = URL.createObjectURL(formData.get('file') as Blob)
-
-      queryClient.setQueriesData<WorkType[]>(
-        {
-          queryKey: ['works'],
-        },
-        (works) =>
-          works?.map((item) =>
-            item.id === work.id ? { ...item, imageUrl } : item,
-          ),
-      )
+      return updateWorksWithFilterCache((cache) => {
+        return map(cache, (item) =>
+          item.id === work.id ? { ...item, imageUrl } : item,
+        )
+      })
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Imagem atualizada com sucesso')
     },
-    onError: () => {
-      toast.error('Erro ao atualizar imagem')
+    onError: (_, __, oldCache) => {
+      updateWorksWithFilterCache(oldCache)
     },
   })
 
-  const { mutate: uploadWorkMutation } = useMutation({
+  const { mutate: updateWorkMutation } = useMutation({
     mutationKey: ['update-work', work.id],
     mutationFn: updateWork,
-    onSuccess() {
+    async onSuccess() {
       toast.success('Obra atualizada com sucesso')
     },
-    onError() {
+    onError(_, __, oldCache) {
       toast.error('Erro ao atualizar obra')
+      updateWorksWithFilterCache(oldCache as WorkType[])
     },
 
     onMutate(payload) {
-      queryClient.setQueriesData<WorkType[]>(
-        {
-          queryKey: ['works'],
-        },
-        (works) =>
-          works?.map((item) =>
-            item.id === work.id ? { ...item, ...payload } : item,
-          ),
-      )
+      return updateWorksWithFilterCache((cache) => {
+        return cache?.map((work) => {
+          if (work.id === payload.id) {
+            return {
+              ...work,
+              ...payload,
+              tags: form.getValues('tags'),
+            }
+          }
+
+          return work
+        })
+      })
     },
   })
 
@@ -140,7 +150,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       await uploadImageMutation(formData)
     }
 
-    uploadWorkMutation({
+    updateWorkMutation({
       id: work.id,
       chapter: payload.chapter,
       name: payload.name,
