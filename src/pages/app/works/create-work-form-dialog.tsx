@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { differenceBy, filter } from 'lodash'
 import { Book, Tv } from 'lucide-react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -8,6 +10,7 @@ import { z } from 'zod'
 
 import { createWork } from '@/api/create-work'
 import { WorkType } from '@/api/fetch-for-works-with-filter'
+import { tagSchema } from '@/api/get-tags-paged.ts'
 import { ComboBox } from '@/components/combobox'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,7 +30,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { getDefaultImageFile, validateFileType } from '@/utils/helpers.ts'
+import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
+import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
+import {
+  getDefaultImageFile,
+  normalizeString,
+  useDebounceState,
+  useUpdateQueryCache,
+  validateFileType,
+} from '@/utils/helpers.ts'
 
 import { ImageSelector } from './image-selector'
 
@@ -44,15 +55,25 @@ const createWorkSchema = z.object({
     .optional(),
 
   imageUrl: z.string().optional(),
+  tags: z.array(tagSchema),
 })
 
 export type CreateWorkForm = z.infer<typeof createWorkSchema>
 
 export function CreateWorkFormDialog() {
   const [params, setParams] = useSearchParams()
+  const currentFilter = params.get('status')
+  const currentQueryKey = ['works', currentFilter]
+  const [search, setSearch] = useDebounceState('', 300)
+
+  const parsedSearch = useMemo(() => normalizeString(search), [search])
+
+  const { tags, fetchNextPage } = useFetchTagsInfinity({ search: parsedSearch })
+
   const queryClient = useQueryClient()
 
-  const currentFilter = params.get('status')
+  const updateCurrentWorksListCache =
+    useUpdateQueryCache<WorkType[]>(currentQueryKey)
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
@@ -60,22 +81,15 @@ export function CreateWorkFormDialog() {
     defaultValues: {
       chapter: 0,
       imageUrl: '/animes-default.jpg',
+      tags: [],
     },
   })
-
-  const currentQueryKey = ['works', currentFilter]
 
   const { mutate: createWorkMutation } = useMutation({
     mutationKey: ['create-work'],
     mutationFn: createWork,
     onMutate() {
-      const cache = queryClient.getQueryData<WorkType[] | undefined>(
-        currentQueryKey,
-      )
-
-      if (!cache) return
-
-      queryClient.setQueryData(currentQueryKey, () => {
+      return updateCurrentWorksListCache((cache) => {
         const values = form.getValues()
         const newWork = {
           category: values.category,
@@ -95,13 +109,14 @@ export function CreateWorkFormDialog() {
           isStales: true,
         }
 
-        return [...cache, newWork]
+        return [...(cache ?? []), newWork]
       })
     },
 
     onSuccess() {
       toast.success('Obra adicionada com sucesso')
-      queryClient.invalidateQueries({
+
+      void queryClient.invalidateQueries({
         predicate: (query) => {
           return (
             query.queryKey.includes('works') ||
@@ -119,13 +134,9 @@ export function CreateWorkFormDialog() {
 
       form.reset()
     },
-    onError(error) {
-      console.log(error)
+    onError(_, __, oldCache) {
       toast.error('Erro ao adicionar obra')
-
-      queryClient.setQueryData(['works', currentFilter], (works: any[]) => {
-        return works.filter((work) => !work.isStales)
-      })
+      updateCurrentWorksListCache(oldCache)
     },
   })
 
@@ -136,7 +147,6 @@ export function CreateWorkFormDialog() {
       }
 
       const compressedImage = await compressImageAsync(imageFile)
-
       const formData = new FormData()
 
       formData.set('category', values.category)
@@ -192,7 +202,9 @@ export function CreateWorkFormDialog() {
               <ComboBox
                 disabledSearch
                 value={category}
-                onSelected={(value) => form.setValue('category', value as any)}
+                onSelected={(value) =>
+                  form.setValue('category', value as CreateWorkForm['category'])
+                }
                 options={[
                   {
                     label: 'Manga',
@@ -207,6 +219,31 @@ export function CreateWorkFormDialog() {
                 ]}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              render={({ field }) => (
+                <>
+                  <FormLabel>Tags</FormLabel>
+                  <TagsSelect
+                    onSearch={setSearch}
+                    options={differenceBy(tags, field.value, 'id')}
+                    onEndReached={fetchNextPage}
+                    handleRemoveTag={(tagId) => {
+                      field.onChange(
+                        filter(field.value, (tag) => tag.id !== tagId),
+                      )
+                    }}
+                    handleAddTag={(tags) => {
+                      field.onChange(tags)
+                    }}
+                    value={field.value}
+                  />
+                </>
+              )}
+              name="tags"
+            />
+
             <FormField
               control={form.control}
               name="chapter"
