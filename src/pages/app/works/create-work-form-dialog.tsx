@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { differenceBy, filter } from 'lodash'
+import { differenceBy, filter, map } from 'lodash'
 import { Book, Tv } from 'lucide-react'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -56,6 +56,7 @@ const createWorkSchema = z.object({
 
   imageUrl: z.string().optional(),
   tags: z.array(tagSchema),
+  alternativeName: z.string().optional(),
 })
 
 export type CreateWorkForm = z.infer<typeof createWorkSchema>
@@ -82,6 +83,7 @@ export function CreateWorkFormDialog() {
       chapter: 0,
       imageUrl: '/animes-default.jpg',
       tags: [],
+      alternativeName: '',
     },
   })
 
@@ -107,6 +109,7 @@ export function CreateWorkFormDialog() {
           updatedAt: new Date().toISOString(),
           url: values.url,
           isStales: true,
+          alternativeName: values.alternativeName ?? null,
         }
 
         return [...(cache ?? []), newWork]
@@ -154,6 +157,8 @@ export function CreateWorkFormDialog() {
       formData.set('chapter', values.chapter.toString())
       formData.set('url', values.url)
       formData.set('file', compressedImage)
+      formData.set('tagsId', map(values.tags, 'id').join(','))
+      formData.set('alternativeName', values.alternativeName ?? '')
 
       createWorkMutation(formData)
     } catch (error) {
@@ -190,7 +195,21 @@ export function CreateWorkFormDialog() {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="one piece" {...field} />
+                    <Input placeholder="ex: one piece" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="alternativeName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome alternativo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex: aventuras de luffy" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

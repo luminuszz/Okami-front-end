@@ -49,6 +49,7 @@ const editWorkSchema = z.object({
 
   imageUrl: z.string().optional(),
   tags: z.array(tagSchema),
+  alternativeName: z.string().optional(),
 })
 
 export type EditWorkFormDialog = z.infer<typeof editWorkSchema>
@@ -63,6 +64,7 @@ interface EditWorkFormDialogProps {
     type: string
     hasNewChapter: boolean
     tags: Tag[]
+    alternativeName: string | null
   }
 }
 
@@ -88,6 +90,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       imageFile: null,
       imageUrl: work.imageUrl,
       tags: work.tags ?? [],
+      alternativeName: work.alternativeName ?? '',
     },
   })
 
@@ -150,6 +153,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       name: payload.name,
       url: payload.url,
       tagsId: map(payload.tags, 'id'),
+      alternativeName: payload.alternativeName,
     })
   }
 
@@ -185,7 +189,21 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="one piece" {...field} />
+                    <Input placeholder="ex:one piece" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="alternativeName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome alternativo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex: aventuras de luffy" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

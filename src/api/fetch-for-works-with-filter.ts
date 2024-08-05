@@ -33,6 +33,7 @@ export const workSchema = z.object({
   isDropped: z.boolean(),
   createdAt: z.string(),
   tags: z.array(tagsSchema).optional(),
+  alternativeName: z.string().nullable(),
 })
 
 const fetchWorksWithFilterOutputSchema = z.array(workSchema)
