@@ -4,6 +4,7 @@ import { okamiHttpGateway } from '@/lib/axios'
 
 const fetchWorksWithFilterSchema = z.object({
   status: z.enum(['unread', 'read', 'dropped', 'finished']).nullable(),
+  search: z.string().optional().nullable(),
 })
 
 const tagsSchema = z.object({
