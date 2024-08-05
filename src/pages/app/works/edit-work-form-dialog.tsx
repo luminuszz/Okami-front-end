@@ -123,17 +123,11 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
 
     onMutate(payload) {
       return updateWorksWithFilterCache((cache) => {
-        return cache?.map((work) => {
-          if (work.id === payload.id) {
-            return {
-              ...work,
-              ...payload,
-              tags: form.getValues('tags'),
-            }
-          }
-
-          return work
-        })
+        return map(cache, (work) =>
+          work.id === payload.id
+            ? { ...work, ...payload, tags: form.getValues('tags') }
+            : work,
+        )
       })
     },
   })

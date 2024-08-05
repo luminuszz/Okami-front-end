@@ -140,6 +140,8 @@ export function useDebounceState<T>(
   return [debouncedValue, setValue]
 }
 
+export const normalizeString = (value: string) => value.trim().normalize('NFC')
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (value: unknown): value is Function =>
   typeof value === 'function'
