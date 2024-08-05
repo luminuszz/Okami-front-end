@@ -150,6 +150,7 @@ export function WorkCard({ work }: WorksCardProps) {
               type: work.category,
               hasNewChapter: work.hasNewChapter,
               tags: work?.tags ?? [],
+              alternativeName: work.alternativeName,
             }}
           />
 
