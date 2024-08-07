@@ -14,6 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx'
+import { worksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
+import { useUpdateQueryCache } from '@/utils/helpers.ts'
 
 export interface ConfirmDeleteWorkAlertDialogProps {
   work: {
@@ -28,20 +30,19 @@ export function ConfirmDeleteWorkAlertDialog({
   const queryClient = useQueryClient()
   const [params] = useSearchParams()
 
-  const currentFilter = params.get('status')
+  const queryKey = [
+    worksGalleryQueryKey,
+    { status: params.get('status'), search: params.get('name') },
+  ]
 
-  const queryKey = ['works', currentFilter]
+  const updateCache = useUpdateQueryCache<WorkType[]>(queryKey)
 
   const { mutate: deleteWorkMutation } = useMutation({
     mutationFn: deleteWork,
     onMutate: (workId) => {
-      const cache = queryClient.getQueryData<WorkType[]>(queryKey)
-
-      queryClient.setQueryData<WorkType[]>(queryKey, (works) => {
+      return updateCache((works) => {
         return filter(works, (value) => value.id !== workId)
       })
-
-      return cache
     },
     onSuccess() {
       toast.success('Obra excluída com sucesso')
@@ -49,12 +50,9 @@ export function ConfirmDeleteWorkAlertDialog({
         queryKey: ['user-quote'],
       })
     },
-    onError(_, __, context: WorkType[] | undefined) {
+    onError(_, __, context) {
       toast.error('Erro ao excluir obra')
-
-      if (context) {
-        queryClient.setQueryData<WorkType[]>(queryKey, context)
-      }
+      updateCache(context)
     },
   })
 

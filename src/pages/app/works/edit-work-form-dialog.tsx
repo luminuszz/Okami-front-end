@@ -27,9 +27,9 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
-import { queryClient } from '@/lib/react-query.ts'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
+import { worksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
 import {
   useDebounceState,
   useUpdateQueryCache,
@@ -74,8 +74,8 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   const [params] = useSearchParams()
 
   const updateWorksWithFilterCache = useUpdateQueryCache<WorkType[]>([
-    'works',
-    params.get('status') ?? '',
+    worksGalleryQueryKey,
+    { search: params.get('name'), status: params.get('status') },
   ])
 
   const { fetchNextPage, tags } = useFetchTagsInfinity({
@@ -108,12 +108,6 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     },
     onSuccess: async () => {
       toast.success('Imagem atualizada com sucesso')
-
-      void queryClient.invalidateQueries({
-        queryKey: ['works', params.get('status'), params.get('name')].filter(
-          (vl) => !!vl,
-        ),
-      })
     },
     onError: (_, __, oldCache) => {
       updateWorksWithFilterCache(oldCache)

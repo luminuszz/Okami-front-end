@@ -11,15 +11,17 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 import { WorkCard } from './workCard'
 
+export const worksGalleryQueryKey = 'works-gallery'
+
 export function WorkGallery() {
   const [params] = useSearchParams()
 
-  const status = (params.get('status') as FilterStatus) ?? null
-  const search = params.get('name') ?? ''
+  const status = params.get('status') as FilterStatus
+  const search = params.get('name')
 
   const { data: works, isLoading } = useQuery({
     queryFn: () => fetchWorksWithFilter({ status, search }),
-    queryKey: ['works', status, search],
+    queryKey: [worksGalleryQueryKey, { status, search }],
     select: filterAndSortWorks,
   })
 

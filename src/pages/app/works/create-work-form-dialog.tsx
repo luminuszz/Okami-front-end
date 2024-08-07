@@ -32,6 +32,7 @@ import { Label } from '@/components/ui/label'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
+import { worksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
 import {
   getDefaultImageFile,
   normalizeString,
@@ -63,8 +64,7 @@ export type CreateWorkForm = z.infer<typeof createWorkSchema>
 
 export function CreateWorkFormDialog() {
   const [params, setParams] = useSearchParams()
-  const currentFilter = params.get('status')
-  const currentQueryKey = ['works', currentFilter]
+
   const [search, setSearch] = useDebounceState('', 300)
 
   const parsedSearch = useMemo(() => normalizeString(search), [search])
@@ -73,8 +73,10 @@ export function CreateWorkFormDialog() {
 
   const queryClient = useQueryClient()
 
-  const updateCurrentWorksListCache =
-    useUpdateQueryCache<WorkType[]>(currentQueryKey)
+  const updateCurrentWorksListCache = useUpdateQueryCache<WorkType[]>([
+    worksGalleryQueryKey,
+    { status: params.get('status'), search: params.get('name') },
+  ])
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
