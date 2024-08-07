@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { compressImageAsync } from '@/lib/imageCompressor'
+import { queryClient } from '@/lib/react-query.ts'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
 import {
@@ -107,6 +108,12 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     },
     onSuccess: async () => {
       toast.success('Imagem atualizada com sucesso')
+
+      void queryClient.invalidateQueries({
+        queryKey: ['works', params.get('status'), params.get('name')].filter(
+          (vl) => !!vl,
+        ),
+      })
     },
     onError: (_, __, oldCache) => {
       updateWorksWithFilterCache(oldCache)
