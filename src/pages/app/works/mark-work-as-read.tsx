@@ -18,6 +18,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { worksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
+import { useUpdateQueryCache } from '@/utils/helpers.ts'
 
 interface MarkChapterReadDialogProps {
   work: {
@@ -34,17 +36,30 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
 
   const [params] = useSearchParams()
 
+  const currentWorkGalleryListQueryKey = [
+    worksGalleryQueryKey,
+    { search: params.get('name'), status: params.get('status') },
+  ]
+
+  const updateCache = useUpdateQueryCache<WorkType[]>(
+    currentWorkGalleryListQueryKey,
+  )
+
   const { mutateAsync } = useMutation({
     mutationFn: markWorkAsRead,
     mutationKey: ['markWorkAsRead', work.id],
     onMutate: () => {
-      client.setQueryData<WorkType[]>(
-        ['works', params.get('status')],
-        (works) => filter(works, (value) => value.id !== work.id),
+      return updateCache((works) =>
+        filter(works, (value) => value.id !== work.id),
       )
     },
+    onError(_, __, oldCache) {
+      updateCache(oldCache)
+    },
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: ['works', 'read'] })
+      void client.invalidateQueries({
+        queryKey: currentWorkGalleryListQueryKey,
+      })
     },
   })
 
@@ -77,11 +92,7 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
 
     if (currentNotifications?.length) {
       const notification = find(currentNotifications, ({ content, readAt }) => {
-        return (
-          content.nextChapter >= Number(inputValue) &&
-          content.name === work.name &&
-          readAt === null
-        )
+        return content?.workId === work.id && !readAt
       })
 
       if (notification) {

@@ -1,12 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { filter } from 'lodash'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { filter, map } from 'lodash'
 import { Bell } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { getRecentNotifications } from '@/api/get-recent-notifications'
 import { markNotificationAsRead } from '@/api/mark-notification-as-read'
 import { NotificationType } from '@/api/schemas'
-import { parseDistanceByDate } from '@/utils/helpers.ts'
+import { parseDistanceByDate, useUpdateQueryCache } from '@/utils/helpers.ts'
 
 import { Button } from './ui/button'
 import {
@@ -31,6 +31,7 @@ interface NotificationItemProps {
     name: string
     createdAt: string
     readAt: string | null
+    workId?: string
   }
 }
 
@@ -77,48 +78,29 @@ function NotificationItem({ content }: NotificationItemProps) {
   )
 }
 
-interface UpdateNotificationCache {
-  notificationId: string
-  readAt: string | null
-}
-
 export function NotificationTab() {
-  const queryClient = useQueryClient()
-
   const queryNotificationsKey = ['recent-notifications']
 
-  function updateNotificationCacheStatus({
-    notificationId,
-    readAt,
-  }: UpdateNotificationCache) {
-    queryClient.setQueryData<NotificationType[]>(
-      queryNotificationsKey,
-      (cache) => {
-        if (!cache) return []
-
-        return cache.map((item) =>
-          item.id === notificationId ? { ...item, readAt } : item,
-        )
-      },
-    )
-  }
+  const updateNotificationCacheList = useUpdateQueryCache<NotificationType[]>(
+    queryNotificationsKey,
+  )
 
   const { mutate: markAsRead } = useMutation({
     mutationKey: ['mark-notification-as-read'],
     mutationFn: markNotificationAsRead,
 
     onMutate(notificationId) {
-      updateNotificationCacheStatus({
-        notificationId,
-        readAt: new Date().toISOString(),
-      })
+      return updateNotificationCacheList((cache) =>
+        map(cache, (item) =>
+          item.id === notificationId
+            ? { ...item, readAt: new Date().toISOString() }
+            : item,
+        ),
+      )
     },
 
-    onError(_, notificationId) {
-      updateNotificationCacheStatus({
-        notificationId,
-        readAt: null,
-      })
+    onError(_, __, oldCache) {
+      updateNotificationCacheList(oldCache)
     },
   })
 
