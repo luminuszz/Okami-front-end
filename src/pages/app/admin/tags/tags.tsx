@@ -1,13 +1,17 @@
 import { AlertDialog, AlertDialogTrigger } from '@radix-ui/react-alert-dialog'
 import { useQuery } from '@tanstack/react-query'
-import { Pencil, Tag, Trash } from 'lucide-react'
-import colors from 'tailwindcss/colors'
+import { map } from 'lodash'
+import { Pencil, Search, Tag, Trash } from 'lucide-react'
+import { FormEvent, useState } from 'react'
+import { toast } from 'sonner'
 
+import { filterTagsBySearch } from '@/api/filter-tags-by-search.ts'
 import { getTagsPaged } from '@/api/get-tags-paged.ts'
 import { Pagination } from '@/components/pagination.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog.tsx'
+import { Input } from '@/components/ui/input.tsx'
 import {
   Table,
   TableBody,
@@ -19,17 +23,19 @@ import {
 import { CreateTagDialog } from '@/pages/app/admin/tags/create-tag-dialog.tsx'
 import { DeleteTagAlertConfirmDialog } from '@/pages/app/admin/tags/delete-tag-alert-confirm-dialog.tsx'
 import { UpdateTagDialog } from '@/pages/app/admin/tags/update-tag-dialog.tsx'
-import { ColorKey, useGetCurrentPage } from '@/utils/helpers.ts'
+import { getTagColor, useGetCurrentPage } from '@/utils/helpers.ts'
 
 import { EmptyLoadingTable } from '../../scrapping-report/empty-loading-table.tsx'
 
 export const getTagsQueryKey = 'tags' as const
+export const filteredTagsQueryKey = 'filtered-tags' as const
 
 const defaultItemPerPage = 20
 
 export function Tags() {
   const currentPage = useGetCurrentPage()
 
+  const [search, setSearch] = useState('')
   const { isLoading, data: results } = useQuery({
     queryKey: [getTagsQueryKey, currentPage],
     queryFn: () => getTagsPaged(currentPage),
@@ -38,13 +44,41 @@ export function Tags() {
         totalOfPages,
         tags: data.map((item) => ({
           ...item,
-          themeColor: colors[item.color as ColorKey] ?? colors.gray,
+          themeColor: getTagColor(item.color),
         })),
       }
     },
   })
 
-  const totalOfTags = defaultItemPerPage * (results?.totalOfPages ?? 0)
+  const { data: filteredTags, refetch } = useQuery({
+    queryKey: [filteredTagsQueryKey, { search }],
+    queryFn: () => filterTagsBySearch(search),
+    enabled: false,
+    initialData: [],
+    select(data) {
+      return map(data, (item) => ({
+        ...item,
+        themeColor: getTagColor(item.color),
+      }))
+    },
+  })
+
+  function handleSubmitSearch(e: FormEvent) {
+    e.preventDefault()
+
+    if (!search) return
+
+    refetch().then((query) => {
+      if (!query.data?.length) {
+        toast.error('Nenhuma tag encontrada')
+      }
+    })
+  }
+
+  const totalOfTags =
+    filteredTags.length ?? defaultItemPerPage * (results?.totalOfPages ?? 0)
+
+  const tagList = filteredTags.length ? filteredTags : results?.tags ?? []
 
   return (
     <section className="flex flex-col gap-4">
@@ -56,7 +90,19 @@ export function Tags() {
         Tags são utilizadas para categorizar os conteúdos das obras
       </p>
 
-      <aside className="flex justify-end">
+      <aside className="flex justify-between">
+        <form className="flex items-center gap-4" onSubmit={handleSubmitSearch}>
+          <Input
+            placeholder="Pesquisar tag..."
+            className="h-8 w-full max-w-[320px]"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button type="submit" variant="ghost" className="h-8">
+            <Search className="size-4" />
+          </Button>
+        </form>
+
         <Dialog>
           <CreateTagDialog />
           <DialogTrigger asChild>
@@ -79,7 +125,7 @@ export function Tags() {
           </TableHeader>
           <TableBody>{isLoading && <EmptyLoadingTable />}</TableBody>
 
-          {results?.tags.map((tag) => (
+          {tagList.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell>{tag.id}</TableCell>
               <TableCell>{tag.name}</TableCell>
@@ -87,7 +133,7 @@ export function Tags() {
               <TableCell>
                 <Badge
                   className="text-gray-100"
-                  style={{ background: tag.themeColor[600] }}
+                  style={{ background: tag.themeColor }}
                   variant="outline"
                   key={tag.id}
                 >
@@ -123,12 +169,14 @@ export function Tags() {
           Total de {totalOfTags} tags
         </p>
 
-        <div className="flex">
-          <Pagination
-            totalOfPages={results?.totalOfPages ?? 0}
-            currentPage={currentPage}
-          />
-        </div>
+        {!search && (
+          <div className="flex">
+            <Pagination
+              totalOfPages={results?.totalOfPages ?? 0}
+              currentPage={currentPage}
+            />
+          </div>
+        )}
       </div>
     </section>
   )
