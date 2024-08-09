@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { chain, flatMap } from 'lodash'
+import { flatMap } from 'lodash'
 import { useCallback } from 'react'
 
 import { filterTagsBySearch } from '@/api/filter-tags-by-search.ts'
@@ -36,11 +36,12 @@ export function useFetchTagsInfinity({
     },
   })
 
-  const { data: filteredTags = [], isFetching: isFetchingTagsSelectSearch } =
+  const { data: filteredTags, isFetching: isFetchingTagsSelectSearch } =
     useQuery({
       queryKey: ['tags-select-search', search],
       queryFn: () => filterTagsBySearch(search),
       enabled: !!search,
+      initialData: [],
     })
 
   const handleFetchNextPage = useCallback(() => {
@@ -60,10 +61,7 @@ export function useFetchTagsInfinity({
     search,
   ])
 
-  const currentTags = chain(tagsFromInfinityQuery)
-    .concat(filteredTags)
-    .uniqBy('id')
-    .value()
+  const currentTags = search ? filteredTags : tagsFromInfinityQuery
 
   return {
     fetchNextPage: handleFetchNextPage,

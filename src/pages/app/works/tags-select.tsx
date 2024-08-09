@@ -53,6 +53,10 @@ export function TagsSelect({
     }
   }, [handler, inView])
 
+  console.log({
+    options,
+  })
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <div className="flex items-center justify-between px-2">
@@ -89,8 +93,9 @@ export function TagsSelect({
       </div>
 
       <PopoverContent align="center">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput
+            inputMode="search"
             onValueChange={onSearch}
             placeholder="Pesquisar tags..."
             isPending={isLoading}
