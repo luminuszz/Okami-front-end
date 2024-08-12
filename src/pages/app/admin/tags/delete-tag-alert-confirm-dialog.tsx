@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx'
 import { getTagsQueryKey } from '@/pages/app/admin/tags/tags.tsx'
-import { useGetCurrentPage } from '@/utils/helpers.ts'
+import { useGetCurrentPage, useUpdateQueryCache } from '@/utils/helpers.ts'
 
 export interface DeleteTagConfirmDialogProps {
   tag: {
@@ -33,6 +33,8 @@ export function DeleteTagAlertConfirmDialog({
   const tagQueryKey = [getTagsQueryKey, page] as const
   const mutationKey = ['delete-tag', tag.id] as const
 
+  const { updateCache } = useUpdateQueryCache<TagResponse>(tagQueryKey)
+
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteTag(tag.id),
     mutationKey,
@@ -43,20 +45,18 @@ export function DeleteTagAlertConfirmDialog({
     },
 
     onMutate() {
-      const oldCache = client.getQueryData<TagResponse>(tagQueryKey)
-
-      client.setQueryData(tagQueryKey, () => {
+      return updateCache((cache) => {
         return {
-          ...oldCache,
-          data: filter(oldCache?.data, (value) => value.id !== tag.id),
+          ...cache,
+          totalOfPages: cache?.totalOfPages ?? 0,
+          data: filter(cache?.data, (value) => value.id !== tag.id),
         }
       })
-
-      return oldCache
     },
 
     onError(_, __, oldCache) {
-      client.setQueryData(tagQueryKey, oldCache)
+      updateCache(oldCache)
+
       toast.error('Erro ao excluir a tag')
     },
 

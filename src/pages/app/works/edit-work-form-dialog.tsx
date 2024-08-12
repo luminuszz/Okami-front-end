@@ -73,7 +73,9 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   const [search, setSearch] = useDebounceState('', 300)
   const [params] = useSearchParams()
 
-  const updateWorksWithFilterCache = useUpdateQueryCache<WorkType[]>([
+  const { updateCache: updateWorksWithFilterCache } = useUpdateQueryCache<
+    WorkType[]
+  >([
     worksGalleryQueryKey,
     { search: params.get('name'), status: params.get('status') },
   ])
