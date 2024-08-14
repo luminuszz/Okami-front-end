@@ -26,6 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area.tsx'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
@@ -173,106 +174,108 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
         <DialogTitle>Editar Obra</DialogTitle>
       </DialogHeader>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleEditWork)}
-          className="flex flex-col gap-2"
-        >
-          <div className="m-auto flex h-[300px] w-[300px] justify-center">
-            <ImageSelector />
-          </div>
+      <ScrollArea className="h-[712px]">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleEditWork)}
+            className="flex flex-col gap-2"
+          >
+            <div className="m-auto flex h-[200px] w-full max-w-[200px] justify-center">
+              <ImageSelector />
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex:one piece" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex:one piece" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="alternativeName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome alternativo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex: aventuras de luffy" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="alternativeName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome alternativo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex: aventuras de luffy" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              render={({ field }) => (
-                <>
-                  <FormLabel>Tags</FormLabel>
-                  <TagsSelect
-                    onSearch={setSearch}
-                    options={differenceBy(tags, field.value, 'id')}
-                    onEndReached={fetchNextPage}
-                    handleRemoveTag={(tagId) =>
-                      handleRemoveTag(tagId, field.value)
-                    }
-                    handleAddTag={(tags) => {
-                      field.onChange(tags)
-                    }}
-                    value={field.value ?? []}
-                  />
-                </>
-              )}
-              name="tags"
-            />
-
-            <FormField
-              control={form.control}
-              name="chapter"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{currentChapterLabel}</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={work.hasNewChapter}
-                      type="number"
-                      placeholder="120"
-                      {...field}
+              <FormField
+                control={form.control}
+                render={({ field }) => (
+                  <>
+                    <FormLabel>Tags</FormLabel>
+                    <TagsSelect
+                      onSearch={setSearch}
+                      options={differenceBy(tags, field.value, 'id')}
+                      onEndReached={fetchNextPage}
+                      handleRemoveTag={(tagId) =>
+                        handleRemoveTag(tagId, field.value)
+                      }
+                      handleAddTag={(tags) => {
+                        field.onChange(tags)
+                      }}
+                      value={field.value ?? []}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  </>
+                )}
+                name="tags"
+              />
 
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>URL</FormLabel>
-                  <FormControl>
-                    <Input type="url" placeholder="anime.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogClose asChild>
-              <Button disabled={form.formState.isSubmitting} type="submit">
-                Salvar
-              </Button>
-            </DialogClose>
-          </div>
-        </form>
-      </Form>
+              <FormField
+                control={form.control}
+                name="chapter"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{currentChapterLabel}</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={work.hasNewChapter}
+                        type="number"
+                        placeholder="120"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>URL</FormLabel>
+                    <FormControl>
+                      <Input type="url" placeholder="anime.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogClose asChild>
+                <Button disabled={form.formState.isSubmitting} type="submit">
+                  Salvar
+                </Button>
+              </DialogClose>
+            </div>
+          </form>
+        </Form>
+      </ScrollArea>
     </DialogContent>
   )
 }
