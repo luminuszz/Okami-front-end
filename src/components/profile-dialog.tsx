@@ -7,7 +7,6 @@ import { z } from 'zod'
 import { getUserDetails, GetUserDetailsType } from '@/api/get-user-details'
 import { updateUserCall } from '@/api/update-user'
 import { uploadAvatarImage } from '@/api/upload-avatar-image'
-import { compressImageAsync } from '@/lib/imageCompressor'
 import { isFileList } from '@/utils/helpers.ts'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -116,9 +115,7 @@ export function EditProfileDialog() {
 
     try {
       if (isFileList(avatar) && dirtyFields.avatar) {
-        const compressedImage = await compressImageAsync(avatar[0])
-
-        formData.set('avatar', compressedImage)
+        formData.set('avatar', avatar[0])
 
         await uploadAvatar(formData)
 
@@ -129,6 +126,8 @@ export function EditProfileDialog() {
 
       toast.success('Perfil atualizado com sucesso')
     } catch (error) {
+      console.log({ error })
+
       toast.error('Erro ao atualizar perfil')
     }
   }
