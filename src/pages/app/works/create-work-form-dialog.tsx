@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area.tsx'
 import { compressImageAsync } from '@/lib/imageCompressor'
 import { TagsSelect } from '@/pages/app/works/tags-select.tsx'
 import { useFetchTagsInfinity } from '@/pages/app/works/use-fetch-tags-infinity.ts'
@@ -64,7 +65,6 @@ export type CreateWorkForm = z.infer<typeof createWorkSchema>
 
 export function CreateWorkFormDialog() {
   const [params, setParams] = useSearchParams()
-
   const [search, setSearch] = useDebounceState('', 300)
 
   const parsedSearch = useMemo(() => normalizeString(search), [search])
@@ -113,7 +113,6 @@ export function CreateWorkFormDialog() {
           isStales: true,
           alternativeName: values.alternativeName ?? null,
         }
-
         return [...(cache ?? []), newWork]
       })
     },
@@ -124,7 +123,7 @@ export function CreateWorkFormDialog() {
       void queryClient.invalidateQueries({
         predicate: (query) => {
           return (
-            query.queryKey.includes('works') ||
+            query.queryKey.includes('works-gallery') ||
             query.queryKey.includes('user-quote')
           )
         },
@@ -154,13 +153,13 @@ export function CreateWorkFormDialog() {
       const compressedImage = await compressImageAsync(imageFile)
       const formData = new FormData()
 
-      formData.set('category', values.category)
-      formData.set('name', values.name)
-      formData.set('chapter', values.chapter.toString())
-      formData.set('url', values.url)
-      formData.set('file', compressedImage)
-      formData.set('tagsId', map(values.tags, 'id').join(','))
-      formData.set('alternativeName', values.alternativeName ?? '')
+      formData.append('category', values.category)
+      formData.append('name', values.name)
+      formData.append('chapter', values.chapter.toString())
+      formData.append('url', values.url)
+      formData.append('file', compressedImage)
+      formData.append('tagsId', map(values.tags, 'id').join(','))
+      formData.append('alternativeName', values.alternativeName ?? '')
 
       createWorkMutation(formData)
     } catch (error) {
@@ -175,135 +174,140 @@ export function CreateWorkFormDialog() {
     form.formState.isSubmitting || !form.formState.isValid
 
   return (
-    <DialogContent className="mx-2">
+    <DialogContent className="mx-2 ">
       <DialogHeader>
         <DialogTitle>Adicionar obra</DialogTitle>
       </DialogHeader>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleCreateWork)}
-          className="flex flex-col gap-2"
-        >
-          <div className="m-auto flex h-[200px] w-full max-w-[200px] justify-center">
-            <ImageSelector />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex: one piece" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="alternativeName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome alternativo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex: aventuras de luffy" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex flex-col gap-2">
-              <Label className="mb-2">Tipo da obra</Label>
-              <ComboBox
-                disabledSearch
-                value={category}
-                onSelected={(value) =>
-                  form.setValue('category', value as CreateWorkForm['category'])
-                }
-                options={[
-                  {
-                    label: 'Manga',
-                    value: 'MANGA',
-                    icon: <Book className="size-4" />,
-                  },
-                  {
-                    label: 'Anime',
-                    value: 'ANIME',
-                    icon: <Tv className="size-4" />,
-                  },
-                ]}
-              />
+      <ScrollArea className="h-[600px] px-4">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleCreateWork)}
+            className="flex flex-col gap-2"
+          >
+            <div className="m-auto flex h-[200px] w-full max-w-[200px] justify-center">
+              <ImageSelector />
             </div>
 
-            <FormField
-              control={form.control}
-              render={({ field }) => (
-                <>
-                  <FormLabel>Tags</FormLabel>
-                  <TagsSelect
-                    onSearch={setSearch}
-                    options={differenceBy(tags, field.value, 'id')}
-                    onEndReached={fetchNextPage}
-                    handleRemoveTag={(tagId) => {
-                      field.onChange(
-                        filter(field.value, (tag) => tag.id !== tagId),
-                      )
-                    }}
-                    handleAddTag={(tags) => {
-                      field.onChange(tags)
-                    }}
-                    value={field.value}
-                  />
-                </>
-              )}
-              name="tags"
-            />
+            <div className="flex flex-col gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex: one piece" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="chapter"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Episódio / Capítulo</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="120" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="alternativeName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome alternativo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex: aventuras de luffy" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>URL</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="url"
-                      placeholder="http://anime.com"
-                      {...field}
+              <div className="flex flex-col gap-2">
+                <Label className="mb-2">Tipo da obra</Label>
+                <ComboBox
+                  disabledSearch
+                  value={category}
+                  onSelected={(value) =>
+                    form.setValue(
+                      'category',
+                      value as CreateWorkForm['category'],
+                    )
+                  }
+                  options={[
+                    {
+                      label: 'Manga',
+                      value: 'MANGA',
+                      icon: <Book className="size-4" />,
+                    },
+                    {
+                      label: 'Anime',
+                      value: 'ANIME',
+                      icon: <Tv className="size-4" />,
+                    },
+                  ]}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                render={({ field }) => (
+                  <>
+                    <FormLabel>Tags</FormLabel>
+                    <TagsSelect
+                      onSearch={setSearch}
+                      options={differenceBy(tags, field.value, 'id')}
+                      onEndReached={fetchNextPage}
+                      handleRemoveTag={(tagId) => {
+                        field.onChange(
+                          filter(field.value, (tag) => tag.id !== tagId),
+                        )
+                      }}
+                      handleAddTag={(tags) => {
+                        field.onChange(tags)
+                      }}
+                      value={field.value}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogClose asChild className="mt-2">
-              <Button disabled={needDisableButton} type="submit">
-                Adicionar
-              </Button>
-            </DialogClose>
-          </div>
-        </form>
-      </Form>
+                  </>
+                )}
+                name="tags"
+              />
+
+              <FormField
+                control={form.control}
+                name="chapter"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Episódio / Capítulo</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="120" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="url"
+                        placeholder="http://anime.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogClose asChild className="mt-2">
+                <Button disabled={needDisableButton} type="submit">
+                  Adicionar
+                </Button>
+              </DialogClose>
+            </div>
+          </form>
+        </Form>
+      </ScrollArea>
     </DialogContent>
   )
 }

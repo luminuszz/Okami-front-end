@@ -53,10 +53,6 @@ export function TagsSelect({
     }
   }, [handler, inView])
 
-  console.log({
-    options,
-  })
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <div className="flex items-center justify-between px-2">
