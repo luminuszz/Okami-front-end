@@ -81,9 +81,9 @@ function NotificationItem({ content }: NotificationItemProps) {
 export function NotificationTab() {
   const queryNotificationsKey = ['recent-notifications']
 
-  const updateNotificationCacheList = useUpdateQueryCache<NotificationType[]>(
-    queryNotificationsKey,
-  )
+  const { updateCache: updateNotificationCacheList } = useUpdateQueryCache<
+    NotificationType[]
+  >(queryNotificationsKey)
 
   const { mutate: markAsRead } = useMutation({
     mutationKey: ['mark-notification-as-read'],

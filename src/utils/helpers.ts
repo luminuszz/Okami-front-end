@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from 'clsx'
 import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { differenceBy } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { twMerge } from 'tailwind-merge'
 import colors from 'tailwindcss/colors'
@@ -166,5 +166,11 @@ export function useUpdateQueryCache<CacheType>(key: QueryKey) {
     return originalCache
   }
 
-  return updateCache
+  const invalidateCache = useCallback(async () => {
+    void client.invalidateQueries({
+      queryKey: key,
+    })
+  }, [client, key])
+
+  return { updateCache, invalidateCache }
 }

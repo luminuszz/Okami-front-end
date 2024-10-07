@@ -35,7 +35,7 @@ export function ConfirmDeleteWorkAlertDialog({
     { status: params.get('status'), search: params.get('name') },
   ]
 
-  const updateCache = useUpdateQueryCache<WorkType[]>(queryKey)
+  const { updateCache } = useUpdateQueryCache<WorkType[]>(queryKey)
 
   const { mutate: deleteWorkMutation } = useMutation({
     mutationFn: deleteWork,
