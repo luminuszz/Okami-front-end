@@ -9,7 +9,7 @@ export const notificationSchema = z.object({
     message: z.string(),
     name: z.string(),
     url: z.string(),
-    nextChapter: z.number(),
+    nextChapter: z.number().optional().default(0),
     workId: z.string().optional(),
   }),
   createdAt: z.string(),
