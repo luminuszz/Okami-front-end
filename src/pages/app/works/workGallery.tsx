@@ -27,12 +27,7 @@ export function WorkGallery() {
 
   function filterAndSortWorks(works: WorkType[]) {
     return works.sort((a, b) => {
-      const compare: [Date, Date] = [
-        parseISO(a.nextChapterUpdatedAt ?? a.updatedAt ?? a.createdAt),
-        parseISO(b.nextChapterUpdatedAt ?? b.updatedAt ?? b.createdAt),
-      ]
-
-      return compareDesc(...compare)
+      return compareDesc(parseISO(a.createdAt), parseISO(b.createdAt))
     })
   }
 

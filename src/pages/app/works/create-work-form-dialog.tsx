@@ -112,6 +112,7 @@ export function CreateWorkFormDialog() {
           url: values.url,
           isStales: true,
           alternativeName: values.alternativeName ?? null,
+          isFavorite: false,
         }
         return [...(cache ?? []), newWork]
       })

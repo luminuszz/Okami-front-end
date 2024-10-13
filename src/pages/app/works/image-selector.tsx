@@ -43,7 +43,7 @@ export function ImageSelector({ isRound }: ImageSelectorProps) {
 
       setValue('imageFile', null)
     }
-  }, [])
+  }, [setValue])
 
   return (
     <label htmlFor="fileInput" className="relative size-full cursor-pointer">

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card'
 import { DialogTrigger } from '@/components/ui/dialog'
 import { ConfirmDeleteWorkAlertDialog } from '@/pages/app/works/confirm-delete-work-alert-dialog'
+import { WorkFavoriteButton } from '@/pages/app/works/work-favorite-button.tsx'
 
 import { EditWorkFormDialog } from './edit-work-form-dialog.tsx'
 import { MarkWorksAsReadDialog } from './mark-work-as-read'
@@ -48,7 +49,9 @@ export function WorkCard({ work }: WorksCardProps) {
 
   return (
     <Card className="max-w-xl">
-      <div className="flex justify-end p-2">
+      <div className="flex justify-between p-2">
+        <WorkFavoriteButton initialState={work.isFavorite} workId={work.id} />
+
         <AlertDialog>
           <ConfirmDeleteWorkAlertDialog
             work={{ name: work.name, workId: work.id }}
