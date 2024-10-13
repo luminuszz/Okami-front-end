@@ -1,10 +1,10 @@
-import {} from '@radix-ui/react-avatar'
 import { useQuery } from '@tanstack/react-query'
-import { compareDesc, formatDistance, parseISO } from 'date-fns'
+import { clsx } from 'clsx'
+import { formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowRight, FolderSync } from 'lucide-react'
+import { ArrowRight, BookHeart } from 'lucide-react'
 
-import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import { fetchFavoritesWorks } from '@/api/fetch-favorites-works.ts'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +25,7 @@ interface SyncItemProps {
     nextChapterUpdatedAt: string
     nextChapter: number
     url: string
+    chapter: number
   }
 }
 
@@ -39,10 +40,11 @@ const SyncItemList = ({ work }: SyncItemProps) => {
     },
   )
 
-  const message =
-    work.type === 'ANIME'
-      ? `Novo Episodio: ${work.nextChapter} `
-      : `Novo Capitulo:  ${work.nextChapter}`
+  const label = work.type === 'ANIME' ? `Episodio:` : `Capitulo:`
+
+  const message = work.nextChapter
+    ? `Novo ${label} ${work.nextChapter}`
+    : `Ultimo ${label} ${work.chapter}`
 
   return (
     <div className="flex items-center justify-between">
@@ -57,11 +59,16 @@ const SyncItemList = ({ work }: SyncItemProps) => {
           className="flex cursor-pointer flex-col"
           onClick={() => window.open(work.url)}
         >
-          <span className="break-words text-base font-normal  text-foreground md:max-w-xs">
+          <span className="max-w-xs break-words text-base  font-normal text-foreground md:max-w-sm md:text-clip">
             {work.title}
           </span>
 
-          <p className="text-sm font-medium text-muted-foreground">
+          <p
+            className={clsx('text-sm font-medium text-muted-foreground', {
+              'text-emerald-700': !!work.nextChapter,
+              'text-muted-foreground': !work.nextChapter,
+            })}
+          >
             {`${message} - ${formattedUpdateAt}`}
           </p>
         </div>
@@ -79,20 +86,17 @@ const SyncItemList = ({ work }: SyncItemProps) => {
   )
 }
 
-export function RecentSyncList() {
+export function FavoriteSyncList() {
   const filter = 'unread'
 
   const { data: works, isLoading } = useQuery({
     queryKey: ['works', filter],
-    queryFn: () => fetchWorksWithFilter({ status: filter }),
+    queryFn: fetchFavoritesWorks,
     select: (data) =>
       data
-        .sort((a, b) =>
-          compareDesc(
-            new Date(a.nextChapterUpdatedAt || ''),
-            new Date(b.nextChapterUpdatedAt || ''),
-          ),
-        )
+        .sort((a, b) => {
+          return (b.hasNewChapter ? 1 : 0) - (a.hasNewChapter ? 1 : 0)
+        })
         .slice(0, 7),
   })
 
@@ -103,12 +107,14 @@ export function RecentSyncList() {
       <CardHeader className="flex  flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="font-medium text-foreground">
-            Sincronizações
+            Favoritos
           </CardTitle>
-          <CardDescription>Sincronização de obras recentes</CardDescription>
+          <CardDescription>
+            Sincronização de suas obras favoritas
+          </CardDescription>
         </div>
 
-        <FolderSync className="size-5 text-muted-foreground" />
+        <BookHeart className="size-5 text-muted-foreground" />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5 ">
@@ -125,6 +131,7 @@ export function RecentSyncList() {
                 title: item.name,
                 type: item.category,
                 url: item.url,
+                chapter: item.chapter,
               }}
             />
           ))
@@ -133,7 +140,7 @@ export function RecentSyncList() {
         {hasNoWorks && (
           <div className="h-[400px]">
             <p className="text-center text-muted-foreground">
-              Você não tem nenhuma obra recente
+              Você não tem nenhuma obra favorita
             </p>
           </div>
         )}

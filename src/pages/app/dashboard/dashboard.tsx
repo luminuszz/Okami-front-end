@@ -1,8 +1,8 @@
 import { Helmet } from 'react-helmet-async'
 
+import { FavoriteSyncList } from './favorite-sync-list.tsx'
 import { FinishedWorksAmountCard } from './finished-works-amount-card'
 import { ReadWorksAmountCard } from './read-works-amount.card'
-import { RecentSyncList } from './recent-sync-list'
 import { TotalWorksCard } from './total-works-card'
 import { UnreadWorksAmountCard } from './unread-works-amount-card'
 import { WorksInfoChart } from './works-info-chart'
@@ -24,7 +24,7 @@ export function Dashboard() {
 
         <section className="grid gap-2 md:grid-cols-2">
           <WorksInfoChart />
-          <RecentSyncList />
+          <FavoriteSyncList />
         </section>
       </main>
     </>

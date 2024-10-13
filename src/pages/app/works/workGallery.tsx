@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { compareDesc, parseISO } from 'date-fns'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -17,6 +16,7 @@ export function WorkGallery() {
   const [params] = useSearchParams()
 
   const status = params.get('status') as FilterStatus
+
   const search = params.get('name')
 
   const { data: works, isLoading } = useQuery({
@@ -27,7 +27,7 @@ export function WorkGallery() {
 
   function filterAndSortWorks(works: WorkType[]) {
     return works.sort((a, b) => {
-      return compareDesc(parseISO(a.createdAt), parseISO(b.createdAt))
+      return (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0)
     })
   }
 
