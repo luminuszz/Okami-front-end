@@ -1,16 +1,25 @@
+import { toast } from 'sonner'
+
 import { getSubscriptionPublicKey } from '@/api/get-subscription-public-key'
 import { registerSubscription } from '@/api/register-subscription'
 
 export class ServiceWorkerNotification {
-  constructor() {
-    void this.requestNotifications()
+  async checkPermissions(): Promise<boolean> {
+    const permission = window.Notification.permission
+    return permission === 'granted'
   }
 
   async requestNotifications() {
     window.Notification.requestPermission().then((permission) => {
-      permission === 'granted'
-        ? console.log('Notification permission granted')
-        : console.log('Notification permission denied')
+      const isGranted = permission === 'granted'
+
+      if (!isGranted) {
+        toast.warning(
+          'Você precisa permitir as notificações para receber ser notificado de novas atualizações.',
+        )
+      } else {
+        this.registerServiceWorker()
+      }
     })
   }
 
@@ -37,7 +46,7 @@ export class ServiceWorkerNotification {
             })
           }
         } catch (error) {
-          console.log({ error })
+          toast.error('Não foi possível registrar as notificações.')
         }
       })
   }

@@ -7,7 +7,11 @@ import { serviceWorkNotificationManager } from '@/lib/notifications'
 import { Header } from '../header'
 import { PermissionsProvider } from '../permissions-provider'
 
-serviceWorkNotificationManager.registerServiceWorker()
+serviceWorkNotificationManager.checkPermissions().then((isGranted) => {
+  if (!isGranted) {
+    serviceWorkNotificationManager.requestNotifications()
+  }
+})
 
 export function AppLayout() {
   const navigate = useNavigate()
