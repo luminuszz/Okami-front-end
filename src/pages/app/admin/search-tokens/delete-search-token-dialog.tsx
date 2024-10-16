@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx'
 import { searchTokenQueryKey } from '@/pages/app/admin/search-tokens/search-tokens.tsx'
+import { useUpdateQueryCache } from '@/utils/helpers.ts'
 
 export interface DeleteSearchTokenDialogProps {
   searchToken: {
@@ -32,9 +33,13 @@ export function DeleteSearchTokenDialog({
 
   const searchTokenQueryKeyWithType = [searchTokenQueryKey, searchToken.type]
 
+  const { updateCache } = useUpdateQueryCache<SearchToken[]>(
+    searchTokenQueryKeyWithType,
+  )
+
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteSearchToken(searchToken.id),
-    mutationKey: [deleteSearchTokenMutationKey],
+    mutationKey: searchTokenQueryKeyWithType,
     onSettled() {
       void client.invalidateQueries({
         queryKey: searchTokenQueryKeyWithType,
@@ -42,19 +47,13 @@ export function DeleteSearchTokenDialog({
     },
 
     onMutate() {
-      const oldCache = client.getQueryData<SearchToken[]>(
-        searchTokenQueryKeyWithType,
+      return updateCache((cache) =>
+        filter(cache, (token) => token.id !== searchToken.id),
       )
-
-      client.setQueryData(searchTokenQueryKeyWithType, () => {
-        return filter(oldCache, (value) => value.id !== searchToken.id)
-      })
-
-      return oldCache
     },
 
     onError(_, __, oldCache) {
-      client.setQueryData(searchTokenQueryKeyWithType, oldCache)
+      updateCache(oldCache)
       toast.error('Erro ao excluir token de busca')
     },
 
@@ -67,7 +66,6 @@ export function DeleteSearchTokenDialog({
     <AlertDialogContent>
       <AlertDialogHeader>
         <AlertDialogTitle>
-          {/* eslint-disable-next-line react/no-unescaped-entities */}
           Excluir Token: "{searchToken.token}" ?
         </AlertDialogTitle>
 

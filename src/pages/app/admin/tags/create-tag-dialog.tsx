@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx'
 import { getTagsQueryKey } from '@/pages/app/admin/tags/tags.tsx'
-import { getAvailableTagColors } from '@/utils/helpers.ts'
+import { getAvailableTagColors, useUpdateQueryCache } from '@/utils/helpers.ts'
 
 const availableColors = getAvailableTagColors()
 
@@ -57,6 +57,8 @@ export function CreateTagDialog() {
 
   const queryTagCacheKey = [getTagsQueryKey, 0]
 
+  const { updateCache } = useUpdateQueryCache<TagResponse>(queryTagCacheKey)
+
   const form = useForm<CreateTagForm>({
     resolver: zodResolver(createTagSchema),
     values: {
@@ -68,10 +70,7 @@ export function CreateTagDialog() {
   const createTagMutation = useMutation({
     mutationFn: createTag,
     mutationKey: ['create-tag'],
-    onError(_, __, oldCache?: TagResponse) {
-      toast.error('Houve um erro ao criar a tag')
-      client.setQueryData(queryTagCacheKey, oldCache)
-    },
+
     onSettled() {
       void client.invalidateQueries({
         queryKey: queryTagCacheKey,
@@ -93,24 +92,20 @@ export function CreateTagDialog() {
         id: Math.random().toString(),
       }
 
-      return uploadCache([tag])
+      return updateCache((cache) => {
+        return {
+          ...cache,
+          totalOfPages: cache?.totalOfPages ?? 0,
+          data: cache?.data?.concat(tag) ?? [],
+        }
+      })
+    },
+
+    onError(_, __, oldCache) {
+      toast.error('Houve um erro ao criar a tag')
+      updateCache(oldCache)
     },
   })
-
-  function uploadCache(tagList: Tag[] = []) {
-    const oldCache = client.getQueryData<TagResponse>(queryTagCacheKey)
-
-    client.setQueryData(queryTagCacheKey, () => {
-      if (!oldCache) return oldCache
-
-      return {
-        ...oldCache,
-        data: [...oldCache.data, ...tagList],
-      }
-    })
-
-    return oldCache
-  }
 
   return (
     <DialogContent>

@@ -41,7 +41,7 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
     { search: params.get('name'), status: params.get('status') },
   ]
 
-  const updateCache = useUpdateQueryCache<WorkType[]>(
+  const { updateCache } = useUpdateQueryCache<WorkType[]>(
     currentWorkGalleryListQueryKey,
   )
 

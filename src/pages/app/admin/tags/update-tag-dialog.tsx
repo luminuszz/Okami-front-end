@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 import colors from 'tailwindcss/colors'
 import { z } from 'zod'
 
-import { Tag, TagResponse } from '@/api/get-tags-paged.ts'
+import { TagResponse } from '@/api/get-tags-paged.ts'
 import { updateTag } from '@/api/update-tag.ts'
 import { Button } from '@/components/ui/button.tsx'
 import {
@@ -38,6 +38,7 @@ import {
   ColorKey,
   getAvailableTagColors,
   parsePageQuery,
+  useUpdateQueryCache,
 } from '@/utils/helpers.ts'
 
 const availableColors = getAvailableTagColors()
@@ -80,13 +81,16 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
     parsePageQuery(params.get('page')),
   ]
 
+  const { updateCache } = useUpdateQueryCache<TagResponse>(currentTagsQueryKey)
+
   const updateTagMutation = useMutation({
     mutationFn: updateTag,
     mutationKey: ['update-tag'],
-    onError(_, __, oldCache?: TagResponse) {
+
+    onError(_, __, oldCache) {
       toast.error('Houve um erro ao editar a tag')
 
-      client.setQueryData(currentTagsQueryKey, oldCache)
+      updateCache(oldCache as TagResponse)
     },
     onSettled() {
       void client.invalidateQueries({
@@ -97,10 +101,14 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
       toast.success('Tag editada com sucesso')
     },
     onMutate(args) {
-      return uploadCache({
-        name: args.name,
-        color: args.color,
-        id: args.id,
+      return updateCache((cache) => {
+        return {
+          ...cache,
+          totalOfPages: cache?.totalOfPages ?? 0,
+          data: map(cache?.data, (item) => {
+            return item.id === args.id ? Object.assign(item, args) : item
+          }),
+        }
       })
     },
   })
@@ -115,30 +123,6 @@ export function UpdateTagDialog({ tag }: CreateTagDialogProps) {
     })
   }
 
-  function uploadCache(tagUpdated: Partial<Tag>) {
-    const oldCache = client.getQueryData<TagResponse>(currentTagsQueryKey)
-
-    client.setQueryData(currentTagsQueryKey, () => {
-      const tags = oldCache?.data?.map((item) => {
-        if (item.id === tagUpdated.id) {
-          return {
-            ...item,
-            name: tagUpdated.name ?? item.name,
-            color: tagUpdated.color ?? item.color,
-          }
-        }
-
-        return item
-      })
-
-      return {
-        ...oldCache,
-        data: tags ?? [],
-      }
-    })
-
-    return oldCache
-  }
   return (
     <DialogContent>
       <DialogHeader>
