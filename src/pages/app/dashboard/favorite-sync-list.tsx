@@ -26,12 +26,13 @@ interface SyncItemProps {
     nextChapter: number
     url: string
     chapter: number
+    createdAt: string
   }
 }
 
 const SyncItemList = ({ work }: SyncItemProps) => {
   const formattedUpdateAt = formatDistance(
-    parseISO(work.nextChapterUpdatedAt),
+    parseISO(work.nextChapterUpdatedAt || work.createdAt),
     new Date(),
     {
       addSuffix: true,
@@ -132,6 +133,7 @@ export function FavoriteSyncList() {
                 type: item.category,
                 url: item.url,
                 chapter: item.chapter,
+                createdAt: item.createdAt,
               }}
             />
           ))

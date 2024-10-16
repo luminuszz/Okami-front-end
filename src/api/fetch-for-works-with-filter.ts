@@ -29,7 +29,7 @@ export const workSchema = z.object({
   imageUrl: z.string().nullable(),
   updatedAt: z.string().nullable(),
   category: z.enum(['ANIME', 'MANGA']),
-  nextChapterUpdatedAt: z.string().nullable(),
+  nextChapterUpdatedAt: z.string().nullable().default(null),
   nextChapter: z.number().nullable(),
   isDropped: z.boolean(),
   createdAt: z.string(),
