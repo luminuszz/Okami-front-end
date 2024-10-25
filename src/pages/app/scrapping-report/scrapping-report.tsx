@@ -33,6 +33,7 @@ export function ScrappingReport() {
 
   const page = parsePageQuery(query.get('page'))
   const filter = (query.get('filter') as ScrapingFilterStatus) ?? ''
+  const search = query.get('search') ?? ''
 
   const {
     data: works,
@@ -40,8 +41,8 @@ export function ScrappingReport() {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ['scrappingReport', page, filter],
-    queryFn: () => fetchScrappingReport({ page, filter }),
+    queryKey: ['scrappingReport', page, filter, search],
+    queryFn: () => fetchScrappingReport({ page, filter, search }),
   })
 
   const totalOfWorks = works?.totalOfPages ? works.totalOfPages * 10 : 0

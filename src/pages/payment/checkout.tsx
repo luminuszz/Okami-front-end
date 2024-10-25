@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -24,7 +24,7 @@ export function Checkout() {
 
   const showLoading = isLoadingUser || isCreatingCheckout
 
-  async function createPaymentCheckoutHandler() {
+  const createPaymentCheckoutHandler = useCallback(async () => {
     try {
       const { data: user } = await getCurrentUser({ throwOnError: true })
 
@@ -45,11 +45,11 @@ export function Checkout() {
     } catch (error) {
       toast.error('Erro ao verificar assinatura ativa')
     }
-  }
+  }, [createCheckout, getCurrentUser, navigate])
 
   useEffect(() => {
     createPaymentCheckoutHandler()
-  }, [])
+  }, [createPaymentCheckoutHandler])
 
   return (
     <div className="flex items-center justify-center">

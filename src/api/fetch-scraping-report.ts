@@ -39,15 +39,17 @@ export type ScrapingFilterStatus = 'PENDING' | 'SUCCESS' | 'FAILED'
 interface Params {
   page: number
   filter?: ScrapingFilterStatus
+  search?: string
 }
 
-export async function fetchScrappingReport({ page, filter }: Params) {
+export async function fetchScrappingReport({ page, filter, search }: Params) {
   const { data } = await okamiHttpGateway.get(
     '/work/fetch-for-works-scraping-report',
     {
       params: {
         page,
         filter,
+        search,
       },
     },
   )
