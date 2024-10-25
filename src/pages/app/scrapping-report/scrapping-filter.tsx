@@ -107,7 +107,7 @@ export function ScrappingFilters() {
         variant="outline"
         size="sm"
       >
-        <X className="mt-1 size-4" />
+        <X className="size-4" />
         Remover filtros
       </Button>
     </form>
