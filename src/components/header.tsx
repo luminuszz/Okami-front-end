@@ -45,10 +45,7 @@ export function Header() {
           </NavLink>
 
           <NavLink
-            to={{
-              pathname: '/works',
-              search: '?status=unread',
-            }}
+            to={'/works'}
             className="flex flex-col items-center justify-center gap-2"
           >
             <Book className="mr-1 h-4 w-4" />

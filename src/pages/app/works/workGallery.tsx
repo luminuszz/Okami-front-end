@@ -7,6 +7,7 @@ import {
   WorkType,
 } from '@/api/fetch-for-works-with-filter'
 import { Skeleton } from '@/components/ui/skeleton'
+import { convertAndCompareDescendingDates } from '@/utils/helpers'
 
 import { WorkCard } from './workCard'
 
@@ -26,9 +27,14 @@ export function WorkGallery() {
   })
 
   function filterAndSortWorks(works: WorkType[]) {
-    return works.sort((a, b) => {
-      return (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0)
+    const sortedWorks = works.sort((a, b) => {
+      const aDate = a.updatedAt ?? a.createdAt
+      const bDate = b.updatedAt ?? b.createdAt
+
+      return convertAndCompareDescendingDates(aDate, bDate)
     })
+
+    return sortedWorks
   }
 
   const hasWorks = works && works.length > 0

@@ -28,7 +28,7 @@ export interface WorksCardProps {
 
 export function WorkCard({ work }: WorksCardProps) {
   const updatedAt = formatDistance(
-    parseISO(work.nextChapterUpdatedAt ?? work.updatedAt ?? work.createdAt),
+    parseISO(work.updatedAt ?? work.createdAt),
     new Date(),
     {
       addSuffix: true,
@@ -121,7 +121,7 @@ export function WorkCard({ work }: WorksCardProps) {
 
         <div className="flex items-center justify-center gap-1">
           <Clock className="size-5" />
-          <span className="text-sm text-muted-foreground">{`Atualizado a ${updatedAt}`}</span>
+          <span className="text-sm text-muted-foreground">{`Ultima atualização a ${updatedAt}`}</span>
         </div>
       </CardContent>
       <CardFooter className="flex justify-center gap-4">

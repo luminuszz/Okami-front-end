@@ -1,6 +1,6 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query'
 import { type ClassValue, clsx } from 'clsx'
-import { formatDistance, parseISO } from 'date-fns'
+import { compareDesc, formatDistance, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { differenceBy } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -167,4 +167,8 @@ export function useUpdateQueryCache<CacheType>(key: QueryKey) {
   }
 
   return updateCache
+}
+
+export function convertAndCompareDescendingDates<T extends string>(a: T, b: T) {
+  return compareDesc(parseISO(a), parseISO(b))
 }

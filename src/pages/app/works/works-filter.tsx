@@ -1,4 +1,4 @@
-import { Book, BookCheck, BookMarked, Search, X } from 'lucide-react'
+import { Book, BookCheck, BookMarked, Heart, Search, X } from 'lucide-react'
 import { Controller } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -70,6 +70,13 @@ export function WorksFilter() {
                   <div className="flex items-center gap-2">
                     <BookCheck className="size-4" />
                     <span>Finalizados</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="favorites">
+                  <div className="flex items-center gap-2">
+                    <Heart className="size-4" />
+                    <span>Favoritos</span>
                   </div>
                 </SelectItem>
               </SelectContent>
