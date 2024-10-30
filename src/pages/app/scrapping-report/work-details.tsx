@@ -1,4 +1,5 @@
 import { DialogClose, DialogTitle } from '@radix-ui/react-dialog'
+import { Clock } from 'lucide-react'
 
 import { ClipBoardInput } from '@/components/clipboard-input'
 import { Badge } from '@/components/ui/badge'
@@ -33,23 +34,22 @@ export function WorkDetails({ work }: WorkDetailsProps) {
           src={work.imageUrl ?? ''}
           alt={work.name}
         />
-        <p>
-          Categoria:
-          <Badge className="ml-1" variant="secondary">
-            {work.category}
-          </Badge>
-        </p>
-        <p>
-          Status:
-          <span
-            data-status={work.refreshStatus}
-            className="ml-2 text-slate-500 data-[status=Falhou]:text-red-600 data-[status=Sincronizado]:text-emerald-600"
-          >
-            {work.refreshStatus}
-          </span>
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Atualizado: {work.updatedAt}
+
+        <Badge className="ml-1" variant="secondary">
+          {work.category}
+        </Badge>
+
+        <span
+          data-status={work.refreshStatus}
+          className="ml-2 text-slate-500 data-[status=Falhou]:text-red-600 data-[status=Sincronizado]:text-emerald-600"
+        >
+          {work.refreshStatus}
+        </span>
+
+        <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+          <Clock className="size-5" />
+
+          <span>{work.updatedAt}</span>
         </p>
         <ClipBoardInput value={work.url} />
       </div>

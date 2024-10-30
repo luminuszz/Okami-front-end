@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { map } from 'lodash'
-import { useEffect, useState } from 'react'
+import { find, map } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
@@ -27,6 +27,11 @@ export function MarkWorksAsFinishedDialog() {
     queryKey: ['works', 'read'],
     queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
+
+  const currentWork = useMemo(
+    () => find(works, { id: selectOption }) ?? null,
+    [works, selectOption],
+  )
 
   const { mutate: markAsFinished, isPending } = useMutation({
     mutationKey: ['mark-works-at-finished', selectOption],
@@ -83,6 +88,22 @@ export function MarkWorksAsFinishedDialog() {
           onSelected={setSelectOption}
         />
       </div>
+
+      {currentWork && (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <img
+            className="size-[250px] rounded-sm"
+            src={currentWork.imageUrl ?? ''}
+            alt={currentWork.name}
+          />
+          <p className="text-center text-foreground">{`${currentWork.name}`}</p>
+          {currentWork.alternativeName && (
+            <span className="text-muted-foreground">
+              {currentWork.alternativeName}
+            </span>
+          )}
+        </div>
+      )}
 
       <DialogFooter className="flex-col gap-4 md:flex-row">
         <DialogClose asChild>

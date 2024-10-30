@@ -11,6 +11,7 @@ import { Pagination } from '@/components/pagination'
 import { Can } from '@/components/permissions-provider'
 import { RsyncAllWorksButton } from '@/components/rsync-all-works-button.tsx'
 import { SyncNotionButton } from '@/components/sync-notion-button'
+import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
@@ -89,11 +90,10 @@ export function ScrappingReport() {
                     />
                   </Button>
                 </TableHead>
-                <TableHead className="w-[140px] ">Identificador</TableHead>
-                <TableHead className="w-[180px]">Sincronizado há </TableHead>
                 <TableHead>Titulo da obra</TableHead>
+                <TableHead className="w-[180px]">Sincronizado há </TableHead>
                 <TableHead className="w-[140px]">Ultimo Cap/Ep</TableHead>
-                <TableHead className="w-[160px]">Categoria</TableHead>
+                <TableHead className="w-[160px]">Tipo de Obra</TableHead>
                 <TableHead className="w-[140px]">Status da Obra</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -124,15 +124,15 @@ export function ScrappingReport() {
                       </DialogTrigger>
                     </Dialog>
                   </TableCell>
-                  <TableCell className="font-mono text-xs font-medium">
-                    {work.id}
-                  </TableCell>
+
+                  <TableCell className="font-medium">{work.name}</TableCell>
                   <TableCell className="text-muted-foreground ">
                     {work.updatedAt}
                   </TableCell>
-                  <TableCell className="font-medium">{work.name}</TableCell>
                   <TableCell>{`${work.category === 'ANIME' ? 'Episódio' : 'Capítulo'} ${work.nextChapter ?? work.chapter}`}</TableCell>
-                  <TableCell>{work.category}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{work.category}</Badge>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <span className="relative flex size-2">
@@ -153,10 +153,12 @@ export function ScrappingReport() {
                   </TableCell>
 
                   <TableCell>
-                    <RsyncWorkButton
-                      workId={work.id}
-                      isPending={work.refreshStatus === 'Pendente'}
-                    />
+                    {['Falhou'].includes(work.refreshStatus) && (
+                      <RsyncWorkButton
+                        workId={work.id}
+                        isPending={work.refreshStatus === 'Pendente'}
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

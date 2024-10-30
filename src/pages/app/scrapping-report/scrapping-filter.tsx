@@ -29,6 +29,7 @@ export function ScrappingFilters() {
       }
       if (data.search) {
         query.set('search', data.search)
+        query.set('page', String(1))
       }
 
       return query

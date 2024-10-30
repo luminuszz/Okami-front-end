@@ -20,6 +20,10 @@ export function ClipBoardInput({ value }: Props) {
     })
   }
 
+  function handleInputClick() {
+    window.open(value, '_blank')
+  }
+
   useEffect(() => {
     return () => {
       setIsCopied(false)
@@ -29,7 +33,11 @@ export function ClipBoardInput({ value }: Props) {
   return (
     <div className="rounded-sm">
       <div className="flex items-center justify-center gap-2">
-        <Input disabled value={value} className="placeholder-gray-200" />
+        <Input
+          onClick={handleInputClick}
+          value={value}
+          className="cursor-pointer placeholder-gray-200"
+        />
         <Button onClick={handleClipboard} variant="outline" size="icon">
           {isCopied ? (
             <ClipboardCheck className="size-4 text-emerald-600" />
