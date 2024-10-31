@@ -7,14 +7,16 @@ import { serviceWorkNotificationManager } from '@/lib/notifications'
 import { Header } from '../header'
 import { PermissionsProvider } from '../permissions-provider'
 
-serviceWorkNotificationManager.checkPermissions().then((isGranted) => {
-  if (!isGranted) {
-    serviceWorkNotificationManager.requestNotifications()
-  }
-})
-
 export function AppLayout() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    serviceWorkNotificationManager.checkPermissions().then((isGranted) => {
+      if (!isGranted) {
+        serviceWorkNotificationManager.requestNotifications()
+      }
+    })
+  }, [])
 
   useEffect(() => {
     const interceptorId = okamiHttpGateway.interceptors.response.use(
