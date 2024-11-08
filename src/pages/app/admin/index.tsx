@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
 
 import { SearchTokens } from '@/pages/app/admin/search-tokens/search-tokens.tsx'
-import { TabLink } from '@/pages/app/admin/TabLink.tsx'
+import { TabLink } from '@/pages/app/admin/tab-link.tsx'
 import { Tags } from '@/pages/app/admin/tags/tags.tsx'
 
 export const sectionMap: Record<string, ReactNode> = {

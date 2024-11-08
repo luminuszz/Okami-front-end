@@ -73,7 +73,9 @@ export function CreateWorkFormDialog() {
 
   const queryClient = useQueryClient()
 
-  const updateCurrentWorksListCache = useUpdateQueryCache<WorkType[]>([
+  const { updateCache: updateCurrentWorksListCache } = useUpdateQueryCache<
+    WorkType[]
+  >([
     worksGalleryQueryKey,
     { status: params.get('status'), search: params.get('name') },
   ])
