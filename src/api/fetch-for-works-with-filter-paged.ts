@@ -26,6 +26,8 @@ export async function fetchForWorksWithPageFilterPaged(
 ) {
   const parsedParams = fetchWorksWithFilterPageParamsSchema.parse(params)
 
+  console.log({ parsedParams })
+
   const response = await okamiHttpGateway.get('/work/list/paged', {
     params: parsedParams,
   })

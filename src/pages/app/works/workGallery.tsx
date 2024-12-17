@@ -16,7 +16,7 @@ export function WorkGallery() {
 
   const [params] = useSearchParams()
 
-  const status = params.get('status') as FilterStatus
+  const status = (params.get('status') as FilterStatus) || null
   const search = params.get('name')
 
   const {
