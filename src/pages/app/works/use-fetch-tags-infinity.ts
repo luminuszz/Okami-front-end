@@ -34,6 +34,7 @@ export function useFetchTagsInfinity({
     select({ pages }) {
       return flatMap(pages, (page) => page.data)
     },
+    staleTime: Infinity,
   })
 
   const { data: filteredTags, isFetching: isFetchingTagsSelectSearch } =

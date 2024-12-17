@@ -1,16 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { filter, map } from 'lodash'
+import { map } from 'lodash'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { Label } from 'recharts'
 import { toast } from 'sonner'
 
 import { deleteWork } from '@/api/delete-work'
-import {
-  fetchWorksWithFilter,
-  WorkType,
-} from '@/api/fetch-for-works-with-filter'
+import { fetchWorksWithFilter } from '@/api/fetch-for-works-with-filter'
+import { worksGalleryQueryKey } from '@/pages/app/works/workGallery'
 
 import { ComboBox } from './combobox'
 import { Button } from './ui/button'
@@ -26,8 +23,6 @@ import {
 export function DeleteWorkDialog() {
   const [selectOption, setSelectOption] = useState('')
 
-  const [params] = useSearchParams()
-
   const queryClient = useQueryClient()
 
   const { data: works, isLoading } = useQuery({
@@ -35,27 +30,19 @@ export function DeleteWorkDialog() {
     queryFn: () => fetchWorksWithFilter({ status: 'read' }),
   })
 
-  const currentFilter = params.get('status')
-
   const { mutate: deleteWorkMutation } = useMutation({
     mutationFn: deleteWork,
-    onMutate: (workId) => {
-      queryClient.setQueryData<WorkType[]>(
-        ['works', currentFilter],
-        (works) => {
-          return filter(works, (value) => value.id !== workId)
-        },
-      )
-    },
     onSuccess() {
       toast.success('Obra excluída com sucesso')
       queryClient.invalidateQueries({
-        queryKey: ['user-quote'],
+        predicate: (query) =>
+          query.queryKey.includes('user-quote') ||
+          query.queryKey.includes(worksGalleryQueryKey),
       })
     },
-    onError() {
+    onError(error) {
+      console.log({ error })
       toast.error('Erro ao excluir obra')
-
       queryClient.invalidateQueries({ queryKey: ['works', 'read'] })
     },
   })

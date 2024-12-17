@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { differenceBy, map } from 'lodash'
+import { differenceBy, flatMap, map } from 'lodash'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -74,7 +74,9 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   const [search, setSearch] = useDebounceState('', 300)
   const [params] = useSearchParams()
 
-  const updateWorksWithFilterCache = useUpdateQueryCache<WorkType[]>([
+  const updateWorksWithFilterCache = useUpdateQueryCache<{
+    pages: { works: WorkType[] }[]
+  }>([
     worksGalleryQueryKey,
     { search: params.get('name'), status: params.get('status') },
   ])
@@ -102,9 +104,17 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     onMutate: (formData) => {
       const imageUrl = URL.createObjectURL(formData.get('file') as Blob)
       return updateWorksWithFilterCache((cache) => {
-        return map(cache, (item) =>
-          item.id === work.id ? { ...item, imageUrl } : item,
-        )
+        return {
+          ...cache,
+          pages: flatMap(cache?.pages, (page) => {
+            return {
+              ...page,
+              works: map(page.works, (item) =>
+                item.id === work.id ? { ...item, imageUrl } : item,
+              ),
+            }
+          }),
+        }
       })
     },
     onSuccess: async () => {
@@ -123,16 +133,24 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     },
     onError(_, __, oldCache) {
       toast.error('Erro ao atualizar obra')
-      updateWorksWithFilterCache(oldCache as WorkType[])
+      updateWorksWithFilterCache(oldCache as { pages: { works: WorkType[] }[] })
     },
 
     onMutate(payload) {
       return updateWorksWithFilterCache((cache) => {
-        return map(cache, (work) =>
-          work.id === payload.id
-            ? { ...work, ...payload, tags: form.getValues('tags') }
-            : work,
-        )
+        return {
+          ...cache,
+          pages: flatMap(cache?.pages, (page) => {
+            return {
+              ...page,
+              works: map(page.works, (item) =>
+                item.id === work.id
+                  ? { ...item, ...payload, tags: form.getValues('tags') }
+                  : item,
+              ),
+            }
+          }),
+        }
       })
     },
   })

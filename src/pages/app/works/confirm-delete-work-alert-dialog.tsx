@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { filter } from 'lodash'
+import { filter, flatMap } from 'lodash'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -35,13 +35,23 @@ export function ConfirmDeleteWorkAlertDialog({
     { status: params.get('status'), search: params.get('name') },
   ]
 
-  const updateCache = useUpdateQueryCache<WorkType[]>(queryKey)
+  const updateCache = useUpdateQueryCache<{ pages: { works: WorkType[] }[] }>(
+    queryKey,
+  )
 
   const { mutate: deleteWorkMutation } = useMutation({
     mutationFn: deleteWork,
     onMutate: (workId) => {
-      return updateCache((works) => {
-        return filter(works, (value) => value.id !== workId)
+      return updateCache((cache) => {
+        return {
+          ...cache,
+          pages: flatMap(cache?.pages, (page) => {
+            return {
+              ...page,
+              works: filter(page.works, (work) => work?.id !== workId),
+            }
+          }),
+        }
       })
     },
     onSuccess() {

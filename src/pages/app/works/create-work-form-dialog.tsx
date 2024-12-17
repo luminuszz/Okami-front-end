@@ -9,7 +9,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { createWork } from '@/api/create-work'
-import { WorkType } from '@/api/fetch-for-works-with-filter'
 import { tagSchema } from '@/api/get-tags-paged.ts'
 import { ComboBox } from '@/components/combobox'
 import { Button } from '@/components/ui/button'
@@ -38,7 +37,6 @@ import {
   getDefaultImageFile,
   normalizeString,
   useDebounceState,
-  useUpdateQueryCache,
   validateFileType,
 } from '@/utils/helpers.ts'
 
@@ -54,7 +52,8 @@ const createWorkSchema = z.object({
     .refine(validateFileType, { message: 'Tipo de arquivo invalido' })
     .transform((imageList) => imageList?.length && imageList[0])
     .nullable()
-    .optional(),
+    .optional()
+    .default(null),
 
   imageUrl: z.string().optional(),
   tags: z.array(tagSchema),
@@ -73,10 +72,15 @@ export function CreateWorkFormDialog() {
 
   const queryClient = useQueryClient()
 
-  const updateCurrentWorksListCache = useUpdateQueryCache<WorkType[]>([
-    worksGalleryQueryKey,
-    { status: params.get('status'), search: params.get('name') },
-  ])
+  async function updateWorkGalleryCache() {
+    await queryClient.invalidateQueries({
+      queryKey: [
+        worksGalleryQueryKey,
+        { status: params.get('status'), search: params.get('name') },
+      ],
+      predicate: (query) => query.queryKey.includes('user-quote'),
+    })
+  }
 
   const form = useForm<CreateWorkForm>({
     resolver: zodResolver(createWorkSchema),
@@ -92,43 +96,10 @@ export function CreateWorkFormDialog() {
   const { mutate: createWorkMutation } = useMutation({
     mutationKey: ['create-work'],
     mutationFn: createWork,
-    onMutate() {
-      return updateCurrentWorksListCache((cache) => {
-        const values = form.getValues()
-        const newWork = {
-          category: values.category,
-          chapter: values.chapter,
-          createdAt: new Date().toISOString(),
-          id: Math.random().toString(),
-          imageUrl: values.imageUrl ?? '',
-          name: values.name,
-          hasNewChapter: false,
-          imageId: '',
-          isDropped: false,
-          isFinished: false,
-          nextChapterUpdatedAt: null,
-          nextChapter: null,
-          updatedAt: new Date().toISOString(),
-          url: values.url,
-          isStales: true,
-          alternativeName: values.alternativeName ?? null,
-          isFavorite: false,
-        }
-        return [...(cache ?? []), newWork]
-      })
-    },
-
-    onSuccess() {
+    async onSuccess() {
       toast.success('Obra adicionada com sucesso')
 
-      void queryClient.invalidateQueries({
-        predicate: (query) => {
-          return (
-            query.queryKey.includes('works-gallery') ||
-            query.queryKey.includes('user-quote')
-          )
-        },
-      })
+      await updateWorkGalleryCache()
 
       setParams((params) => {
         params.set('status', 'read')
@@ -139,9 +110,9 @@ export function CreateWorkFormDialog() {
 
       form.reset()
     },
-    onError(_, __, oldCache) {
+
+    onError() {
       toast.error('Erro ao adicionar obra')
-      updateCurrentWorksListCache(oldCache)
     },
   })
 
@@ -159,7 +130,11 @@ export function CreateWorkFormDialog() {
       formData.append('chapter', values.chapter.toString())
       formData.append('url', values.url)
       formData.append('file', compressedImage)
-      formData.append('tagsId', map(values.tags, 'id').join(','))
+
+      if (values.tags.length) {
+        formData.append('tagsId', map(values.tags, 'id').join(','))
+      }
+
       formData.append('alternativeName', values.alternativeName ?? '')
 
       createWorkMutation(formData)

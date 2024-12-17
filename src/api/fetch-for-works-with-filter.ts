@@ -36,6 +36,7 @@ export const workSchema = z.object({
   tags: z.array(tagsSchema).optional(),
   alternativeName: z.string().nullable(),
   isFavorite: z.boolean().optional().default(false),
+  description: z.string().optional().nullable(),
 })
 
 const fetchWorksWithFilterOutputSchema = z.array(workSchema)

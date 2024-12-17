@@ -40,9 +40,6 @@ export function AppLayout() {
           if (!isRefreshing) {
             isRefreshing = true
 
-            console.log('refreshToken', refreshToken)
-            console.log('refrehsing token with refresh token')
-
             refreshTokenCall(refreshToken)
               .then(() => {
                 failRequestQueue.forEach((request) => {
@@ -53,6 +50,7 @@ export function AppLayout() {
                 failRequestQueue.forEach((request) => {
                   request.onFailure(error)
                 })
+                navigate('/auth/sign-in', { replace: true })
               })
               .finally(() => {
                 isRefreshing = false
@@ -68,8 +66,6 @@ export function AppLayout() {
             })
           })
         }
-
-        navigate('/auth/sign-in', { replace: true })
 
         return Promise.reject(error)
       },
