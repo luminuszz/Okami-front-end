@@ -5,7 +5,9 @@ import { okamiHttpGateway } from '@/lib/axios'
 import { workSchema } from './fetch-for-works-with-filter'
 
 const fetchWorksWithFilterPageParamsSchema = z.object({
-  status: z.enum(['unread', 'read', 'dropped', 'finished']).nullable(),
+  status: z
+    .enum(['unread', 'read', 'dropped', 'finished', 'favorites'])
+    .nullable(),
   search: z.string().optional().nullable(),
   page: z.number().positive().min(1),
   limit: z.literal(10).or(z.literal(20)).or(z.literal(30)),
