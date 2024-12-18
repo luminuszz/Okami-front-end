@@ -22,13 +22,18 @@ import {
 import { useFilters } from '@/pages/app/works/use-filters.ts'
 
 export function MobileWorkFilters() {
-  const { handleResetFilter, handleSetFilter, handleSubmit, control } =
-    useFilters()
+  const {
+    handleResetFilter,
+    handleSetFilter,
+    handleSubmit,
+    control,
+    isLoading,
+  } = useFilters()
 
   return (
     <Drawer>
       <DrawerTrigger>
-        <Button variant="secondary">
+        <Button variant="secondary" disabled={isLoading}>
           <Search className="mr-2 size-4 text-muted-foreground" />
           Filtrar obras
         </Button>
@@ -56,7 +61,7 @@ export function MobileWorkFilters() {
                 onBlur={field.onBlur}
               />
             )}
-          ></Controller>
+          />
 
           <Controller
             control={control}
@@ -97,7 +102,12 @@ export function MobileWorkFilters() {
 
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button variant="secondary" size="sm" type="submit">
+              <Button
+                disabled={isLoading}
+                variant="secondary"
+                size="sm"
+                type="submit"
+              >
                 <Search className="mr-1 size-4" />
                 Filtrar Resultados
               </Button>

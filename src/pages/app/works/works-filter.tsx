@@ -1,4 +1,12 @@
-import { Book, BookCheck, BookMarked, Heart, Search, X } from 'lucide-react'
+import {
+  Book,
+  BookCheck,
+  BookMarked,
+  Heart,
+  Loader2,
+  Search,
+  X,
+} from 'lucide-react'
 import { Controller } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -21,6 +29,7 @@ export function WorksFilter() {
     handleSubmit,
     control,
     register,
+    isLoading,
   } = useFilters()
 
   return (
@@ -30,7 +39,7 @@ export function WorksFilter() {
       </div>
       <form
         onSubmit={handleSubmit(handleSetFilter)}
-        className="hidden items-center gap-2 md:flex"
+        className="hidden items-center  gap-2 md:flex"
       >
         <span className="text-sm  font-semibold">Filtros</span>
 
@@ -84,12 +93,18 @@ export function WorksFilter() {
           )}
         />
 
-        <Button variant="secondary" size="sm" type="submit">
+        <Button
+          disabled={isLoading}
+          variant="secondary"
+          size="sm"
+          type="submit"
+        >
           <Search className="mr-1 size-4" />
           Filtrar Resultados
         </Button>
 
         <Button
+          disabled={isLoading}
           onClick={handleResetFilter}
           type="button"
           variant="outline"
@@ -98,6 +113,12 @@ export function WorksFilter() {
           <X className="mr-1 size-4" />
           Remover filtros
         </Button>
+
+        <div>
+          {isLoading && (
+            <Loader2 className=" size-5 animate-spin text-muted-foreground" />
+          )}
+        </div>
       </form>
     </>
   )

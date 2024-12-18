@@ -11,6 +11,11 @@ import { WorkCard } from './workCard'
 
 export const worksGalleryQueryKey = 'works-gallery'
 
+export const getWorksGalleryQueryKey = (
+  search: string | null,
+  status: string | null,
+) => [worksGalleryQueryKey, { search, status }]
+
 export function WorkGallery() {
   const { ref: finalDivInScrollRef, inView: inScrollFinal } = useInView()
 
@@ -25,7 +30,7 @@ export function WorkGallery() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [worksGalleryQueryKey, { status, search }],
+    queryKey: getWorksGalleryQueryKey(search, status),
     queryFn: ({ pageParam }) =>
       fetchForWorksWithPageFilterPaged({
         limit: 30,
@@ -43,7 +48,7 @@ export function WorkGallery() {
 
   useEffect(() => {
     if (!isFetchingNextPage && inScrollFinal) {
-      fetchNextPage()
+      void fetchNextPage()
     }
   }, [isFetchingNextPage, inScrollFinal, fetchNextPage])
 

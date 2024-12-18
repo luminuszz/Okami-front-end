@@ -1,8 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
+
+import { getWorksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
 
 const filterFormSchema = z.object({
   name: z.string().optional().nullable(),
@@ -14,6 +16,10 @@ export type FilterForm = z.infer<typeof filterFormSchema>
 export function useFilters() {
   const [filter, setFilter] = useSearchParams()
   const queryClient = useQueryClient()
+
+  const fetchingCount = useIsFetching({
+    queryKey: getWorksGalleryQueryKey(filter.get('name'), filter.get('status')),
+  })
 
   const { handleSubmit, control, reset, register } = useForm<FilterForm>({
     values: {
@@ -51,5 +57,6 @@ export function useFilters() {
     handleSetFilter,
     handleResetFilter,
     register,
+    isLoading: fetchingCount > 0,
   }
 }
