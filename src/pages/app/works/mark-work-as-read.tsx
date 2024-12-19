@@ -1,6 +1,6 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { filter, find } from 'lodash'
+import { find, flatMap, map, merge } from 'lodash'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { worksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
+import { getWorksGalleryQueryKey } from '@/pages/app/works/workGallery.tsx'
 import { useUpdateQueryCache } from '@/utils/helpers.ts'
 
 interface MarkChapterReadDialogProps {
@@ -36,22 +36,41 @@ export function MarkWorksAsReadDialog({ work }: MarkChapterReadDialogProps) {
 
   const [params] = useSearchParams()
 
-  const currentWorkGalleryListQueryKey = [
-    worksGalleryQueryKey,
-    { search: params.get('name'), status: params.get('status') },
-  ]
-
-  const updateCache = useUpdateQueryCache<WorkType[]>(
-    currentWorkGalleryListQueryKey,
+  const currentWorkGalleryListQueryKey = getWorksGalleryQueryKey(
+    params.get('name'),
+    params.get('status'),
   )
+
+  const updateCache = useUpdateQueryCache<{
+    pages: { works: WorkType[] }[]
+  }>(currentWorkGalleryListQueryKey)
 
   const { mutateAsync } = useMutation({
     mutationFn: markWorkAsRead,
     mutationKey: ['markWorkAsRead', work.id],
-    onMutate: () => {
-      return updateCache((works) =>
-        filter(works, (value) => value.id !== work.id),
-      )
+    onMutate: (values) => {
+      return updateCache((cache) => {
+        return {
+          ...cache,
+          pages: flatMap(cache?.pages, (page) => {
+            return {
+              ...page,
+              works: map(page.works, (item) => {
+                if (item.id === work.id) {
+                  merge(item, {
+                    chapter: values.chapter,
+                    hasNewChapter: false,
+                    nextChapter: null,
+                    nextChapterUpdatedAt: null,
+                  })
+                }
+
+                return item
+              }),
+            }
+          }),
+        }
+      })
     },
     onError(_, __, oldCache) {
       updateCache(oldCache)
