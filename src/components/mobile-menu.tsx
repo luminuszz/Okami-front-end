@@ -44,7 +44,14 @@ export function MobileMenu() {
           <section className="p-2 px-4">
             <nav className="flex  flex-col items-center justify-center space-y-4 ">
               <NavLink to="/">Home</NavLink>
-              <NavLink to="/works">Obras</NavLink>
+              <NavLink
+                to={{
+                  pathname: '/works',
+                  search: '?status=unread',
+                }}
+              >
+                Obras
+              </NavLink>
               <NavLink to="/scrapping-report">Relatório</NavLink>
               <NavLink to="/admin">Administração</NavLink>
             </nav>
