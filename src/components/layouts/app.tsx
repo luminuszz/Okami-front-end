@@ -34,14 +34,21 @@ export function AppLayout() {
     const interceptorId = okamiHttpGateway.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-        const refreshToken = storageService.get('okami-refresh-token')
+        if (isUnauthorizedError(error)) {
+          const refreshToken = storageService.get('okami-refresh-token')
 
-        if (isUnauthorizedError(error) && refreshToken) {
+          if (!refreshToken) {
+            navigate('/auth/sign-in', { replace: true })
+            return Promise.reject(error)
+          }
+
           if (!isRefreshing) {
             isRefreshing = true
 
             refreshTokenCall(refreshToken)
               .then(() => {
+                console.log('refresh token')
+
                 failRequestQueue.forEach((request) => {
                   request.onSuccess()
                 })

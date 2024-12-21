@@ -6,4 +6,4 @@ export const okamiHttpGateway = axios.create({
 })
 
 export const isUnauthorizedError = (error: AxiosError): boolean =>
-  [401, 403].includes(error.response?.status || 0)
+  [403, 401].includes(error.response?.status || 0)

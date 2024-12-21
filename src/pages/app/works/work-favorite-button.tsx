@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { toggleWorkFavorite } from '@/api/toggle-work-favorite.ts'
 import { Button } from '@/components/ui/button.tsx'
 
+import { useUpdateWorkGalleryCache } from './use-update-works-gallery-cache'
+
 export interface WorkFavoriteButtonProps {
   initialState: boolean
   workId: string
@@ -18,10 +20,11 @@ export function WorkFavoriteButton({
 }: WorkFavoriteButtonProps) {
   const [isFavorite, setIsFavorite] = useState(initialState)
 
+  const { invalidateCurrentQuery } = useUpdateWorkGalleryCache()
+
   const { mutate: handleToggleFavorite, isPending } = useMutation({
     mutationFn: () => toggleWorkFavorite(workId),
     mutationKey: ['toggle-favorite-work', workId],
-
     onMutate() {
       setIsFavorite((prev) => !prev)
     },
@@ -29,6 +32,10 @@ export function WorkFavoriteButton({
     onError() {
       setIsFavorite((prev) => !prev)
       toast.error('Erro ao favoritar obra')
+    },
+
+    onSuccess() {
+      void invalidateCurrentQuery()
     },
   })
 

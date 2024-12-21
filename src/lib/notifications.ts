@@ -14,9 +14,7 @@ export class ServiceWorkerNotification {
       const isGranted = permission === 'granted'
 
       if (!isGranted) {
-        toast.warning(
-          'Você precisa permitir as notificações para receber ser notificado de novas atualizações.',
-        )
+        console.log('Notificação não permitida')
       } else {
         this.registerServiceWorker()
       }
