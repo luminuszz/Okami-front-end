@@ -7,9 +7,10 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Tag, tagSchema } from '@/api/get-tags-paged.ts'
+import { getUploadWorkImageUrl } from '@/api/get-upload-work-image-url'
 import { WorkType } from '@/api/schemas'
 import { updateWork } from '@/api/update-work'
-import { uploadWorkImage } from '@/api/upload-work-image'
+import { uploadWorkImageByUrl } from '@/api/upload-work-image-by-url'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -100,32 +101,43 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
 
   const { mutateAsync: uploadImageMutation } = useMutation({
     mutationKey: ['upload-work-image', work.id],
-    mutationFn: uploadWorkImage,
-    onMutate: (formData) => {
-      const imageUrl = URL.createObjectURL(formData.get('file') as Blob)
-      return updateWorksWithFilterCache((cache) => {
-        return {
-          ...cache,
-          pages: flatMap(cache?.pages, (page) => {
-            return {
-              ...page,
-              works: map(page.works, (item) =>
-                item.id === work.id ? { ...item, imageUrl } : item,
-              ),
-            }
-          }),
-        }
-      })
-    },
+    mutationFn: uploadWorkImageByUrl,
     onSuccess: async () => {
       toast.success('Imagem atualizada com sucesso')
     },
-    onError: (_, __, oldCache) => {
-      updateWorksWithFilterCache(oldCache)
+
+    onMutate(params) {
+      const imageUrl = URL.createObjectURL(params.image)
+      const toastId = toast.loading('Atualizando imagem')
+
+      return {
+        oldCache: updateWorksWithFilterCache((cache) => {
+          return {
+            ...cache,
+            pages: flatMap(cache?.pages, (page) => {
+              return {
+                ...page,
+                works: map(page.works, (item) =>
+                  item.id === work.id ? { ...item, imageUrl } : item,
+                ),
+              }
+            }),
+          }
+        }),
+        toastId,
+      }
+    },
+
+    onError: (_, __, params) => {
+      updateWorksWithFilterCache(params?.oldCache)
+      toast.error('Erro ao atualizar imagem')
+    },
+    onSettled(_, __, ___, params) {
+      toast.dismiss(params?.toastId)
     },
   })
 
-  const { mutate: updateWorkMutation } = useMutation({
+  const { mutateAsync: updateWorkMutation } = useMutation({
     mutationKey: ['update-work', work.id],
     mutationFn: updateWork,
     async onSuccess() {
@@ -156,18 +168,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   })
 
   async function handleEditWork({ imageFile, ...payload }: EditWorkFormDialog) {
-    if (imageFile) {
-      const compressedImage = await compressImageAsync(imageFile)
-
-      const formData = new FormData()
-
-      formData.append('file', compressedImage)
-      formData.append('id', work.id)
-
-      await uploadImageMutation(formData)
-    }
-
-    updateWorkMutation({
+    await updateWorkMutation({
       id: work.id,
       chapter: payload.chapter,
       name: payload.name,
@@ -175,6 +176,24 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
       tagsId: map(payload.tags, 'id'),
       alternativeName: payload.alternativeName,
     })
+
+    if (imageFile) {
+      const compressedImage = await compressImageAsync(imageFile)
+
+      const parsedFiletype = imageFile.type.split('/')[1]
+
+      const { url: uploadUrl } = await getUploadWorkImageUrl({
+        fileName: imageFile.name,
+        fileType: parsedFiletype,
+        workId: work.id,
+      })
+
+      await uploadImageMutation({
+        fileType: parsedFiletype,
+        image: compressedImage,
+        url: uploadUrl,
+      })
+    }
   }
 
   const currentChapterLabel = work.type === 'ANIME' ? 'Episodio' : 'Capitulo'
@@ -297,3 +316,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     </DialogContent>
   )
 }
+
+/* 
+      
+*/
