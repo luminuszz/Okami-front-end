@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUserDetails } from '@/api/get-user-details'
 import { makeLogout } from '@/api/logout'
 import { queryClient } from '@/lib/react-query'
+import { storageService } from '@/lib/storage.ts'
 
 import { EditProfileDialog } from './profile-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -41,6 +42,14 @@ export function AccountMenu() {
   })
 
   const initialName = user?.name?.substring(0, 2).toLocaleUpperCase()
+
+  function handleLogout() {
+    const refreshToken = storageService.get('okami-refresh-token')
+
+    logoutMutation.mutate({
+      refreshToken,
+    })
+  }
 
   return (
     <Dialog>
@@ -95,9 +104,7 @@ export function AccountMenu() {
 
           <DropdownMenuItem
             className="cursor-pointer text-rose-500 dark:text-rose-400"
-            onClick={() => {
-              logoutMutation.mutate()
-            }}
+            onClick={handleLogout}
           >
             <LogOut className="mr-2 size-4" />
             <span>Sair</span>
