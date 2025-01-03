@@ -172,3 +172,7 @@ export function useUpdateQueryCache<CacheType>(key: QueryKey) {
 export function convertAndCompareDescendingDates<T extends string>(a: T, b: T) {
   return compareDesc(parseISO(a), parseISO(b))
 }
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

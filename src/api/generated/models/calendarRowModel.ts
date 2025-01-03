@@ -5,12 +5,11 @@
  * The Okami rest api
  * OpenAPI spec version: 1.0
  */
-import type { CalendarRowModelDayOfWeek } from './calendarRowModelDayOfWeek';
 import type { WorkCalendarRowModel } from './workCalendarRowModel';
 
 export interface CalendarRowModel {
   createdAt: string;
-  dayOfWeek: CalendarRowModelDayOfWeek;
+  dayOfWeek: number;
   id: string;
   Work: WorkCalendarRowModel;
 }
