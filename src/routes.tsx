@@ -56,6 +56,15 @@ export const router = createBrowserRouter([
           }
         },
       },
+      {
+        path: '/calendar',
+        lazy: async () => {
+          const { Calendar } = await import('./pages/app/calendar/calendar')
+          return {
+            element: <Calendar />,
+          }
+        },
+      },
     ],
   },
 
