@@ -1,4 +1,4 @@
-import { BarChart4, Book, Home, Shield } from 'lucide-react'
+import { BarChart4, Book, Calendar, Home, Shield } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { Can } from '@/components/permissions-provider'
@@ -61,6 +61,11 @@ export function Header() {
           >
             <BarChart4 className="mr-1 h-4 w-4" />
             Relatório
+          </NavLink>
+
+          <NavLink to="/calendar">
+            <Calendar className="mr-1 h-4 w-4" />
+            Calendário
           </NavLink>
 
           <Can I="show" a="admin-section">

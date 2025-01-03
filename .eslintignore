@@ -1,0 +1,5 @@
+dist
+.deia
+.husky
+images
+src/api/generated
