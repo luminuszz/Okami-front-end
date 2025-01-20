@@ -53,6 +53,7 @@ export function MobileMenu() {
                 Obras
               </NavLink>
               <NavLink to="/scrapping-report">Relatório</NavLink>
+              <NavLink to="/calendar">Calendário</NavLink>
               <NavLink to="/admin">Administração</NavLink>
             </nav>
           </section>

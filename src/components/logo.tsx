@@ -2,16 +2,23 @@ import { useAtomValue } from 'jotai'
 import { ComponentProps } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import { currentThemeAtom } from '@/app/store/theme'
+import { currentThemeAtom, Theme } from '@/app/store/theme'
 
 interface Props extends ComponentProps<'svg'> {
   loading?: boolean
 }
 
+type LogoColorByTheme = Record<Theme, string>
+
+const logoColorByTheme: LogoColorByTheme = {
+  dark: 'white',
+  light: 'black',
+}
+
 export function Logo({ loading, ...props }: Props) {
   const theme = useAtomValue(currentThemeAtom)
 
-  const color = theme === 'dark' ? 'white' : 'black'
+  const color = logoColorByTheme[theme]
 
   return (
     <svg

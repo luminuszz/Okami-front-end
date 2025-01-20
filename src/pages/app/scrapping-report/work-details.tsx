@@ -9,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
 
 interface WorkDetailsProps {
   work: {
@@ -18,6 +19,7 @@ interface WorkDetailsProps {
     category: string
     refreshStatus: string
     url: string
+    message: string | null
   }
 }
 
@@ -29,15 +31,15 @@ export function WorkDetails({ work }: WorkDetailsProps) {
       </DialogHeader>
 
       <div className="flex flex-col items-center gap-4">
+        <Badge className="ml-1" variant="secondary">
+          {work.category}
+        </Badge>
+
         <img
           className="max-h-[500px]"
           src={work.imageUrl ?? ''}
           alt={work.name}
         />
-
-        <Badge className="ml-1" variant="secondary">
-          {work.category}
-        </Badge>
 
         <span
           data-status={work.refreshStatus}
@@ -45,6 +47,16 @@ export function WorkDetails({ work }: WorkDetailsProps) {
         >
           {work.refreshStatus}
         </span>
+
+        {work.message && (
+          <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+            <Textarea
+              className="w-full text-red-500"
+              value={work.message}
+              readOnly
+            />
+          </div>
+        )}
 
         <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
           <Clock className="size-5" />

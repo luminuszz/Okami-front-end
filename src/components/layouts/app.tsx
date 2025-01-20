@@ -39,6 +39,7 @@ export function AppLayout() {
 
           if (!refreshToken) {
             navigate('/auth/sign-in', { replace: true })
+
             return Promise.reject(error)
           }
 
@@ -47,8 +48,6 @@ export function AppLayout() {
 
             refreshTokenCall(refreshToken)
               .then(() => {
-                console.log('refresh token')
-
                 failRequestQueue.forEach((request) => {
                   request.onSuccess()
                 })

@@ -25,6 +25,7 @@ export type Subject =
   | 'rsync-works-button'
   | 'admin-section'
   | 'all'
+  | 'show-calendar-feature'
 
 export type UserAbilities = PureAbility<[Actions, Subject]>
 
