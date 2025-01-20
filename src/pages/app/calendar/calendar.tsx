@@ -1,3 +1,4 @@
+import { ptBR } from 'date-fns/locale'
 import { useAtom, useAtomValue } from 'jotai'
 import { groupBy } from 'lodash'
 
@@ -23,10 +24,13 @@ export function CalendarPage() {
         <Card>
           <CardContent>
             <Calendar
+              locale={ptBR}
               mode="single"
               selected={today}
               onSelect={(date) => {
-                if (date) setToday(date)
+                if (date) {
+                  setToday(date)
+                }
               }}
             />
           </CardContent>
@@ -35,8 +39,7 @@ export function CalendarPage() {
 
       <section className="item flex w-full flex-1 flex-col gap-4">
         {week.map((date) => {
-          const currentDayWorks =
-            parsedCalendarRows?.[date.dayOfWeekNumber - 1] ?? []
+          const currentDayWorks = parsedCalendarRows[date.dayOfWeekNumber] ?? []
 
           return (
             <CalendarCard

@@ -22,6 +22,7 @@ const scrappingReportSchema = z.object({
           .nullable()
           .default('NO_STATUS')
           .transform((value) => parser?.[value ?? 'NO_STATUS']),
+        message: z.string().nullable(),
       }),
     )
     .transform((works) =>

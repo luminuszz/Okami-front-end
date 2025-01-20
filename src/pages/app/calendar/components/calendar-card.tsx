@@ -1,9 +1,17 @@
 import { isToday } from 'date-fns'
-import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+
+type WorkCalendar = {
+  name: string
+  imageUrl: string
+  id: string
+  nextChapter: number | null
+  chapter: number
+  status: string
+  category: string
+}
 
 export interface CalendarCardProps {
   date: {
@@ -12,26 +20,14 @@ export interface CalendarCardProps {
     id: string
     originalDate: Date
   }
-
-  works: Array<{
-    name: string
-    imageUrl: string
-    id: string
-    nextChapter: number | null
-    chapter: number
-    status: string
-    category: string
-  }>
+  works: WorkCalendar[]
 }
 
 export function CalendarCard({ date, works }: CalendarCardProps) {
   const highlightDate = isToday(date.originalDate)
 
   return (
-    <Card
-      className=" flex h-full max-h-[400px] w-full flex-1  rounded-lg"
-      key={date.id}
-    >
+    <Card className="flex h-full w-full flex-1  rounded-lg" key={date.id}>
       <div className=" flex w-full max-w-[120px] flex-col items-center justify-center space-y-2 border-r-2 p-4">
         <span
           className={`text-md font-medium ${highlightDate ? 'text-primary' : 'text-muted-foreground'}`}
@@ -45,7 +41,7 @@ export function CalendarCard({ date, works }: CalendarCardProps) {
         </strong>
       </div>
 
-      <CardContent className="flex flex-1 flex-col gap-4  p-4">
+      <CardContent className="flex  flex-col  gap-4 p-4 pb-2">
         {works.map((work) => (
           <div className="flex items-center gap-4 " key={work.id}>
             <div className="size-[120px]">
@@ -69,10 +65,10 @@ export function CalendarCard({ date, works }: CalendarCardProps) {
       </CardContent>
 
       <footer className="flex items-center justify-end p-4">
-        <Button variant="secondary">
+        {/*  <Button variant="secondary">
           Ações
           <ChevronDown className="ml-1 text-sm" />
-        </Button>
+        </Button> */}
       </footer>
     </Card>
   )

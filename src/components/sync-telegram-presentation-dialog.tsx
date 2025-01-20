@@ -6,15 +6,16 @@ import { TelegramIcon } from './telegram-icon'
 import { Button } from './ui/button'
 import { DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
+const telegramLink = `https://t.me/NotificationChapterBot?start`
+
 export function SyncTelegramPresentationDialog() {
+  const client = useQueryClient()
+
   const isLoading =
-    useQueryClient().getQueryState(['get-telegram-integration'])?.status ===
-    'pending'
+    client.getQueryState(['get-telegram-integration'])?.status === 'pending'
 
   function handleCreateTelegramBotLink() {
-    const link = `https://t.me/NotificationChapterBot?start`
-
-    window.open(link, '_blank')
+    window.open(telegramLink, '_blank')
   }
 
   if (isLoading) return null

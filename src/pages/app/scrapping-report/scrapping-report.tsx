@@ -114,6 +114,7 @@ export function ScrappingReport() {
                           url: work.url,
                           imageUrl: work.imageUrl,
                           updatedAt: work.updatedAt,
+                          message: work.message,
                         }}
                       />
                       <DialogTrigger asChild>

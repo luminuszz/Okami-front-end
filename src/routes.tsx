@@ -57,6 +57,16 @@ export const router = createBrowserRouter([
         },
       },
       {
+        async loader() {
+          const user = await getUserDetails()
+
+          if (user.role !== 'ADMIN') return redirect('/')
+
+          return {
+            user,
+          }
+        },
+
         path: '/calendar',
         lazy: async () => {
           const { CalendarPage } = await import('./pages/app/calendar/calendar')

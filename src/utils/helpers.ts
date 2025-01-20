@@ -142,13 +142,13 @@ export function useDebounceState<T>(
 
 export const normalizeString = (value: string) => value.trim().normalize('NFC')
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const isFunction = (value: unknown): value is Function =>
-  typeof value === 'function'
+type UpdateCacheHandler<CacheType> = (cache: CacheType) => CacheType
+
+export const isFunctionUpdateCacheHandler = (
+  value: unknown,
+): value is UpdateCacheHandler<unknown> => typeof value === 'function'
 
 type ValueOrFalsy<Type> = Type | null | undefined
-
-type UpdateCacheHandler<CacheType> = (cache: CacheType) => CacheType
 
 type UpdateCacheParam<CacheType> = CacheType | UpdateCacheHandler<CacheType>
 
@@ -160,7 +160,7 @@ export function useUpdateQueryCache<CacheType>(key: QueryKey) {
 
     client.setQueryData(
       key,
-      isFunction(resolve) ? resolve(originalCache) : resolve,
+      isFunctionUpdateCacheHandler(resolve) ? resolve(originalCache) : resolve,
     )
 
     return originalCache

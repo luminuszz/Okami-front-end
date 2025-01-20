@@ -63,10 +63,12 @@ export function Header() {
             Relatório
           </NavLink>
 
-          <NavLink to="/calendar">
-            <Calendar className="mr-1 h-4 w-4" />
-            Calendário
-          </NavLink>
+          <Can I="show" an="show-calendar-feature">
+            <NavLink to="/calendar">
+              <Calendar className="mr-1 h-4 w-4" />
+              Calendário
+            </NavLink>
+          </Can>
 
           <Can I="show" a="admin-section">
             <NavLink
