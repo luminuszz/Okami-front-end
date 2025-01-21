@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosRequestConfig } from 'axios'
 import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ type FailRequestQueue = {
   onFailure: (error: AxiosError) => void
 }[]
 
-const failRequestQueue: FailRequestQueue = []
+let failRequestQueue: FailRequestQueue = []
 
 export function AppLayout() {
   const navigate = useNavigate()
@@ -35,6 +35,8 @@ export function AppLayout() {
       (response) => response,
       (error: AxiosError) => {
         if (isUnauthorizedError(error)) {
+          const originalRequest = error.config
+
           const refreshToken = storageService.get('okami-refresh-token')
 
           if (!refreshToken) {
@@ -53,22 +55,25 @@ export function AppLayout() {
                 })
               })
               .catch((error) => {
+                navigate('/auth/sign-in', { replace: true })
+
                 failRequestQueue.forEach((request) => {
                   request.onFailure(error)
                 })
-                navigate('/auth/sign-in', { replace: true })
               })
               .finally(() => {
                 isRefreshing = false
+                failRequestQueue = []
               })
           }
 
           return new Promise((resolve, reject) => {
             failRequestQueue.push({
               onFailure: (error) => reject(error),
-              onSuccess: () => {
-                resolve(null)
-              },
+              onSuccess: () =>
+                resolve(
+                  okamiHttpGateway(originalRequest as AxiosRequestConfig),
+                ),
             })
           })
         }
