@@ -44,7 +44,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(self.registration.showNotification('Okami', options))
 })
 
-self.addEventListener("notificationclick", async function (event)
+self.addEventListener("notificationclick", async function (event) {
   if(event.action === NotificationsActions.goToWork) {
     const  updatedUrl = new URL("https://okami.daviribeiro.com/works");
     updatedUrl.searchParams.append("name", event.notification.data.workName);
