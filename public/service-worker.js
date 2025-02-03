@@ -16,7 +16,7 @@ const parseStringJston = (value) => {
 }
 
 self.addEventListener('push', function (event) {
-  const notificaitonContent = parseStringJston(event.data.text())
+  const notificaitonContent = JSON.parse(event.data.text().replace(/\\"/g, '"'));
 
   const options = {
     body:  notificaitonContent.message,
@@ -41,7 +41,7 @@ self.addEventListener('push', function (event) {
     }),
   )
 
-  event.waitUntil(self.registration.showNotification('Okami', options))
+  event.waitUntil(self.registration.showNotification(`${notificaitonContent.name} - by Okami`, options))
 })
 
 self.addEventListener("notificationclick", async function (event) {
