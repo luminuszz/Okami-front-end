@@ -25,7 +25,7 @@ export function AppLayout() {
   useEffect(() => {
     serviceWorkNotificationManager.checkPermissions().then((isGranted) => {
       if (!isGranted) {
-        serviceWorkNotificationManager.requestNotifications()
+        void serviceWorkNotificationManager.requestNotifications()
       }
     })
   }, [])
