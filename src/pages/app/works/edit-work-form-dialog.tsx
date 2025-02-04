@@ -180,7 +180,7 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
     if (imageFile) {
       const compressedImage = await compressImageAsync(imageFile)
 
-      const parsedFiletype = imageFile.type.split('/')[1]
+      const parsedFiletype = compressedImage.type.split('/')[1]
 
       const { url: uploadUrl } = await getUploadWorkImageUrl({
         fileName: imageFile.name,
@@ -317,6 +317,6 @@ export function EditWorkFormDialog({ work }: EditWorkFormDialogProps) {
   )
 }
 
-/* 
-      
+/*
+
 */
