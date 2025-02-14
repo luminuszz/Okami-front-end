@@ -11,6 +11,3 @@ RUN corepack prepare pnpm@latest --activate
 RUN pnpm install
 
 CMD ["pnpm", "dev"]
-
-
-
