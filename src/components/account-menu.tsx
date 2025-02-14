@@ -32,10 +32,11 @@ export function AccountMenu() {
     mutationKey: ['logout'],
     mutationFn: makeLogout,
     onMutate: () => {
+      storageService.delete('okami-refresh-token')
       navigate('/auth/sign-in')
     },
     onSuccess() {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['user-details'],
       })
     },
