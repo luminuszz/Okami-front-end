@@ -2,14 +2,16 @@ version: "3.7"
 
 services:
   web:
+    networks:
+      - okami_services
     env_file:
       - .env
     build: .
     volumes:
-      - ./src:/app/src
+      - ./:/app
     ports:
       - "5173:5173"
 
 networks:
-  services:
+  okami_services:
     name: okami_services

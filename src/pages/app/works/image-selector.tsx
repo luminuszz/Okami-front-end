@@ -51,7 +51,7 @@ export function ImageSelector({ isRound }: ImageSelectorProps) {
         data-isRound={isRound}
         src={imageUrl}
         alt="image"
-        className="size-full rounded bg-contain data-[isRound]:rounded-full"
+        className="size-full rounded bg-contain data-isRound:rounded-full"
       />
 
       <Input
