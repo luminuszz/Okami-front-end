@@ -7,7 +7,7 @@ const getUserDetailsSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   avatarImageUrl: z.string().url().nullable(),
-  avatarImageId: z.string(),
+  avatarImageId: z.string().nullable(),
   finishedWorksCount: z.number(),
   readingWorksCount: z.number(),
   paymentSubscriptionStatus: z.enum(['ACTIVE', 'INACTIVE']),
