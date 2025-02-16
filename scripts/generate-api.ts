@@ -12,7 +12,7 @@ const ORVAL_CONFIG_PATH = path.resolve(__dirname, '../orval.config.cjs')
 async function run() {
   try {
     if (!OKAMI_URL_SWAGGER) {
-      console.error('EXPO_PUBLIC_API_URL is not defined in .env.local')
+      console.error('VITE_API_URL is not defined in .env.local')
       return
     }
 
